@@ -1,0 +1,23 @@
+<%
+to_output = []
+
+pam_types = [
+  'auth',
+  'account',
+  'password',
+  'session'
+]
+
+if @warn_if_unknown then
+  pam_types.each do |pam_type|
+    to_output << "#{pam_type}    required    pam_warn.so"
+  end
+end
+
+if @deny_if_unknown then
+  pam_types.each do |pam_type|
+    to_output << "#{pam_type}    required    pam_deny.so"
+  end
+end
+-%>
+<%= to_output.join("\n") %>

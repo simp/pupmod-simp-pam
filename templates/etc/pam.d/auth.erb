@@ -1,0 +1,182 @@
+#%PAM-1.0
+# This file managed by Puppet
+# User changes will be lost!
+<%
+def td_gt_rhel5?
+  return ( ['RedHat','CentOS'].include?(@operatingsystem) and scope.function_versioncmp([@lsbmajdistrelease,'5']) > 0 )
+end
+
+# Build the auth section:
+# Remember: ORDER MATTERS!
+
+auth = [
+  "auth     optional      pam_faildelay.so",
+  "auth     required      pam_env.so"
+]
+
+if td_gt_rhel5? then
+  auth << "auth     required      pam_faillock.so preauth" +
+          " #{!@display_account_lock ? 'silent' : ''}" +
+          " deny=#{@deny} even_deny_root audit unlock_time=#{@unlock_time} root_unlock_time=#{@root_unlock_time}" +
+          " fail_interval=#{@fail_interval}"
+else
+  auth << "auth     required      pam_tally2.so onerr=fail deny=#{@deny}" +
+          " audit unlock_time=#{@unlock_time} root_unlock_time=#{@root_unlock_time}"
+end
+
+if @name == 'fingerprint' then
+  auth << 'auth     sufficient    pam_fprintd.so'
+end
+
+if @name == 'smartcard' then
+  auth << 'auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only'
+end
+
+if ['system','password'].include?(@name) then
+  # SSSD is mutually exclusive with pam_ldap!
+  if @use_sssd then
+    auth << 'auth     sufficient    pam_sss.so forward_pass'
+    auth << 'auth     sufficient    pam_unix.so try_first_pass'
+  elsif @use_ldap then
+    auth << 'auth     sufficient  pam_unix.so try_first_pass'
+    auth << 'auth     sufficient  pam_ldap.so use_first_pass ignore_unknown_user ignore_authinfo_unavail'
+  else
+    auth << 'auth     sufficient  pam_unix.so try_first_pass'
+  end
+end
+
+if td_gt_rhel5? and (@name == 'password') then
+  auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} even_deny_root audit unlock_time=#{@unlock_time} root_unlock_time=#{@root_unlock_time}"
+end
+
+auth << "auth     requisite     pam_succeed_if.so uid >= #{@uid} quiet"
+auth << 'auth     required      pam_deny.so'
+
+# Build the account section:
+
+account = []
+
+if @use_netgroups then
+    account << 'account     required      pam_access.so accessfile=/etc/security/access.conf'
+end
+
+if @use_ldap and not @use_sssd then
+  account << 'account     [success=1]     pam_unix.so broken_shadow'
+  account << 'account     optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail'
+else
+  account << 'account     required      pam_unix.so broken_shadow'
+end
+
+if td_gt_rhel5? then
+  account << 'account     required      pam_faillock.so'
+else
+  account << 'account     required      pam_tally2.so'
+end
+
+if @use_sssd then
+  if @use_openshift then
+    account << 'account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
+  end
+  account << 'account     [success=3 default=ignore]  pam_succeed_if.so service = crond quiet'
+  account << "account     sufficient    pam_succeed_if.so uid < #{@uid} quiet"
+  account << 'account     requisite     pam_access.so nodefgroup'
+  account << 'account     [success=1 default=ignore] pam_localuser.so'
+  account << 'account     [default=bad success=ok system_err=ignore user_unknown=ignore] pam_sss.so'
+else
+  if @use_openshift then
+    account << 'account     [success=3 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
+  end
+  account << 'account     [success=2 default=ignore]  pam_succeed_if.so service = crond quiet'
+  account << "account     sufficient  pam_succeed_if.so uid < #{@uid} quiet"
+  account << 'account     requisite     pam_access.so nodefgroup'
+end
+account << 'account     required      pam_permit.so'
+
+# Build the password section:
+
+password = []
+
+if ['system','password'].include?(@name) then
+  t_cracklib = "password     requisite     pam_cracklib.so try_first_pass difok=#{@cracklib_difok}" +
+              " retry=#{@cracklib_retry} minlen=#{@cracklib_minlen} minclass=#{@cracklib_minclass}" +
+              " maxrepeat=#{@cracklib_maxrepeat} maxclassrepeat=#{@cracklib_maxclassrepeat}" +
+              " maxsequence=#{@cracklib_maxsequence} dcredit=#{@cracklib_dcredit} ucredit=#{@cracklib_ucredit}" +
+              " lcredit=#{@cracklib_lcredit} ocredit=#{@cracklib_ocredit}"
+
+  if @cracklib_gecoscheck then
+    t_cracklib += " gecoscheck"
+  end
+
+  if @cracklib_reject_username then
+    t_cracklib += " reject_username"
+  end
+
+  if @cracklib_enforce_for_root then
+    t_cracklib += " enforce_for_root"
+  end
+
+  password << t_cracklib
+
+  if @use_sssd then
+    # The following two lines will be enabled once SSSD has the
+    # ability to change shadow-based passwords in LDAP.
+    password << '#password      sufficient    pam_sss.so use_authtok'
+    password << "#password      sufficient    pam_unix.so sha512 rounds= shadow try_first_pass" +
+                " use_authtok remember=#{@remember}"
+  end
+
+  # This needs to be changed when SSSD works.
+  if @use_sssd or @use_ldap then
+    password << "password     sufficient    pam_unix.so sha512 rounds=#{@rounds}" +
+                " shadow try_first_pass use_authtok remember=#{@remember}"
+    password << 'password     sufficient    pam_ldap.so use_authtok ignore_unknown_user ignore_authinfo_unavail'
+  else
+    password << "password     sufficient    pam_unix.so sha512 rounds=#{@rounds}" +
+                " shadow try_first_pass use_authtok remember=#{@remember}"
+  end
+end
+
+if @name == 'smartcard' then
+  password << 'password     required      pam_pkcs11.so'
+else
+  password << 'password     required      pam_deny.so'
+end
+
+# Build the session section:
+
+session = [
+  'session      optional      pam_keyinit.so revoke',
+  'session      required      pam_limits.so',
+  '-session     optional      pam_systemd.so',
+  'session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet',
+  'session      sufficient    pam_succeed_if.so service in crond quiet use_uid',
+  'session      sufficient    pam_succeed_if.so user = root quiet'
+]
+
+if @use_openshift then
+  session << 'session      [default=1 success=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
+  session << 'session      required    pam_namespace.so no_unmount_on_close'
+  session << 'session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
+end
+
+session << 'session     requisite     pam_access.so nodefgroup'
+session << 'session      optional      pam_oddjob_mkhomedir.so silent'
+
+if @use_sssd then
+  session << 'session     optional      pam_sss.so'
+elsif @use_ldap then
+  session << 'session     [success=1]   pam_unix.so'
+  session << 'session     optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail'
+else
+  session << 'session     required      pam_unix.so'
+end
+
+session << 'session     required      pam_lastlog.so showfailed'
+-%>
+<%= auth.join("\n") %>
+
+<%= account.join("\n") %>
+
+<%= password.join("\n") %>
+
+<%= session.join("\n") %>

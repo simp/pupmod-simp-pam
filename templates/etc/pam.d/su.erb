@@ -1,0 +1,21 @@
+#%PAM-1.0
+auth      sufficient    pam_rootok.so
+auth      [success=1 default=ignore]  pam_wheel.so trust
+<%
+  t_wheel = "auth      required    pam_wheel.so use_uid group=#{@wheel_group}"
+
+  if @root_only then
+    t_wheel = "#{t_wheel} root_only"
+  end
+-%>
+<%= t_wheel %>
+auth      include     system-auth
+account   sufficient  pam_succeed_if.so uid = 0 use_uid quiet
+account   include     system-auth
+password  include     system-auth
+session   include     system-auth
+session   optional    pam_xauth.so
+<% if @use_openshift then -%>
+session [default=1 success=ignore]  pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user # Managed by puppet:openshift_origin
+session  required  pam_namespace.so  no_unmount_on_close # Managed by puppet:openshift_origin
+<% end -%>
