@@ -1,8 +1,9 @@
 ---
 fixtures:
+  repositories:
+    common: "git://github.com/simp/pupmod-simp-common"
+    concat: "git://github.com/simp/pupmod-simp-concat"
+    stdlib: "git://github.com/simp/puppetlabs-stdlib"
+    oddjob: "git://github.com/simp/pupmod-simp-oddjob"
   symlinks:
     pam: "#{source_dir}"
-    common: "#{source_dir}/../common"
-    concat: "#{source_dir}/../concat"
-    stdlib: "#{source_dir}/../stdlib"
-    oddjob: "#{source_dir}/../oddjob"

@@ -51,11 +51,11 @@ define pam::auth (
   $target = "${name}-auth"
 
   file { "${basedir}/${target}":
-    ensure   => 'file',
-    owner    => 'root',
-    group    => 'root',
-    mode     => '0644',
-    content  => template('pam/etc/pam.d/auth.erb')
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('pam/etc/pam.d/auth.erb')
   }
 
   if ! str2bool($preserve_ac) {

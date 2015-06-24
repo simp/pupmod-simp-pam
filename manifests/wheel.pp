@@ -18,10 +18,10 @@ class pam::wheel (
     $use_openshift = pick($::pam::use_openshift,false)
 ) {
   file { '/etc/pam.d/su':
-    owner    => 'root',
-    group    => 'root',
-    mode     => '0644',
-    content  => template('pam/etc/pam.d/su.erb')
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('pam/etc/pam.d/su.erb')
   }
 
   validate_string($wheel_group)

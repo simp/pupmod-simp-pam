@@ -9,9 +9,9 @@ class pam::limits {
   include 'pam'
 
   concat_build { 'pam_limits':
-    order     => ['*.limit'],
-    target    => '/etc/security/limits.conf',
-    require   => Package['pam']
+    order   => ['*.limit'],
+    target  => '/etc/security/limits.conf',
+    require => Package['pam']
   }
 
   file { '/etc/security/limits.conf':

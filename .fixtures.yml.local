@@ -1,0 +1,8 @@
+---
+fixtures:
+  symlinks:
+    pam: "#{source_dir}"
+    common: "#{source_dir}/../common"
+    concat: "#{source_dir}/../concat"
+    stdlib: "#{source_dir}/../stdlib"
+    oddjob: "#{source_dir}/../oddjob"
