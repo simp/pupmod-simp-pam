@@ -3,7 +3,7 @@
 # User changes will be lost!
 <%
 def td_gt_rhel5?
-  return ( ['RedHat','CentOS'].include?(@operatingsystem) and scope.function_versioncmp([@lsbmajdistrelease,'5']) > 0 )
+  return ( ['RedHat','CentOS'].include?(@operatingsystem) and scope.function_versioncmp([@operatingsystemmajrelease,'5']) > 0 )
 end
 
 # Build the auth section:

@@ -1,7 +1,7 @@
 Summary: PAM Puppet Module
 Name: pupmod-pam
 Version: 4.1.0
-Release: 11
+Release: 12
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -60,6 +60,10 @@ mkdir -p %{buildroot}/%{prefix}/pam
 # Post uninstall stuff
 
 %changelog
+* Tue Oct 27 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-12
+- Removed all calls to the lsb* facts and replaced them with 'operatingsystem*'
+  facts
+
 * Fri Sep 18 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-11
 - Moved pam_mkhomedir to before pam_systemd to fix issues with systemd
   subsystem failures occuring due to a lack of a home directory.

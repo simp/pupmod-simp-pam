@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'pam::access::manage' do
   let(:facts){{
     :operatingsystem => 'CentOS',
-    :lsbdistrelease => '6.5',
-    :lsbmajdistrelease => '6'
+    :operatingsystemrelease => '6.5',
+    :operatingsystemmajrelease => '6'
   }}
   let(:title){ 'test' }
   let(:params){{

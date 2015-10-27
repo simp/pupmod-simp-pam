@@ -249,7 +249,7 @@ class pam (
   package { 'pam_pkcs11': ensure => 'latest' }
 
   if $::operatingsystem in ['RedHat','CentOS']
-    and versioncmp($::lsbmajdistrelease,'5') > 0 {
+    and versioncmp($::operatingsystemmajrelease,'5') > 0 {
     package { 'fprintd-pam': ensure => 'latest' }
   }
 
