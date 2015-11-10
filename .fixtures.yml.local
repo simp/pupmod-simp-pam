@@ -3,6 +3,7 @@ fixtures:
   symlinks:
     pam: "#{source_dir}"
     common: "#{source_dir}/../common"
-    concat: "#{source_dir}/../concat"
+    simplib: "#{source_dir}/../simplib"
+    simpcat: "#{source_dir}/../simpcat"
     stdlib: "#{source_dir}/../stdlib"
     oddjob: "#{source_dir}/../oddjob"

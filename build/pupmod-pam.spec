@@ -1,12 +1,12 @@
 Summary: PAM Puppet Module
 Name: pupmod-pam
 Version: 4.1.0
-Release: 12
+Release: 13
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Requires: pupmod-concat >= 2.0.0-0
+Requires: pupmod-simpcat >= 2.0.0-0
 Requires: pupmod-oddjob >= 1.0.0-0
 Requires: pupmod-rsync >= 2.0.0-0
 Requires: pupmod-sssd >= 2.0.0-0
@@ -60,6 +60,9 @@ mkdir -p %{buildroot}/%{prefix}/pam
 # Post uninstall stuff
 
 %changelog
+* Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-13
+- Migration to simplib and simpcat (lib/ only)
+
 * Tue Oct 27 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-12
 - Removed all calls to the lsb* facts and replaced them with 'operatingsystem*'
   facts
@@ -96,7 +99,7 @@ mkdir -p %{buildroot}/%{prefix}/pam
 * Sun Jun 22 2014 Kendall Moore <kmoore@keywcorp.com> - 4.1.0-4
 - Removed MD5 file checksums for FIPS compliance.
 
-* Tue Apr 10 2014 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-3
+* Thu Apr 10 2014 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-3
 - Added full support for access.conf and removed groupaccess.conf
   since it is no longer required. pam::access::manage should now be
   used instead of pam::groupaccess::modify.
