@@ -1,23 +1,27 @@
 require 'spec_helper'
 
 describe 'pam::limits::add' do
-  let(:facts){{
-    :operatingsystem => 'CentOS',
-    :operatingsystemrelease => '6.5',
-    :operatingsystemmajrelease => '6'
-  }}
-  let(:title){ 'test' }
-  let(:params){{
-    :domain => '*',
-    :item => 'core',
-    :value => '0',
-    :type => '-',
-    :order => '1'
-  }}
+  context 'supported operating systems' do
+    on_supported_os.each do |os, facts|
 
-  it { should compile.with_all_deps }
+      context "on #{os}" do
+        let(:facts){ facts }
 
-  it { should create_concat_fragment("pam_limits+#{params[:order]}.#{title}.limit").with_content(
-    /#{Regexp.escape(params[:domain])}\s#{params[:type]}\s#{params[:item]}\s#{params[:value]}/
-  )}
+        let(:title){ 'test' }
+        let(:params){{
+          :domain => '*',
+          :item => 'core',
+          :value => '0',
+          :type => '-',
+          :order => '1'
+        }}
+
+        it { should compile.with_all_deps }
+
+        it { should create_concat_fragment("pam_limits+#{params[:order]}.#{title}.limit").with_content(
+          /#{Regexp.escape(params[:domain])}\s#{params[:type]}\s#{params[:item]}\s#{params[:value]}/
+        )}
+      end
+    end
+  end
 end

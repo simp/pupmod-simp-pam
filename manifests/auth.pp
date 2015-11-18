@@ -35,7 +35,7 @@ define pam::auth (
   $use_ldap                  = $::pam::use_ldap,
   $use_netgroups             = $::pam::use_netgroups,
   $use_openshift             = $::pam::use_openshift,
-  $use_sssd                  = $::pam::use_sssd
+  $use_sssd                  = $::pam::_use_sssd
 ) {
 
   include 'oddjob::mkhomedir'
@@ -47,7 +47,7 @@ define pam::auth (
     'system'
   ]
 
-  $basedir = '/etc/pam.d/'
+  $basedir = '/etc/pam.d'
   $target = "${name}-auth"
 
   file { "${basedir}/${target}":
@@ -55,7 +55,7 @@ define pam::auth (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => template('pam/etc/pam.d/auth.erb')
+    content => template("${module_name}/etc/pam.d/auth.erb")
   }
 
   if ! str2bool($preserve_ac) {

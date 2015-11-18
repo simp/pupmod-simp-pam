@@ -16,7 +16,7 @@ Buildarch: noarch
 Requires: simp-bootstrap >= 4.2.0
 Obsoletes: pupmod-pam-test
 
-Prefix: /etc/puppet/environments/simp/modules
+Prefix: %{_sysconfdir}/puppet/environments/simp/modules
 
 %description
 This Puppet module provides the capability to configure various PAM settings on
@@ -60,6 +60,10 @@ mkdir -p %{buildroot}/%{prefix}/pam
 # Post uninstall stuff
 
 %changelog
+* Wed Nov 18 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-13
+- Updated to enable SSSD properly now that most of the major items have been
+  resolved upstream.
+
 * Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-13
 - Migration to simplib and simpcat (lib/ only)
 

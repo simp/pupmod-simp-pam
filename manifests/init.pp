@@ -203,11 +203,59 @@ class pam (
   $preserve_ac               = false,
   $warn_if_unknown           = true,
   $deny_if_unknown           = true,
-  $use_ldap                  = hiera('use_ldap',true),
+  $use_ldap                  = defined('$::use_ldap') ? { true => $::use_ldap, default => hiera('use_ldap',true) },
   $use_netgroups             = false,
   $use_openshift             = false,
-  $use_sssd                  = hiera('use_sssd',false)
-) {
+  $use_sssd                  = false,
+) inherits ::pam::params {
+
+  validate_integer($cracklib_difok)
+  validate_integer($cracklib_maxclassrepeat)
+  validate_integer($cracklib_maxrepeat)
+  validate_integer($cracklib_maxsequence)
+  validate_integer($cracklib_maxclassrepeat)
+  validate_bool($cracklib_reject_username)
+  validate_bool($cracklib_gecoscheck)
+  validate_bool($cracklib_enforce_for_root)
+  validate_integer($cracklib_dcredit)
+  validate_integer($cracklib_ucredit)
+  validate_integer($cracklib_lcredit)
+  validate_integer($cracklib_ocredit)
+  validate_integer($cracklib_minclass)
+  validate_integer($cracklib_minlen)
+  validate_integer($cracklib_retry)
+  validate_integer($deny)
+  validate_bool($display_account_lock)
+  validate_umask($homedir_umask)
+  validate_integer($remember)
+  validate_integer($root_unlock_time)
+  validate_integer($rounds)
+  validate_integer($uid)
+  validate_integer($unlock_time)
+  validate_integer($fail_interval)
+  validate_bool($preserve_ac)
+  validate_bool($warn_if_unknown)
+  validate_bool($deny_if_unknown)
+  validate_bool($use_ldap)
+  validate_bool($use_netgroups)
+  validate_bool($use_openshift)
+  validate_bool($use_sssd)
+
+  # We only want to use SSSD if we're using LDAP and params tells us to *or*
+  # someone has explicitly set the $use_sssd variable above.
+
+  if $use_sssd {
+    $_use_sssd = $use_sssd
+  }
+  else {
+    if $use_ldap {
+      $_use_sssd = $::sssd::params::use_sssd
+    }
+    else {
+      $_use_sssd = $use_sssd
+    }
+  }
+
   file { '/etc/pam.d':
     ensure  => 'directory',
     owner   => 'root',
@@ -259,37 +307,5 @@ class pam (
     'password',
     'smartcard' ]:
   }
-
-  validate_integer($cracklib_difok)
-  validate_integer($cracklib_maxclassrepeat)
-  validate_integer($cracklib_maxrepeat)
-  validate_integer($cracklib_maxsequence)
-  validate_integer($cracklib_maxclassrepeat)
-  validate_bool($cracklib_reject_username)
-  validate_bool($cracklib_gecoscheck)
-  validate_bool($cracklib_enforce_for_root)
-  validate_integer($cracklib_dcredit)
-  validate_integer($cracklib_ucredit)
-  validate_integer($cracklib_lcredit)
-  validate_integer($cracklib_ocredit)
-  validate_integer($cracklib_minclass)
-  validate_integer($cracklib_minlen)
-  validate_integer($cracklib_retry)
-  validate_integer($deny)
-  validate_bool($display_account_lock)
-  validate_umask($homedir_umask)
-  validate_integer($remember)
-  validate_integer($root_unlock_time)
-  validate_integer($rounds)
-  validate_integer($uid)
-  validate_integer($unlock_time)
-  validate_integer($fail_interval)
-  validate_bool($preserve_ac)
-  validate_bool($warn_if_unknown)
-  validate_bool($deny_if_unknown)
-  validate_bool($use_ldap)
-  validate_bool($use_netgroups)
-  validate_bool($use_openshift)
-  validate_bool($use_sssd)
 }
 
