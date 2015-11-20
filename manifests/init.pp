@@ -249,7 +249,7 @@ class pam (
   }
   else {
     if $use_ldap {
-      $_use_sssd = $::sssd::params::use_sssd
+      $_use_sssd = $::pam::params::use_sssd
     }
     else {
       $_use_sssd = $use_sssd
