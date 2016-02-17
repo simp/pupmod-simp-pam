@@ -17,14 +17,14 @@ class pam::wheel (
 #    openshift_origin puppet code is compatible.
     $use_openshift = pick($::pam::use_openshift,false)
 ) {
+  validate_string($wheel_group)
+  validate_bool($root_only)
+  validate_bool($use_openshift)
+
   file { '/etc/pam.d/su':
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
     content => template('pam/etc/pam.d/su.erb')
   }
-
-  validate_string($wheel_group)
-  validate_bool($root_only)
-  validate_bool($use_openshift)
 }

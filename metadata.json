@@ -7,7 +7,7 @@
   "source":  "https://github.com/simp/pupmod-simp-pam",
   "project_page": "https://github.com/simp/pupmod-simp-pam",
   "issues_url":   "https://simp-project.atlassian.net",
-  "tags": [ "simp" ],
+  "tags": [ "simp", "pam" ],
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
