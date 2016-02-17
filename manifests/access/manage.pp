@@ -96,6 +96,12 @@ define pam::access::manage (
   $comment = '',
   $order = '1000'
 ) {
+  validate_array_member($permission,['+','-'])
+  validate_array($origins)
+  validate_integer($order)
+  if $order > '9999999999' {
+    fail('$order must be less than 9999999999.')
+  }
 
   $l_name = regsubst($name,'/','_')
   $l_origins = join($origins,' ')
@@ -109,11 +115,4 @@ define pam::access::manage (
   }
 
   concat_fragment { "pam_access+${order}.${l_name}.access": content => $content }
-
-  validate_array_member($permission,['+','-'])
-  validate_array($origins)
-  validate_integer($order)
-  if $order > '9999999999' {
-    fail('$order must be less than 9999999999.')
-  }
 }

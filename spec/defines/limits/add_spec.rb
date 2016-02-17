@@ -16,9 +16,9 @@ describe 'pam::limits::add' do
           :order => '1'
         }}
 
-        it { should compile.with_all_deps }
+        it { is_expected.to compile.with_all_deps }
 
-        it { should create_concat_fragment("pam_limits+#{params[:order]}.#{title}.limit").with_content(
+        it { is_expected.to create_concat_fragment("pam_limits+#{params[:order]}.#{title}.limit").with_content(
           /#{Regexp.escape(params[:domain])}\s#{params[:type]}\s#{params[:item]}\s#{params[:value]}/
         )}
       end

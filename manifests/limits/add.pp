@@ -28,11 +28,6 @@ define pam::limits::add (
 #     by name.
     $order = '1000'
   ) {
-  $l_name = regsubst($name,'/','_')
-
-  concat_fragment { "pam_limits+${order}.${l_name}.limit":
-    content => "${domain}\t${type}\t${item}\t${value}\n"
-  }
   include 'pam::limits'
 
   validate_array_member($item,[
@@ -63,4 +58,10 @@ define pam::limits::add (
   }
   validate_array_member($type,['hard','soft','-'])
   validate_integer($order)
+
+  $l_name = regsubst($name,'/','_')
+
+  concat_fragment { "pam_limits+${order}.${l_name}.limit":
+    content => "${domain}\t${type}\t${item}\t${value}\n"
+  }
 }
