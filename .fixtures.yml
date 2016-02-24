@@ -5,5 +5,6 @@ fixtures:
     simpcat: "git://github.com/simp/pupmod-simp-concat"
     stdlib: "git://github.com/simp/puppetlabs-stdlib"
     oddjob: "git://github.com/simp/pupmod-simp-oddjob"
+    compliance: "https://github.com/trevor-vaughan/pupmod-compliance"
   symlinks:
     pam: "#{source_dir}"

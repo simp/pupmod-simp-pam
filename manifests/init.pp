@@ -241,6 +241,8 @@ class pam (
   validate_bool($use_openshift)
   validate_bool($use_sssd)
 
+  compliance_map()
+
   # We only want to use SSSD if we're using LDAP and params tells us to *or*
   # someone has explicitly set the $use_sssd variable above.
 

@@ -1,7 +1,7 @@
 Summary: PAM Puppet Module
 Name: pupmod-pam
 Version: 4.1.0
-Release: 13
+Release: 14
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -15,6 +15,7 @@ Requires: simp_rsync_filestore >= 2.0.0-2
 Buildarch: noarch
 Requires: simp-bootstrap >= 4.2.0
 Obsoletes: pupmod-pam-test
+Requires: pupmod-onyxpoint-compliance_markup
 
 Prefix: %{_sysconfdir}/puppet/environments/simp/modules
 
@@ -60,7 +61,10 @@ mkdir -p %{buildroot}/%{prefix}/pam
 # Post uninstall stuff
 
 %changelog
-* Wed Nov 18 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-13
+* Tue Feb 23 2016 Ralph Wright <ralph.wright@onyxpoint.com> - 4.1.0-14
+- Added compliance function support
+
+* Wed Nov 18 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-13
 - Updated to enable SSSD properly now that most of the major items have been
   resolved upstream.
 
