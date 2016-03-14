@@ -1,7 +1,7 @@
 Summary: PAM Puppet Module
 Name: pupmod-pam
-Version: 4.1.0
-Release: 14
+Version: 4.2.0
+Release: 0
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -61,6 +61,9 @@ mkdir -p %{buildroot}/%{prefix}/pam
 # Post uninstall stuff
 
 %changelog
+* Mon Mar 14 2016 Nick Markowski <nmarkowski@keywcorp.com> - 4.2.0-0
+- Ensure that EL6.7+ uses SSSD over NSCD
+
 * Tue Feb 23 2016 Ralph Wright <ralph.wright@onyxpoint.com> - 4.1.0-14
 - Added compliance function support
 
