@@ -141,7 +141,6 @@ end
 _session = [
   'session      optional      pam_keyinit.so revoke',
   'session      required      pam_limits.so',
-  'session      optional      pam_oddjob_mkhomedir.so silent',
   '-session     optional      pam_systemd.so',
   'session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet',
   'session      sufficient    pam_succeed_if.so service in crond quiet use_uid',
@@ -154,18 +153,19 @@ if @use_openshift
   _session << 'session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
 end
 
-_session << 'session     requisite     pam_access.so nodefgroup'
+_session << 'session      requisite     pam_access.so nodefgroup'
 
 if @use_sssd
-  _session << 'session     optional      pam_sss.so'
+  _session << 'session      optional      pam_sss.so'
 elsif @use_ldap
-  _session << 'session     [success=1]   pam_unix.so'
-  _session << 'session     optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail'
+  _session << 'session      [success=1]   pam_unix.so'
+  _session << 'session      optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail'
 else
-  _session << 'session     required      pam_unix.so'
+  _session << 'session      required      pam_unix.so'
 end
 
-_session << 'session     required      pam_lastlog.so showfailed'
+_session << 'session      optional      pam_oddjob_mkhomedir.so silent'
+_session << 'session      required      pam_lastlog.so showfailed'
 -%>
 <%= _auth.join("\n") %>
 

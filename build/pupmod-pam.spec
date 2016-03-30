@@ -1,6 +1,6 @@
 Summary: PAM Puppet Module
 Name: pupmod-pam
-Version: 4.2.0
+Version: 4.2.1
 Release: 0
 License: Apache License, Version 2.0
 Group: Applications/System
@@ -61,6 +61,10 @@ mkdir -p %{buildroot}/%{prefix}/pam
 # Post uninstall stuff
 
 %changelog
+* Wed Mar 30 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.2.1-0
+- Move pam_oddjob_mkhomedir below pam_sssd in the stack due to a odd
+  SELinux-related bug which prevented users from logging into systems via SSH.
+
 * Mon Mar 14 2016 Nick Markowski <nmarkowski@keywcorp.com> - 4.2.0-0
 - Ensure that EL6.7+ uses SSSD over NSCD
 
