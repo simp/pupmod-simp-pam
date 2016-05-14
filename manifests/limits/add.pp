@@ -28,7 +28,7 @@ define pam::limits::add (
 #     by name.
     $order = '1000'
   ) {
-  include 'pam::limits'
+  include '::pam::limits'
 
   validate_array_member($item,[
     'core',

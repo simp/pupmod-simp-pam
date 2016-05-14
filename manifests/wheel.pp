@@ -16,7 +16,7 @@ class pam::wheel (
 #    Whether or not to configure things in such a way that the
 #    openshift_origin puppet code is compatible.
     $use_openshift = pick($::pam::use_openshift,false)
-) {
+) inherits ::pam {
   validate_string($wheel_group)
   validate_bool($root_only)
   validate_bool($use_openshift)

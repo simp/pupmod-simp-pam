@@ -6,14 +6,14 @@ describe 'pam::auth' do
       context "on #{os}" do
 
         let(:facts){ facts }
+        let(:pre_condition){
+          'class { "::pam": auth_sections => [] }'
+        }
 
         ['password','system'].each do |auth_type|
           context "auth type '#{auth_type}'" do
             let(:title){ auth_type }
             let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-            let(:precondition){
-              'include ::pam'
-            }
 
             it { is_expected.to compile.with_all_deps }
             it { is_expected.to create_class('oddjob::mkhomedir') }
@@ -24,11 +24,11 @@ describe 'pam::auth' do
               /^\s*password\s+sufficient\s+pam_unix\.so/m
               )
             }
-            it { is_expected.to_not contain_file(filename).with_content(
+            it { is_expected.to contain_file(filename).without_content(
               /^\s*password\s+sufficient\s+pam_sss\.so/m
               )
             }
-            it { is_expected.to_not contain_file(filename).with_content(
+            it { is_expected.to contain_file(filename).without_content(
               /^\s*password\s+sufficient\s+pam_ldap\.so/m
               )
             }
@@ -44,9 +44,6 @@ describe 'pam::auth' do
                 :use_ldap => true,
                 :use_sssd => true
               }}
-              let(:precondition){
-                'include ::pam'
-              }
 
               it { is_expected.to compile.with_all_deps }
               it { is_expected.to create_class('oddjob::mkhomedir') }
@@ -61,7 +58,7 @@ describe 'pam::auth' do
                 /^\s*password\s+sufficient\s+pam_sss\.so.*\n\s*.+pam_unix\.so/m
                 )
               }
-              it { is_expected.to_not contain_file(filename).with_content(
+              it { is_expected.to contain_file(filename).without_content(
                 /^\s*password\s+sufficient\s+pam_ldap\.so/m
                 )
               }
@@ -77,9 +74,6 @@ describe 'pam::auth' do
               let(:params){{
                 :use_ldap => true
               }}
-              let(:precondition){
-                'include ::pam'
-              }
 
               it { is_expected.to compile.with_all_deps }
               it { is_expected.to create_class('oddjob::mkhomedir') }

@@ -1,5 +1,5 @@
 #
-# == Define: pam::auth
+# == pam::auth
 #
 # Set up the various -auth files in /etc/pam.d.
 #
@@ -38,7 +38,7 @@ define pam::auth (
   $use_sssd                  = $::pam::_use_sssd
 ) {
 
-  include 'oddjob::mkhomedir'
+  include '::oddjob::mkhomedir'
 
   $valid_targets = [
     'smartcard',
