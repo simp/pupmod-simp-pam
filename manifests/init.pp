@@ -204,6 +204,7 @@ class pam (
   $warn_if_unknown           = true,
   $deny_if_unknown           = true,
   $use_ldap                  = defined('$::use_ldap') ? { true => $::use_ldap, default => hiera('use_ldap',true) },
+  $use_ipa                  = defined('$::use_ipa') ? { true => $::use_ipa, default => hiera('use_ipa',false) },
   $use_netgroups             = false,
   $use_openshift             = false,
   $use_sssd                  = false,
@@ -252,6 +253,9 @@ class pam (
   else {
     if $use_ldap {
       $_use_sssd = $::pam::params::use_sssd
+    }
+    elsif $use_ipa {
+      $_use_sssd = true
     }
     else {
       $_use_sssd = $use_sssd
