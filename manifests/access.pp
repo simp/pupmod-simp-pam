@@ -12,7 +12,7 @@
 #   * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class pam::access {
-  include 'pam'
+  include '::pam'
 
   concat_build { 'pam_access':
     target        => '/etc/security/access.conf',

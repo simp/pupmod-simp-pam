@@ -176,6 +176,10 @@
 #   Default: false
 #   Set PAM to work with SSSD.
 #
+# [*auth_sections*]
+#   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
+#   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
+#
 class pam (
   $cracklib_difok            = '4',
   $cracklib_maxrepeat        = '2',
@@ -203,11 +207,12 @@ class pam (
   $preserve_ac               = false,
   $warn_if_unknown           = true,
   $deny_if_unknown           = true,
-  $use_ldap                  = defined('$::use_ldap') ? { true => $::use_ldap, default => hiera('use_ldap',true) },
+  $use_ldap                  = defined('$::use_ldap') ? { true => $::use_ldap, default => hiera('use_ldap',false) },
   $use_ipa                  = defined('$::use_ipa') ? { true => $::use_ipa, default => hiera('use_ipa',false) },
   $use_netgroups             = false,
   $use_openshift             = false,
   $use_sssd                  = false,
+  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ]
 ) inherits ::pam::params {
 
   validate_integer($cracklib_difok)
@@ -241,6 +246,7 @@ class pam (
   validate_bool($use_netgroups)
   validate_bool($use_openshift)
   validate_bool($use_sssd)
+  validate_array($auth_sections)
 
   compliance_map()
 
@@ -307,11 +313,8 @@ class pam (
     package { 'fprintd-pam': ensure => 'latest' }
   }
 
-  pam::auth { [
-    'fingerprint',
-    'system',
-    'password',
-    'smartcard' ]:
+  if ! empty($auth_sections) {
+    ::pam::auth { $auth_sections: }
   }
 }
 

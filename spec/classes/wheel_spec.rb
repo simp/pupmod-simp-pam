@@ -8,7 +8,7 @@ describe 'pam::wheel' do
         let(:facts){ facts }
 
         let(:params){{ :wheel_group => 'administrators' }}
-        let(:precondition){
+        let(:pre_condition){
           'include ::pam'
         }
 

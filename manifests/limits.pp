@@ -6,7 +6,7 @@
 # See limits.conf(5) for additional details.
 #
 class pam::limits {
-  include 'pam'
+  include '::pam'
 
   concat_build { 'pam_limits':
     order   => ['*.limit'],
