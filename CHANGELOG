@@ -1,66 +1,7 @@
-Summary: PAM Puppet Module
-Name: pupmod-pam
-Version: 4.2.1
-Release: 0
-License: Apache License, Version 2.0
-Group: Applications/System
-Source: %{name}-%{version}-%{release}.tar.gz
-Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Requires: pupmod-simpcat >= 2.0.0-0
-Requires: pupmod-oddjob >= 1.0.0-0
-Requires: pupmod-rsync >= 2.0.0-0
-Requires: pupmod-sssd >= 2.0.0-0
-Requires: puppet >= 3.3.0
-Requires: simp_rsync_filestore >= 2.0.0-2
-Buildarch: noarch
-Requires: simp-bootstrap >= 4.2.0
-Obsoletes: pupmod-pam-test
-Requires: pupmod-onyxpoint-compliance_markup
+* Thu Jul 07 2016 Liz Nemsick <elizabeth.nemsick@uscontracting.us> - 4.2.2-0
+- Added use of pam_tty_audit in system-auth, password-auth, and fingerprint-auth.
+- Updated module to use new rake helper to auto-generate RPM .spec file.
 
-Prefix: %{_sysconfdir}/puppet/environments/simp/modules
-
-%description
-This Puppet module provides the capability to configure various PAM settings on
-the system.
-
-Included are capabilities to manage:
-  * system-auth
-  * Group-based access to the system
-  * access.conf
-
-The system-auth settings are a bit draconian, but simple enough to work within.
-
-%prep
-%setup -q
-
-%build
-
-%install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
-
-mkdir -p %{buildroot}/%{prefix}/pam
-
-dirs='files lib manifests templates'
-for dir in $dirs; do
-  test -d $dir && cp -r $dir %{buildroot}/%{prefix}/pam
-done
-
-%clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
-
-mkdir -p %{buildroot}/%{prefix}/pam
-
-%files
-%defattr(0640,root,puppet,0750)
-%{prefix}/pam
-
-%post
-#!/bin/sh
-
-%postun
-# Post uninstall stuff
-
-%changelog
 * Wed Mar 30 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.2.1-0
 - Move pam_oddjob_mkhomedir below pam_sssd in the stack due to a odd
   SELinux-related bug which prevented users from logging into systems via SSH.
