@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_d9cfb754",
+        "filename": "CHANGELOG",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-07-11T16:58:50Z",
+      "side": 1,
+      "message": "Should mention some more of your commit message in here, a lot was changed.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 72
+      },
+      "revId": "261805fbbb241cd431d98dbdcfe758210f58a115",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_3932235f",
+        "filename": "spec/defines/auth_spec.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-07-11T16:58:50Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 5
+      },
+      "revId": "261805fbbb241cd431d98dbdcfe758210f58a115",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_39090385",
+        "filename": "spec/defines/auth_spec.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-07-11T16:58:50Z",
+      "side": 1,
+      "message": "Do we want to be this explicit? Looking for this string would probably suffice.",
+      "range": {
+        "startLine": 61,
+        "startChar": 27,
+        "endLine": 61,
+        "endChar": 65
+      },
+      "revId": "261805fbbb241cd431d98dbdcfe758210f58a115",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_f9271b10",
+        "filename": "spec/defines/auth_spec.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-07-11T16:58:50Z",
+      "side": 1,
+      "message": "Same as above.",
+      "range": {
+        "startLine": 108,
+        "startChar": 27,
+        "endLine": 108,
+        "endChar": 65
+      },
+      "revId": "261805fbbb241cd431d98dbdcfe758210f58a115",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_f96efb2d",
+        "filename": "spec/defines/auth_spec.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-07-11T16:58:50Z",
+      "side": 1,
+      "message": "Whitespace",
+      "range": {
+        "startLine": 205,
+        "startChar": 0,
+        "endLine": 205,
+        "endChar": 2
+      },
+      "revId": "261805fbbb241cd431d98dbdcfe758210f58a115",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
