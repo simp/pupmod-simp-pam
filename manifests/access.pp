@@ -22,7 +22,7 @@ class pam::access {
   }
 
   file { '/etc/security/access.conf':
-    ensure    => 'present',
+    ensure    => 'file',
     owner     => 'root',
     group     => 'root',
     mode      => '0644',

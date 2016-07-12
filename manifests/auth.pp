@@ -25,6 +25,7 @@ define pam::auth (
   $cracklib_minlen           = $::pam::cracklib_minlen,
   $cracklib_retry            = $::pam::cracklib_retry,
   $deny                      = $::pam::deny,
+  $display_account_lock      = $::pam::display_account_lock,
   $fail_interval             = $::pam::fail_interval,
   $remember                  = $::pam::remember,
   $root_unlock_time          = $::pam::root_unlock_time,
@@ -35,7 +36,8 @@ define pam::auth (
   $use_ldap                  = $::pam::use_ldap,
   $use_netgroups             = $::pam::use_netgroups,
   $use_openshift             = $::pam::use_openshift,
-  $use_sssd                  = $::pam::_use_sssd
+  $use_sssd                  = $::pam::_use_sssd,
+  $tty_audit_enable          = $::pam::tty_audit_enable
 ) {
 
   include '::oddjob::mkhomedir'
