@@ -1,5 +1,19 @@
 require 'spec_helper'
 
+def get_expected(filename)
+  path = File.join(File.dirname(__FILE__), '..', 'expected', File.basename(__FILE__, '.rb'),
+    filename)
+
+  IO.read(path)
+end
+
+shared_examples_for "a pam.d config file generator" do
+  it { is_expected.to compile.with_all_deps }
+  it { is_expected.to create_class('oddjob::mkhomedir') }
+  it { is_expected.to contain_file(filename).with_mode('0644') }
+  it { is_expected.to contain_file("#{filename}-ac").with_ensure('absent') }
+end
+
 describe 'pam::auth' do
   context 'supported operating systems' do
     on_supported_os.each do |os, facts|
@@ -9,89 +23,84 @@ describe 'pam::auth' do
         let(:pre_condition){
           'class { "::pam": auth_sections => [] }'
         }
+     
+        # The three test contexts (scenarios) allow all auth.erb code paths to be
+        # exercised at least once.
 
-        ['password','system'].each do |auth_type|
-          context "auth type '#{auth_type}'" do
-            let(:title){ auth_type }
-            let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-
-            it { is_expected.to compile.with_all_deps }
-            it { is_expected.to create_class('oddjob::mkhomedir') }
-            it { is_expected.to contain_file(filename).with_mode('0644') }
-            it { is_expected.to contain_file("#{filename}-ac").with_ensure('absent') }
-
-            it { is_expected.to contain_file(filename).with_content(
-              /^\s*password\s+sufficient\s+pam_unix\.so/m
-              )
-            }
-            it { is_expected.to contain_file(filename).without_content(
-              /^\s*password\s+sufficient\s+pam_sss\.so/m
-              )
-            }
-            it { is_expected.to contain_file(filename).without_content(
-              /^\s*password\s+sufficient\s+pam_ldap\.so/m
-              )
-            }
-          end
-        end
-
-        context "using SSSD" do
-          ['password','system'].each do |auth_type|
+        context 'Generate file using default params' do
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:params){{
-                :use_ldap => true,
-                :use_sssd => true
-              }}
+              let(:file_content) { get_expected("#{auth_type}-auth_default_params") }
 
-              it { is_expected.to compile.with_all_deps }
-              it { is_expected.to create_class('oddjob::mkhomedir') }
-              it { is_expected.to contain_file(filename).with_mode('0644') }
-              it { is_expected.to contain_file("#{filename}-ac").with_ensure('absent') }
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
+            end
+          end
+        end
+  
+        context 'Generate file with SSSD taking precedence over LDAP and no TTY auditing' do
+          # In this context, we will also verify the logic to deliver config to
+          # auth.erb works for all config parameters, by setting these parameters
+          # to non-default values.
+          let(:params){{
+            :cracklib_dcredit          => 1,
+            :cracklib_difok            => 2,
+            :cracklib_enforce_for_root => false,
+            :cracklib_gecoscheck       => false,
+            :cracklib_lcredit          => 3,
+            :cracklib_maxclassrepeat   => 4,
+            :cracklib_maxrepeat        => 5,
+            :cracklib_maxsequence      => 6,
+            :cracklib_minclass         => 7,
+            :cracklib_minlen           => 8,
+            :cracklib_ocredit          => 9,
+            :cracklib_reject_username  => false,
+            :cracklib_retry            => 10,
+            :cracklib_ucredit          => 11,
+            :deny                      => 12,
+            :display_account_lock      => true,
+            :fail_interval             => 13,
+            :remember                  => 14,
+            :root_unlock_time          => 15,
+            :rounds                    => 16,
+            :uid                       => 17,
+            :use_ldap                  => true,
+            :unlock_time               => 18,
+            :use_netgroups             => true,
+            :use_openshift             => true,
+            :use_sssd                  => true,
+            :tty_audit_enable          => []
+          }}
 
-              it { is_expected.to contain_file(filename).with_content(
-                /^\s*password\s+sufficient\s+pam_unix\.so/m
-                )
-              }
-              it { is_expected.to contain_file(filename).with_content(
-                /^\s*password\s+sufficient\s+pam_sss\.so.*\n\s*.+pam_unix\.so/m
-                )
-              }
-              it { is_expected.to contain_file(filename).without_content(
-                /^\s*password\s+sufficient\s+pam_ldap\.so/m
-                )
-              }
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title){ auth_type }
+              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:file_content) { get_expected("#{auth_type}-auth_sssd_no_tty_audit") }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
 
-        context "using LDAP without SSSD" do
-          ['password','system'].each do |auth_type|
+        context 'Generate file using LDAP, OpenShift, and TTY auditing of multiple users' do
+          let(:params){{
+            :use_ldap      => true,
+            :use_openshift => true,
+            :tty_audit_enable => ['root', 'user1', 'user2']
+          }}
+
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:params){{
-                :use_ldap => true
-              }}
+              let(:file_content) { get_expected("#{auth_type}-auth_ldap_openshift_multi_tty_audit") }
 
-              it { is_expected.to compile.with_all_deps }
-              it { is_expected.to create_class('oddjob::mkhomedir') }
-              it { is_expected.to contain_file(filename).with_mode('0644') }
-              it { is_expected.to contain_file("#{filename}-ac").with_ensure('absent') }
-
-              it { is_expected.to contain_file(filename).with_content(
-                /^\s*password\s+sufficient\s+pam_unix\.so/m
-                )
-              }
-              it { is_expected.to contain_file(filename).without_content(
-                /^\s*password\s+sufficient\s+pam_sss\.so/m
-                )
-              }
-              it { is_expected.to contain_file(filename).with_content(
-                /^\s*.*pam_unix\.so.*\n\s*password\s+sufficient\s+pam_ldap\.so/m
-                )
-              }
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end

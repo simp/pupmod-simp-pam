@@ -62,6 +62,12 @@ describe 'pam' do
           it { is_expected.to contain_file('/etc/pam.d/other').with_content("\n") }
         end
       end
+
+      context "tty_audit_enable parameter error" do
+        let(:facts){ facts }
+        let(:params){{ :tty_audit_enable => 'root' }}
+        it { is_expected.not_to compile.with_all_deps }
+      end
     end
   end
 end
