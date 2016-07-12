@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_da9c426c",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-07-12T19:09:46Z",
+      "side": 1,
+      "message": "I think the defaults should include the \u0027simp\u0027 user.\nMaybe this is also the place to mention that this only catches `sudo sudosh` sessions for users listed here in addition to root.",
+      "range": {
+        "startLine": 180,
+        "startChar": 13,
+        "endLine": 180,
+        "endChar": 23
+      },
+      "revId": "f1b452610b1e076eff28d73de065579e48ee28df",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
