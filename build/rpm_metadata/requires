@@ -1,0 +1,11 @@
+Requires: pupmod-simpcat >= 2.0.0-0
+Requires: pupmod-simplib >= 1.2.5-0
+Requires: pupmod-oddjob >= 1.0.0-0
+Requires: pupmod-rsync >= 2.0.0-0
+Requires: pupmod-sssd >= 2.0.0-0
+Requires: pupmod-onyxpoint-compliance_markup
+Requires: puppet >= 3.3.0
+Requires: puppetlabs-stdlib >= 4.9.0-0.SIMP
+Requires: simp_rsync_filestore >= 2.0.0-2
+Requires: simp-bootstrap >= 4.2.0
+Obsoletes: pupmod-pam-test

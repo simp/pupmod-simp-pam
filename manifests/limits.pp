@@ -15,7 +15,7 @@ class pam::limits {
   }
 
   file { '/etc/security/limits.conf':
-    ensure    => 'present',
+    ensure    => 'file',
     owner     => 'root',
     group     => 'root',
     mode      => '0640',
