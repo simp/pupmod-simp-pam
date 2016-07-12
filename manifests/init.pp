@@ -176,6 +176,10 @@
 #   Default: false
 #   Set PAM to work with SSSD.
 #
+# [*tty_audit_enable*]
+#   Default: [ 'root' ]
+#   The users for which TTY auditing is enabled. Set to an empty Array to not audit TTY actions for any user.
+#
 # [*auth_sections*]
 #   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
 #   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
@@ -211,6 +215,7 @@ class pam (
   $use_netgroups             = false,
   $use_openshift             = false,
   $use_sssd                  = false,
+  $tty_audit_enable          = [ 'root' ],
   $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ]
 ) inherits ::pam::params {
 
@@ -245,6 +250,7 @@ class pam (
   validate_bool($use_netgroups)
   validate_bool($use_openshift)
   validate_bool($use_sssd)
+  validate_array($tty_audit_enable)
   validate_array($auth_sections)
 
   compliance_map()
