@@ -1,10 +1,12 @@
 ---
 fixtures:
   repositories:
-    simplib: "git://github.com/simp/pupmod-simp-simplib"
-    simpcat: "git://github.com/simp/pupmod-simp-concat"
-    stdlib: "git://github.com/simp/puppetlabs-stdlib"
-    oddjob: "git://github.com/simp/pupmod-simp-oddjob"
-    compliance: "https://github.com/trevor-vaughan/pupmod-compliance"
+    compliance_markup: "https://github.com/simp/pupmod-simp-compliance_markup"
+    oddjob: "https://github.com/simp/pupmod-simp-oddjob"
+    simpcat: "https://github.com/simp/pupmod-simp-simpcat"
+    simplib: "https://github.com/simp/pupmod-simp-simplib"
+    stdlib: 
+      repo: "https://github.com/simp/puppetlabs-stdlib"
+      branch: "simp-master"
   symlinks:
     pam: "#{source_dir}"
