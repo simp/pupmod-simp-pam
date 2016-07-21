@@ -1,8 +1,9 @@
----
-fixtures:
-  symlinks:
-    pam: "#{source_dir}"
-    simplib: "#{source_dir}/../simplib"
-    simpcat: "#{source_dir}/../simpcat"
-    stdlib: "#{source_dir}/../stdlib"
-    oddjob: "#{source_dir}/../oddjob"
+--- 
+  fixtures: 
+    symlinks: 
+      compliance_markup: "#{source_dir}/../compliance_markup"
+      oddjob: "#{source_dir}/../oddjob"
+      pam: "#{source_dir}"
+      simpcat: "#{source_dir}/../simpcat"
+      simplib: "#{source_dir}/../simplib"
+      stdlib: "#{source_dir}/../stdlib"
