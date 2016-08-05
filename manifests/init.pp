@@ -10,7 +10,7 @@
 # == Parameters
 #
 # [*cracklib_difok*]
-#   Changs the default of 4 for the number of character changes in the
+#   Changs the default of 8 for the number of character changes in the
 #   new password that differentiate it from the old password.
 #
 # [*cracklib_maxrepeat*]
@@ -25,8 +25,7 @@
 #
 # [*cracklib_maxclassrepeat*]
 #   Reject passwords which contain more than N consecutive characters
-#   of the same class.  The default is 0 which means that this check
-#   is disabled.
+#   of the same class.  The default is 2.
 #
 # [*cracklib_reject_username*]
 #   Check whether the name of the user in straight or reversed form is
@@ -99,7 +98,7 @@
 #
 # [*cracklib_minclass*]
 #   The minimum number of required classes of characters for the new
-#   password. The default number is zero. The four classes are digits,
+#   password. The default number is 4. The four classes are digits,
 #   upper and lower letters and other characters.  The difference to
 #   the credit check is that a specific class if of characters is not
 #   required.  Instead N out of four of the classes are required.
@@ -123,6 +122,7 @@
 #
 # [*deny*]
 #   The number of failed attempts before PAM denies a user from logging in.
+#   Defaults to 3.
 #
 # [*display_account_lock*]
 #   Whether or not to display to the remote user that their account
@@ -132,8 +132,10 @@
 #   Sets the file mode creation mask of the user home directories.
 #
 # [*remember*]
-#   The last n passwords for each user are saved in /etc/security/opasswd in order to force password
-#   change history and keep the user from alternating between the same password too frequently.
+#   The last n passwords for each user are saved in /etc/security/opasswd
+#   in order to force password change history and keep the user from alternating
+#   between the same password too frequently.
+#   Defaults to 5.
 #
 # [*root_unlock_time*]
 #   Allow access after n seconds to root account after failed attempt.
@@ -185,10 +187,10 @@
 #   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
 #
 class pam (
-  $cracklib_difok            = '4',
+  $cracklib_difok            = '8',
   $cracklib_maxrepeat        = '2',
   $cracklib_maxsequence      = '4',
-  $cracklib_maxclassrepeat   = '0',
+  $cracklib_maxclassrepeat   = '2',
   $cracklib_reject_username  = true,
   $cracklib_gecoscheck       = true,
   $cracklib_enforce_for_root = true,
@@ -196,13 +198,13 @@ class pam (
   $cracklib_ucredit          = '-1',
   $cracklib_lcredit          = '-1',
   $cracklib_ocredit          = '-1',
-  $cracklib_minclass         = '3',
+  $cracklib_minclass         = '4',
   $cracklib_minlen           = '14',
   $cracklib_retry            = '3',
-  $deny                      = '5',
+  $deny                      = '3',
   $display_account_lock      = false,
   $homedir_umask             = '0077',
-  $remember                  = '24',
+  $remember                  = '5',
   $root_unlock_time          = '60',
   $rounds                    = '10000',
   $uid                       = '500',
