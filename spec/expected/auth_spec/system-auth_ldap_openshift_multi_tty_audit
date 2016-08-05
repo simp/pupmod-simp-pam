@@ -3,7 +3,7 @@
 # User changes will be lost!
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
-auth     required      pam_faillock.so preauth silent deny=5 even_deny_root audit unlock_time=900 root_unlock_time=60 fail_interval=900
+auth     required      pam_faillock.so preauth silent deny=3 even_deny_root audit unlock_time=900 root_unlock_time=60 fail_interval=900
 auth     sufficient    pam_unix.so try_first_pass
 auth     sufficient    pam_ldap.so use_first_pass ignore_unknown_user ignore_authinfo_unavail
 auth     requisite     pam_succeed_if.so uid >= 500 quiet
@@ -18,8 +18,8 @@ account     sufficient    pam_succeed_if.so uid < 500 quiet
 account     requisite     pam_access.so nodefgroup
 account     required      pam_permit.so
 
-password     requisite     pam_cracklib.so try_first_pass difok=4 retry=3 minlen=14 minclass=3 maxrepeat=2 maxclassrepeat=0 maxsequence=4 dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1 gecoscheck reject_username enforce_for_root
-password     sufficient    pam_unix.so sha512 rounds=10000 shadow try_first_pass use_authtok remember=24
+password     requisite     pam_cracklib.so try_first_pass difok=8 retry=3 minlen=14 minclass=4 maxrepeat=2 maxclassrepeat=2 maxsequence=4 dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1 gecoscheck reject_username enforce_for_root
+password     sufficient    pam_unix.so sha512 rounds=10000 shadow try_first_pass use_authtok remember=5
 password     sufficient    pam_ldap.so use_authtok ignore_unknown_user ignore_authinfo_unavail
 password     required      pam_deny.so
 
