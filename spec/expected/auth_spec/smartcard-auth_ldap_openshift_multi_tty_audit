@@ -3,7 +3,7 @@
 # User changes will be lost!
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
-auth     required      pam_faillock.so preauth silent deny=5 even_deny_root audit unlock_time=900 root_unlock_time=60 fail_interval=900
+auth     required      pam_faillock.so preauth silent deny=3 even_deny_root audit unlock_time=900 root_unlock_time=60 fail_interval=900
 auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only
 auth     requisite     pam_succeed_if.so uid >= 500 quiet
 auth     required      pam_deny.so
