@@ -1,3 +1,6 @@
+* Fri Aug 05 2016 Nick Markowski <nmarkowski@keywcorp.com>  4.2.3-0
+- Updated system-auth values to be STIG compliant.
+
 * Thu Jul 07 2016 Liz Nemsick <elizabeth.nemsick@uscontracting.us> - 4.2.2-0
 - Added use of pam_tty_audit in system-auth, password-auth, and fingerprint-auth.
 - Updated module to use new rake helper to auto-generate RPM .spec file.
