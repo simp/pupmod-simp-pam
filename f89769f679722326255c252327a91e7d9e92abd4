@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_8b5bb253",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2016-08-09T04:01:15Z",
+      "side": 1,
+      "message": "do we want this to be a semicolon and/or followed a space?\n/pedantry",
+      "range": {
+        "startLine": 28,
+        "startChar": 46,
+        "endLine": 28,
+        "endChar": 47
+      },
+      "revId": "f89769f679722326255c252327a91e7d9e92abd4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
