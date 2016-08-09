@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_e4b38b98",
+        "filename": "manifests/init.pp",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2016-08-09T15:45:47Z",
+      "side": 1,
+      "message": "^ Insert \"e\" here.",
+      "revId": "8d323725a5405e6fda0d2909cd4bb6eb2ec41a31",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
