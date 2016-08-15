@@ -1,4 +1,7 @@
-* Fri Aug 05 2016 Nick Markowski <nmarkowski@keywcorp.com>  4.2.3-0
+* Mon Aug 15 2016 Nick Miller <nick.miller@onyxpoint.com> - 4.2.4-0
+- Reverted STIG password policy compliance changes
+
+* Fri Aug 05 2016 Nick Markowski <nmarkowski@keywcorp.com> - 4.2.3-0
 - Updated system-auth values to be STIG compliant.
 
 * Thu Jul 07 2016 Liz Nemsick <elizabeth.nemsick@uscontracting.us> - 4.2.2-0
