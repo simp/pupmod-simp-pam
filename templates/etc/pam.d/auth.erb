@@ -103,16 +103,25 @@ if ['system','password'].include?(@name)
   end
 
   _password << _cracklib
+  _pam_pwhistory  = "password     required      pam_pwhistory.so remember=#{@remember} retry=#{@remember_retry}"
+
+  if @remember_for_root
+    _pam_pwhistory << ' enforce_for_root'
+  end
+
   _pam_unix = "password     sufficient    pam_unix.so sha512 rounds=#{@rounds}" +
-                " shadow try_first_pass use_authtok remember=#{@remember}"
+                ' shadow try_first_pass use_authtok'
 
   if @use_sssd
     _password << 'password     sufficient    pam_sss.so use_authtok'
+    _password << _pam_pwhistory
     _password << _pam_unix
   elsif @use_ldap
+    _password << _pam_pwhistory
     _password << _pam_unix
     _password << 'password     sufficient    pam_ldap.so use_authtok ignore_unknown_user ignore_authinfo_unavail'
   else
+    _password << _pam_pwhistory
     _password << _pam_unix
   end
 end
