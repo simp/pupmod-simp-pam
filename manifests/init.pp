@@ -125,9 +125,20 @@
 #   Sets the file mode creation mask of the user home directories.
 #
 # [*remember*]
-#   The last n passwords for each user are saved in /etc/security/opasswd in order to force password
-#   change history and keep the user from alternating between the same password too frequently.
+#   The last n passwords for each user are saved in /etc/security/opasswd in
+#   order to force password change history and keep the user from alternating
+#   between the same password too frequently.
 #   Defaults to 24.
+#
+# [*remember_retry*]
+#   Type: Integer
+#   Default: 1
+#     Allow this many retries for a valid password
+#
+# [*remember_for_root*]
+#   Type: Boolean
+#   Default: true
+#     If set, also remember the last ``$remember`` passwords for the root user.
 #
 # [*root_unlock_time*]
 #   Allow access after n seconds to root account after failed attempt.
@@ -198,6 +209,8 @@ class pam (
   $display_account_lock      = false,
   $homedir_umask             = '0077',
   $remember                  = '24',
+  $remember_retry            = '1',
+  $remember_for_root         = true,
   $root_unlock_time          = '60',
   $rounds                    = '10000',
   $uid                       = '500',
@@ -233,6 +246,8 @@ class pam (
   validate_bool($display_account_lock)
   validate_umask($homedir_umask)
   validate_integer($remember)
+  validate_integer($remember_retry)
+  validate_bool($remember_for_root)
   validate_integer($root_unlock_time)
   validate_integer($rounds)
   validate_integer($uid)
@@ -314,4 +329,3 @@ class pam (
     ::pam::auth { $auth_sections: }
   }
 }
-
