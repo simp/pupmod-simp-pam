@@ -1,3 +1,7 @@
+* Thu Aug 25 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.2.5-0
+- Update to pam_pwhistory.so to fix local user login failures due to SELinux
+  policy updates affecting /etc/security/opasswd in EL7.
+
 * Mon Aug 15 2016 Nick Miller <nick.miller@onyxpoint.com> - 4.2.4-0
 - Reverted STIG password policy compliance changes
 
