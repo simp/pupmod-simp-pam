@@ -28,6 +28,8 @@ define pam::auth (
   $display_account_lock      = $::pam::display_account_lock,
   $fail_interval             = $::pam::fail_interval,
   $remember                  = $::pam::remember,
+  $remember_retry            = $::pam::remember_retry,
+  $remember_for_root         = $::pam::remember_for_root,
   $root_unlock_time          = $::pam::root_unlock_time,
   $rounds                    = $::pam::rounds,
   $uid                       = $::pam::uid,
