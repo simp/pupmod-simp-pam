@@ -114,5 +114,5 @@ define pam::access::manage (
     $content = "# ${l_comment}\n${permission} : ${users} : ${l_origins}\n"
   }
 
-  concat_fragment { "pam_access+${order}.${l_name}.access": content => $content }
+  simpcat_fragment { "pam_access+${order}.${l_name}.access": content => $content }
 }

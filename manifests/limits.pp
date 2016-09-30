@@ -8,7 +8,7 @@
 class pam::limits {
   include '::pam'
 
-  concat_build { 'pam_limits':
+  simpcat_build { 'pam_limits':
     order   => ['*.limit'],
     target  => '/etc/security/limits.conf',
     require => Package['pam']
@@ -19,7 +19,7 @@ class pam::limits {
     owner     => 'root',
     group     => 'root',
     mode      => '0640',
-    subscribe => Concat_build['pam_limits'],
+    subscribe => Simpcat_build['pam_limits'],
     audit     => content
   }
 }
