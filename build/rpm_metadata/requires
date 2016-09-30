@@ -1,6 +1,6 @@
 Requires: pupmod-simp-compliance_markup
 Requires: pupmod-simp-oddjob >= 1.0.0-0
 Requires: pupmod-simp-rsync >= 2.0.0-0
-Requires: pupmod-simp-simpcat >= 2.0.0-0
+Requires: pupmod-simp-simpcat >= 6.0.0-0
 Requires: pupmod-simp-sssd >= 2.0.0-0
 Obsoletes: pupmod-pam-test >= 0.0.1

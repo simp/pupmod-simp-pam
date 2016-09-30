@@ -61,7 +61,7 @@ define pam::limits::add (
 
   $l_name = regsubst($name,'/','_')
 
-  concat_fragment { "pam_limits+${order}.${l_name}.limit":
+  simpcat_fragment { "pam_limits+${order}.${l_name}.limit":
     content => "${domain}\t${type}\t${item}\t${value}\n"
   }
 }

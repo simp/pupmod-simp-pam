@@ -14,7 +14,7 @@
 class pam::access {
   include '::pam'
 
-  concat_build { 'pam_access':
+  simpcat_build { 'pam_access':
     target        => '/etc/security/access.conf',
     order         => '*.access',
     squeeze_blank => true,
@@ -26,7 +26,7 @@ class pam::access {
     owner     => 'root',
     group     => 'root',
     mode      => '0644',
-    subscribe => Concat_build['pam_access'],
+    subscribe => Simpcat_build['pam_access'],
     audit     => content
   }
 
