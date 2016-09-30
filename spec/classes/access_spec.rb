@@ -8,13 +8,13 @@ describe 'pam::access' do
         let(:facts){ facts }
 
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to create_concat_build('pam_access').with({
+        it { is_expected.to create_simpcat_build('pam_access').with({
             :target         => '/etc/security/access.conf',
             :squeeze_blank  => true,
           })
         }
-        it { is_expected.to create_concat_build('pam_access').that_requires('Package[pam]') }
-        it { is_expected.to create_file('/etc/security/access.conf').that_subscribes_to('Concat_build[pam_access]') }
+        it { is_expected.to create_simpcat_build('pam_access').that_requires('Package[pam]') }
+        it { is_expected.to create_file('/etc/security/access.conf').that_subscribes_to('Simpcat_build[pam_access]') }
         it { is_expected.to create_pam__access__manage('default_deny').with({
             :permission => '-',
             :users      => 'ALL',

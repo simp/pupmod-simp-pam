@@ -16,7 +16,7 @@ describe 'pam::access::manage' do
 
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to create_concat_fragment("pam_access+#{params[:order]}.#{title}.access").with_content(<<-EOM.gsub(/^\s+/,'')
+        it { is_expected.to create_simpcat_fragment("pam_access+#{params[:order]}.#{title}.access").with_content(<<-EOM.gsub(/^\s+/,'')
           + : #{params[:users]} : #{params[:origins].join(' ')}
           EOM
         )}
@@ -29,7 +29,7 @@ describe 'pam::access::manage' do
             :comment => "foo\nbar\nbaz"
           }}
 
-          it { is_expected.to create_concat_fragment("pam_access+#{params[:order]}.#{title}.access").with_content(<<-EOM.gsub(/^\s+/,'')
+          it { is_expected.to create_simpcat_fragment("pam_access+#{params[:order]}.#{title}.access").with_content(<<-EOM.gsub(/^\s+/,'')
             # foo
             # bar
             # baz

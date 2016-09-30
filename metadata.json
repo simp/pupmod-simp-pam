@@ -1,6 +1,6 @@
 {
   "name":    "simp-pam",
-  "version": "4.2.5",
+  "version": "5.0.0",
   "author":  "simp",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -12,6 +12,10 @@
     {
       "name": "puppetlabs/stdlib",
       "version_requirement": ">= 4.9.0"
+    },
+    {
+      "name": "simp/simpcat",
+      "version_requirement": ">= 6.0.0"
     },
     {
       "name": "simp/simplib",
