@@ -9,9 +9,9 @@ describe 'pam::access::manage' do
 
         let(:title){ 'test' }
         let(:params){{
-          :users => 'user1 user2',
+          :users   => 'user1 user2',
           :origins => ['foo.bar.baz','bar.baz.foo'],
-          :order => '1'
+          :order   => '1'
         }}
 
         it { is_expected.to compile.with_all_deps }
@@ -23,9 +23,9 @@ describe 'pam::access::manage' do
 
         context 'with_comment' do
           let(:params){{
-            :users => 'user1 user2',
+            :users   => 'user1 user2',
             :origins => ['foo.bar.baz','bar.baz.foo'],
-            :order => '1',
+            :order   => '1',
             :comment => "foo\nbar\nbaz"
           }}
 

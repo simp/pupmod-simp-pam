@@ -29,6 +29,33 @@ describe 'pam::access' do
             :order      => '0'
           })
         }
+
+        context 'create pam::access::manage resources with an iterator' do
+          context 'with a well-formatted data structure' do
+            let(:hieradata) { 'pam__access__user' }
+            it { is_expected.to create_pam__access__manage('manage_vagrant').with({
+             :users      => 'vagrant',
+             :origins    => ['ALL'],
+             :permission => '+'
+            }) }
+            it { is_expected.to create_pam__access__manage('manage_(simp)').with({
+             :users      => '(simp)',
+             :origins    => ['ALL'],
+             :permission => '+'
+            }) }
+            it { is_expected.to create_pam__access__manage('manage_test').with({
+              :users      => 'test',
+              :origins    => ['192.168.0.1/24'],
+              :permission => '+'
+            }) }
+            it { is_expected.to create_pam__access__manage('manage_baddude').with({
+              :users      => 'baddude',
+              :origins    => ['ALL'],
+              :permission => '-'
+            }) }
+          end
+        end
+
       end
     end
   end

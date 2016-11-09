@@ -224,7 +224,7 @@ class pam (
   $use_openshift             = false,
   $use_sssd                  = false,
   $tty_audit_enable          = [ 'root' ],
-  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ]
+  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
 ) inherits ::pam::params {
 
   validate_integer($cracklib_difok)
@@ -262,8 +262,6 @@ class pam (
   validate_bool($use_sssd)
   validate_array($tty_audit_enable)
   validate_array($auth_sections)
-
-  compliance_map()
 
   # We only want to use SSSD if we're using LDAP and params tells us to *or*
   # someone has explicitly set the $use_sssd variable above.
@@ -328,4 +326,5 @@ class pam (
   if ! empty($auth_sections) {
     ::pam::auth { $auth_sections: }
   }
+
 }
