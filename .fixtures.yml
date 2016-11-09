@@ -1,8 +1,7 @@
 ---
 fixtures:
   repositories:
-    compliance_markup: "https://github.com/simp/pupmod-simp-compliance_markup"
-    oddjob: "https://github.com/simp/pupmod-simp-oddjob"
+    oddjob:  "https://github.com/simp/pupmod-simp-oddjob"
     simpcat: "https://github.com/simp/pupmod-simp-simpcat"
     simplib: "https://github.com/simp/pupmod-simp-simplib"
     stdlib:

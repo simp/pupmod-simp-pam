@@ -94,7 +94,7 @@ define pam::access::manage (
   $origins,
   $permission = '+',
   $comment = '',
-  $order = '1000'
+  $order = '1000',
 ) {
   validate_array_member($permission,['+','-'])
   validate_array($origins)

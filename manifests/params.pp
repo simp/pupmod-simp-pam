@@ -10,7 +10,7 @@
 #   this can be worked around much more easily than the workaround for the nscd
 #   issues which significantly weaken your security posture.
 class pam::params {
-  if $::osfamily == 'RedHat' {
+  if $::operatingsystem in ['RedHat', 'CentOS'] {
     if (versioncmp($::operatingsystemrelease,'6.7') < 0) {
       $_use_sssd = false
       $_use_nscd = true
@@ -21,16 +21,17 @@ class pam::params {
     }
 
     $use_sssd = defined('$::use_sssd') ? {
-      true => $::use_sssd,
+      true    => $::use_sssd,
       default => hiera('use_sssd',$_use_sssd)
     }
 
     $use_nscd = defined('$::use_nscd') ? {
-      true => $::use_nscd,
+      true    => $::use_nscd,
       default => hiera('use_nscd',$_use_nscd)
     }
   }
   else {
     fail("${::operatingsystem} not yet supported by ${::module_name}")
   }
+
 }
