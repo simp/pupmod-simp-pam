@@ -190,6 +190,27 @@
 #   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
 #   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
 #
+# [*pam_access_manage_hash*]
+#   Default: {}
+#   A hash that can be used to create several pam::access::manage resources set in Hiera.
+#   Each member of the hash will be a resource (this example is yaml):
+#
+#     pam_access_manage_hash:
+#       vagrant_user:
+#         users: vagrant
+#         origins:
+#           - ALL
+#         permission: '+'
+#       simp_group:
+#         users: (simp)
+#         origins:
+#           - 192.168.0.1/24
+#         permission: '-'
+#
+# [*pam_access_manage_hash_defaults*]
+#   Default: {}
+#   Default parameters to be added to every resource created with pam_access_manage_hash
+#
 class pam (
   $cracklib_difok            = '4',
   $cracklib_maxrepeat        = '2',
@@ -224,7 +245,9 @@ class pam (
   $use_openshift             = false,
   $use_sssd                  = false,
   $tty_audit_enable          = [ 'root' ],
-  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ]
+  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
+  $pam_access_manage_hash    = defined('$::pam_access_manage_hash') ? { true => $pam_access_manage_hash, default => hiera('pam_access_manage_hash', {}) },
+  $pam_access_manage_hash_defaults = {}
 ) inherits ::pam::params {
 
   validate_integer($cracklib_difok)
@@ -262,8 +285,8 @@ class pam (
   validate_bool($use_sssd)
   validate_array($tty_audit_enable)
   validate_array($auth_sections)
-
-  compliance_map()
+  validate_hash($pam_access_manage_hash)
+  validate_hash($pam_access_manage_hash_defaults)
 
   # We only want to use SSSD if we're using LDAP and params tells us to *or*
   # someone has explicitly set the $use_sssd variable above.
@@ -328,4 +351,13 @@ class pam (
   if ! empty($auth_sections) {
     ::pam::auth { $auth_sections: }
   }
+
+  if ! empty($pam_access_manage_hash) {
+    $pam_access_manage_hash.each |$name, $access| {
+      ::pam::access::manage { $name:
+        * => $pam_access_manage_hash_defaults + $access
+      }
+    }
+  }
+
 }

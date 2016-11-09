@@ -1,3 +1,7 @@
+*  Nick Miller <nick.miller@onyxpoint.com> - 6.0.0-0
+- Removed dependency on compliance_markup
+- Added feature to add pam::access::manage resources from hiera
+
 * Fri Sep 30 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 5.1.0-0
 - Updated to use the version of 'simpcat' that does not conflict with
   'puppetlabs/concat'.

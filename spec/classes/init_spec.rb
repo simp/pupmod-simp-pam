@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'yaml'
 
 describe 'pam' do
   context 'supported operating systems' do
@@ -61,13 +62,93 @@ describe 'pam' do
           }}
           it { is_expected.to contain_file('/etc/pam.d/other').with_content("\n") }
         end
+
+        context 'create pam::access::manage resources with an iterator' do
+          context 'with a well-formatted data structure' do
+            let(:params) {
+              YAML.load(<<-EOF
+pam_access_manage_hash:
+  vagrant_user:
+    users: vagrant
+    origins:
+      - ALL
+    permission: '+'
+  simp_group:
+    users: (simp)
+    origins:
+      - 192.168.0.1/24
+    permission: '-'
+EOF
+              )
+            }
+            it { is_expected.to create_pam__access__manage('vagrant_user').with({
+             :users      => 'vagrant',
+             :origins    => ['ALL'],
+             :permission => '+'
+            }) }
+            it { is_expected.to create_pam__access__manage('simp_group').with({
+             :users      => '(simp)',
+             :origins    => ['192.168.0.1/24'],
+             :permission => '-'
+            }) }
+          end
+
+          context 'with valid yaml that fails type validation' do
+            let(:params) {
+              YAML.load(<<-EOF
+pam_access_manage_hash:
+  vagrant_user:
+    users: vagrant
+    origins: ALL
+    permission: '+'
+EOF
+              )
+            }
+            it { is_expected.to raise_error }
+          end
+
+          context 'with invalid yaml' do
+            let(:params) {
+              YAML.load(<<-EOF
+pam_access_manage_hash:
+  vagrant_user:
+  users: vagrant
+    origins:
+    permission: '+'
+EOF
+              )
+            }
+            it { is_expected.to raise_error }
+          end
+
+          context 'with defaults provided' do
+            let(:params) {
+              YAML.load(<<-EOF
+pam_access_manage_hash_defaults:
+  origins:
+    - 10.0.2.0/24
+pam_access_manage_hash:
+  vagrant_user:
+    users: vagrant
+    permission: '+'
+EOF
+              )
+            }
+            it { is_expected.to create_pam__access__manage('vagrant_user').with({
+              :users      => 'vagrant',
+              :origins    => ['10.0.2.0/24'],
+              :permission => '+'
+            }) }
+          end
+        end
       end
 
-      context "tty_audit_enable parameter error" do
+      context 'tty_audit_enable parameter error' do
         let(:facts){ facts }
         let(:params){{ :tty_audit_enable => 'root' }}
         it { is_expected.not_to compile.with_all_deps }
       end
+
     end
   end
 end
