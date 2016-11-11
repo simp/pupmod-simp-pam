@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_32bdd867",
+        "filename": "manifests/access/manage.pp",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1004834
+      },
+      "writtenOn": "2016-11-11T18:57:29Z",
+      "side": 1,
+      "message": "No trailing commas",
+      "revId": "9f4002b2ce89a8fdf56424ff8f72df98ec0a667b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_929144f4",
+        "filename": "manifests/init.pp",
+        "patchSetId": 1
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1004834
+      },
+      "writtenOn": "2016-11-11T18:57:29Z",
+      "side": 1,
+      "message": "This needs to be a full defined... style selector",
+      "revId": "9f4002b2ce89a8fdf56424ff8f72df98ec0a667b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
