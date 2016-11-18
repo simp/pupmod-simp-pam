@@ -21,7 +21,6 @@ class pam::wheel (
   validate_bool($root_only)
   validate_bool($use_openshift)
 
-  compliance_map()
 
   file { '/etc/pam.d/su':
     owner   => 'root',
