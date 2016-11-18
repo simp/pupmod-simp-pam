@@ -263,7 +263,6 @@ class pam (
   validate_array($tty_audit_enable)
   validate_array($auth_sections)
 
-  compliance_map()
 
   # We only want to use SSSD if we're using LDAP and params tells us to *or*
   # someone has explicitly set the $use_sssd variable above.
