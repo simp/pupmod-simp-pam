@@ -37,6 +37,14 @@ describe 'pam::wheel' do
           it { is_expected.not_to create_file('/etc/pam.d/su').with_content(/root_only/) }
           it { is_expected.to create_file('/etc/pam.d/su').with_content(/oo-trap/) }
         end
+
+        context 'with $::pam::use_templates => false' do
+          let(:params) {{
+            :use_templates => false,
+            :su_content    => 'this is valid pam su configuration, I promise'
+          }}
+          it { is_expected.to create_file('/etc/pam.d/su').with_content('this is valid pam su configuration, I promise') }
+        end
       end
     end
   end

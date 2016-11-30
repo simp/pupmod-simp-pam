@@ -39,7 +39,12 @@ define pam::auth (
   $use_netgroups             = $::pam::use_netgroups,
   $use_openshift             = $::pam::use_openshift,
   $use_sssd                  = $::pam::_use_sssd,
-  $tty_audit_enable          = $::pam::tty_audit_enable
+  $tty_audit_enable          = $::pam::tty_audit_enable,
+  Boolean $use_templates     = $::pam::use_templates,
+  String $fingerprint_auth_content = $::pam::fingerprint_auth_content,
+  String $system_auth_content      = $::pam::system_auth_content,
+  String $password_auth_content    = $::pam::password_auth_content,
+  String $smartcard_auth_content   = $::pam::smartcard_auth_content
 ) {
 
   include '::oddjob::mkhomedir'
@@ -51,15 +56,33 @@ define pam::auth (
     'system'
   ]
 
+  $l_valid_targets_join = join($valid_targets,',')
+  if ! ($name in $valid_targets) {
+    fail("\$name must be one of '${l_valid_targets_join}'.")
+  }
+
   $basedir = '/etc/pam.d'
   $target = "${name}-auth"
+
+  if $use_templates {
+    $_content = template("${module_name}/etc/pam.d/auth.erb")
+  }
+  else {
+    case $name {
+      'smartcard':   { $_content = $smartcard_auth_content }
+      'fingerprint': { $_content = $fingerprint_auth_content }
+      'password':    { $_content = $password_auth_content }
+      'system':      { $_content = $system_auth_content }
+      default:       { $_content = template("${module_name}/etc/pam.d/auth.erb") }
+    }
+  }
 
   file { "${basedir}/${target}":
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => template("${module_name}/etc/pam.d/auth.erb")
+    content => $_content
   }
 
   if ! str2bool($preserve_ac) {
@@ -68,8 +91,4 @@ define pam::auth (
     }
   }
 
-  $l_valid_targets_join = join($valid_targets,',')
-  if ! ($name in $valid_targets) {
-    fail("\$name must be one of '${l_valid_targets_join}'.")
-  }
 }

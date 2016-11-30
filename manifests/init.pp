@@ -186,9 +186,48 @@
 #   Default: [ 'root' ]
 #   The users for which TTY auditing is enabled. Set to an empty Array to not audit TTY actions for any user.
 #
+# [*use_templates*]
+#   Default: true
+#   Whether or not to use the SIMP templates to populate the pam configuration.
+#   Set this to false to drop in completely custom PAM configuration files, if
+#   you need to support third-party or custom modules. The following *_content
+#   parameters need to be filled if this option is disabled, otherwise you may
+#   leave your system in an unacessible state.
+#
+# [*su_content*]
+#   Default: ''
+#   The content that should be used to fill the /etc/pam.d/su file instead
+#   of the templated content.
+#
+# [*other_content*]
+#   Default: ''
+#   The content that should be used to fill the /etc/pam.d/other file instead
+#   of the templated content.
+#
+#
 # [*auth_sections*]
 #   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
 #   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
+#
+# [*fingerprint_content*]
+#   Default: ''
+#   The content that should be used to fill /etc/pam.d/fingerprint_auth_ instead
+#   of the templated content.
+#
+# [*system_content*]
+#   Default: ''
+#   The content that should be used to fill /etc/pam.d/system_auth
+#   instead of the templated content.
+#
+# [*password_content*]
+#   The content that should be used to fill /etc/pam.d/password_auth
+#   instead of the templated content.
+#   Default: ''
+#
+# [*smartcard_content*]
+#   The content that should be used to fill /etc/pam.d/smartcard_auth
+#   instead of the templated content.
+#   Default: ''
 #
 class pam (
   $cracklib_difok            = '4',
@@ -219,12 +258,19 @@ class pam (
   $preserve_ac               = false,
   $warn_if_unknown           = true,
   $deny_if_unknown           = true,
-  $use_ldap                  = defined('$::use_ldap') ? { true => $::use_ldap, default => hiera('use_ldap',false) },
+  $use_ldap                  = defined('$::use_ldap') ? { true => $::use_ldap, default => hiera('use_ldap', false) },
   $use_netgroups             = false,
   $use_openshift             = false,
   $use_sssd                  = false,
   $tty_audit_enable          = [ 'root' ],
-  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ]
+  $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
+  Boolean $use_templates     = true,
+  String $su_content         = '',
+  String $other_content      = '',
+  String $fingerprint_auth_content = '',
+  String $system_auth_content      = '',
+  String $password_auth_content    = '',
+  String $smartcard_auth_content   = ''
 ) inherits ::pam::params {
 
   validate_integer($cracklib_difok)
@@ -266,7 +312,6 @@ class pam (
 
   # We only want to use SSSD if we're using LDAP and params tells us to *or*
   # someone has explicitly set the $use_sssd variable above.
-
   if $use_sssd {
     $_use_sssd = $use_sssd
   }
@@ -293,12 +338,18 @@ class pam (
     mode  => '0640'
   }
 
+  if $use_templates {
+    $_other_content = template('pam/etc/pam.d/other.erb')
+  }
+  else {
+    $_other_content = $other_content
+  }
   file { '/etc/pam.d/other':
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => template('pam/etc/pam.d/other.erb')
+    content => $_other_content
   }
 
   # Get rid of authconfig so that the tool can't be used to modify PAM.

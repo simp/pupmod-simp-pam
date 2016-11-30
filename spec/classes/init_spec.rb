@@ -7,20 +7,29 @@ describe 'pam' do
       context "on #{os}" do
         let(:facts){ facts }
 
-        it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_file('/etc/pam.d').with_mode('0644') }
-        it { is_expected.to contain_file('/etc/pam.d/other').with_content(<<-EOM.gsub(/^\s+/,'')
-            auth    required    pam_warn.so
-            account    required    pam_warn.so
-            password    required    pam_warn.so
-            session    required    pam_warn.so
-            auth    required    pam_deny.so
-            account    required    pam_deny.so
-            password    required    pam_deny.so
-            session    required    pam_deny.so
-            EOM
-          )
-        }
+        context '/etc/pam.d/other with default values' do
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_file('/etc/pam.d').with_mode('0644') }
+          it { is_expected.to contain_file('/etc/pam.d/other').with_content(<<-EOM.gsub(/^\s+/,'')
+              auth    required    pam_warn.so
+              account    required    pam_warn.so
+              password    required    pam_warn.so
+              session    required    pam_warn.so
+              auth    required    pam_deny.so
+              account    required    pam_deny.so
+              password    required    pam_deny.so
+              session    required    pam_deny.so
+              EOM
+            )
+          }
+        end
+        context '/etc/pam.d/other with use_templates => false' do
+          let(:params) {{
+            :use_templates => false,
+            :other_content => 'this is valid pam other configuration, I promise'
+          }}
+          it { is_expected.to contain_file('/etc/pam.d/other').with_content('this is valid pam other configuration, I promise') }
+        end
 
         it { is_expected.to contain_package('pam') }
         it { is_expected.to contain_package('pam_pkcs11') }
