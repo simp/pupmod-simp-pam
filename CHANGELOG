@@ -1,3 +1,7 @@
+* Wed Nov 30 2016 Nick Miller <nick.miller@onyxpoint.com> - 5.0.1-0
+- Added a generic content option to replace all templated PAM configurations
+  - Setting use_templates to false will enable them
+
 * Wed Nov 23 2016 Jeanne Greulich <jgreulich.simp@onyxpoint.com> - 5.0.0-0
 - update requirement versions
 

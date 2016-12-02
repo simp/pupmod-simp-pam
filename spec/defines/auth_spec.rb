@@ -40,6 +40,26 @@ describe 'pam::auth' do
           end
         end
 
+        context 'Generate file using content params' do
+          let(:params) {{
+            :use_templates            => false,
+            :fingerprint_auth_content => 'this is valid pam fingerprint_auth configuration, I promise',
+            :system_auth_content      => 'this is valid pam system_auth configuration, I promise',
+            :password_auth_content    => 'this is valid pam password_auth configuration, I promise',
+            :smartcard_auth_content   => 'this is valid pam smartcard_auth configuration, I promise'
+          }}
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title){ auth_type }
+              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:file_content) { get_expected("#{auth_type}-auth_custom_content").chomp! }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
+            end
+          end
+        end
+
         context 'Generate file with SSSD taking precedence over LDAP and no TTY auditing' do
           # In this context, we will also verify the logic to deliver config to
           # auth.erb works for all config parameters, by setting these parameters
