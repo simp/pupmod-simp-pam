@@ -35,10 +35,10 @@ define pam::auth (
   Stdlib::Compat::Integer $uid                       = $::pam::uid,
   Stdlib::Compat::Integer $unlock_time               = $::pam::unlock_time,
   Boolean                 $preserve_ac               = $::pam::preserve_ac,
-  Boolean                 $use_ldap                  = $::pam::use_ldap,
+  Boolean                 $ldap                      = $::pam::ldap,
   Boolean                 $use_netgroups             = $::pam::use_netgroups,
   Boolean                 $use_openshift             = $::pam::use_openshift,
-  Boolean                 $use_sssd                  = $::pam::use_sssd,
+  Boolean                 $sssd                      = $::pam::sssd,
   Array[String]           $tty_audit_enable          = $::pam::tty_audit_enable,
   Boolean                 $use_templates             = $::pam::use_templates,
   String                  $fingerprint_auth_content  = $::pam::fingerprint_auth_content,
@@ -49,7 +49,7 @@ define pam::auth (
   
   include '::oddjob::mkhomedir'
 
-  if $use_ldap and !$use_sssd {
+  if $ldap and !$sssd {
     if $use_templates {
       fail("SIMP templates only configure unix auth or ldap using sssd.\n To use ldap without sssd you most provide your own content.")
     }

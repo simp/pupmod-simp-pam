@@ -24,7 +24,7 @@ if @name == 'smartcard'
 end
 
 if ['system','password'].include?(@name)
-  if @use_sssd
+  if @sssd
     _auth << 'auth     sufficient    pam_sss.so forward_pass'
     _auth << 'auth     sufficient    pam_unix.so try_first_pass'
   else
@@ -50,7 +50,7 @@ end
 _account << 'account     required      pam_unix.so broken_shadow'
 _account << 'account     required      pam_faillock.so'
 
-if @use_sssd
+if @sssd
   if @use_openshift
     _account << 'account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
   end
@@ -102,7 +102,7 @@ if ['system','password'].include?(@name)
   _pam_unix = "password     sufficient    pam_unix.so sha512 rounds=#{@rounds}" +
                 ' shadow try_first_pass use_authtok'
 
-  if @use_sssd
+  if @sssd
     _password << _pam_pwhistory
     _password << 'password     sufficient    pam_sss.so use_authtok'
     _password << _pam_unix
@@ -142,7 +142,7 @@ end
 
 _session << 'session      requisite     pam_access.so nodefgroup'
 
-if @use_sssd
+if @sssd
   _session << 'session      optional      pam_sss.so'
 else
   _session << 'session      required      pam_unix.so'

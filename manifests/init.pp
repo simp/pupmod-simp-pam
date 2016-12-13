@@ -166,7 +166,7 @@
 #     If true, deny any access to an application that falls all the
 #     way through the PAM stack.
 #
-# [*use_ldap*]
+# [*ldap*]
 #   Default: true
 #   Set PAM up to use LDAP connections.
 #
@@ -178,7 +178,7 @@
 #   Default: false
 #   Set PAM to work well with OpenShift.
 #
-# [*use_sssd*]
+# [*sssd*]
 #   Default: false
 #   Set PAM to work with SSSD.
 #
@@ -228,10 +228,10 @@ class pam (
   Boolean                 $preserve_ac               = false,
   Boolean                 $warn_if_unknown           = true,
   Boolean                 $deny_if_unknown           = true,
-  Boolean                 $use_ldap                  = simplib::lookup('simp_options::ldap', { 'default_value' => false}),
+  Boolean                 $ldap                      = simplib::lookup('simp_options::ldap', { 'default_value' => false}),
   Boolean                 $use_netgroups             = false,
   Boolean                 $use_openshift             = false,
-  Boolean                 $use_sssd                  = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
+  Boolean                 $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
   Array[String]           $tty_audit_enable          = [ 'root' ],
   Array[String]           $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
   Boolean                 $use_templates             = true,
