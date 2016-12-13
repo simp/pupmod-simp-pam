@@ -18,20 +18,8 @@ define pam::limits::add (
 # $name
 #     This becomes part of the temp file name.
 #     Do not use '/' as part of the name!
-    $domain,
-    $item,
-    $value,
-    $type = '-',
-# $order
-#     The order where you want this rule to appear.  1000 is the default.  If
-#     you don't specify a order, the rules will be listed in alphabetical order
-#     by name.
-    $order = '1000'
-  ) {
-  include '::pam::limits'
-
-  validate_array_member($item,[
-    'core',
+  String  $domain,
+  Enum['core',
     'data',
     'fsize',
     'memlock',
@@ -48,16 +36,22 @@ define pam::limits::add (
     'sigpending',
     'msgqueue',
     'nice',
-    'rtprio'
-  ])
+    'rtprio' ] $item,
+    Variant[Enum['unlimited','infinity'],Stdlib::Compat::Integer] $value,
+    Enum['hard','soft','-'] $type = '-',
+# $order
+#     The order where you want this rule to appear.  1000 is the default.  If
+#     you don't specify a order, the rules will be listed in alphabetical order
+#     by name.
+  Stdlib::Compat::Integer  $order = '1000'
+  ) {
+  include '::pam::limits'
+
   if $item in ['priority','nice'] {
-    validate_integer($value)
+    if $value in ['unlimited','infinity'] {
+      err("The value ${value} is not an appropriate value for ${item} in pam::limits::add.  It must be an integer")
+    }
   }
-  else {
-    validate_re($value,'^(\d+|unlimited|infinity)$')
-  }
-  validate_array_member($type,['hard','soft','-'])
-  validate_integer($order)
 
   $l_name = regsubst($name,'/','_')
 

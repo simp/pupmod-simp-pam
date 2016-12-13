@@ -90,15 +90,12 @@
 #   * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 define pam::access::manage (
-  $users,
-  $origins,
-  $permission = '+',
-  $comment = '',
-  $order = '1000'
+  String $users,
+  Array[String] $origins,
+  Enum['+','-'] $permission = '+',
+  String $comment = '',
+  Stdlib::Compat::Integer $order = '1000'
 ) {
-  validate_array_member($permission,['+','-'])
-  validate_array($origins)
-  validate_integer($order)
   if $order > '9999999999' {
     fail('$order must be less than 9999999999.')
   }
