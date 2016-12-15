@@ -12,38 +12,21 @@
 #    value => '0',
 #    order => '1'
 #  }
-define pam::limits::add (
 # _Variables_
 #
 # $name
 #     This becomes part of the temp file name.
 #     Do not use '/' as part of the name!
-  String  $domain,
-  Enum['core',
-    'data',
-    'fsize',
-    'memlock',
-    'nofile',
-    'rss',
-    'stack',
-    'cpu',
-    'nproc',
-    'as',
-    'maxlogins',
-    'maxsyslogins',
-    'priority',
-    'locks',
-    'sigpending',
-    'msgqueue',
-    'nice',
-    'rtprio' ] $item,
-    Variant[Enum['unlimited','infinity'],Stdlib::Compat::Integer] $value,
-    Enum['hard','soft','-'] $type = '-',
 # $order
 #     The order where you want this rule to appear.  1000 is the default.  If
 #     you don't specify a order, the rules will be listed in alphabetical order
 #     by name.
-  Stdlib::Compat::Integer  $order = '1000'
+define pam::limits::add (
+  String                  $domain,
+  Pam::Limits::Item         $item,
+  Pam::Limits::Value        $value,
+  Enum['hard','soft','-'] $type = '-',
+  Stdlib::Compat::Integer $order = '1000'
   ) {
   include '::pam::limits'
 

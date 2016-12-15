@@ -42,8 +42,8 @@ describe 'pam::auth' do
 
         context 'Generate file using content params' do
           let(:params) {{
-            :use_ldap                 => true,
-            :use_sssd                 => false,
+            :ldap                 => true,
+            :sssd                 => false,
             :use_templates            => false,
             :fingerprint_auth_content => 'this is valid pam fingerprint_auth configuration, I promise',
             :system_auth_content      => 'this is valid pam system_auth configuration, I promise',
@@ -88,11 +88,11 @@ describe 'pam::auth' do
             :root_unlock_time          => 15,
             :rounds                    => 16,
             :uid                       => 17,
-            :use_ldap                  => true,
+            :ldap                  => true,
             :unlock_time               => 18,
             :use_netgroups             => true,
             :use_openshift             => true,
-            :use_sssd                  => true,
+            :sssd                  => true,
             :tty_audit_enable          => []
           }}
 
@@ -110,8 +110,8 @@ describe 'pam::auth' do
 
         context 'Generate file using SSSD, OpenShift, and TTY auditing of multiple users' do
           let(:params){{
-            :use_ldap      => true,
-            :use_sssd      => true,
+            :ldap      => true,
+            :sssd      => true,
             :use_openshift => true,
             :tty_audit_enable => ['root', 'user1', 'user2']
           }}

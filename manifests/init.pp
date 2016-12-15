@@ -189,7 +189,47 @@
 # [*auth_sections*]
 #   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
 #   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
-# 
+# [*use_templates*]
+#   Default: true
+#   Whether or not to use the SIMP templates to populate the pam configuration.
+#   Set this to false to drop in completely custom PAM configuration files, if
+#   you need to support third-party or custom modules. The following *_content
+#   parameters need to be filled if this option is disabled, otherwise you may
+#   leave your system in an unacessible state.
+#
+# [*su_content*]
+#   Default: ''
+#   The content that should be used to fill the /etc/pam.d/su file instead
+#   of the templated content.
+#
+# [*other_content*]
+#   Default: ''
+#   The content that should be used to fill the /etc/pam.d/other file instead
+#   of the templated content.
+# [*auth_sections*]
+#   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
+#   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
+#
+# [*fingerprint_content*]
+#   Default: ''
+#   The content that should be used to fill /etc/pam.d/fingerprint_auth_ instead
+#   of the templated content.
+#
+# [*system_content*]
+#   Default: ''
+#   The content that should be used to fill /etc/pam.d/system_auth
+#   instead of the templated content.
+#
+# [*password_content*]
+#   The content that should be used to fill /etc/pam.d/password_auth
+#   instead of the templated content.
+#   Default: ''
+#
+# [*smartcard_content*]
+#   The content that should be used to fill /etc/pam.d/smartcard_auth
+#   instead of the templated content.
+#   Default: ''
+#
 # [*enable*]
 #   Default:  true
 #   If you have included this module but want simp to stop managing your configuration files set
