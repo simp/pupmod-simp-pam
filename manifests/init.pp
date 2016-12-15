@@ -186,9 +186,6 @@
 #   Default: [ 'root' ]
 #   The users for which TTY auditing is enabled. Set to an empty Array to not audit TTY actions for any user.
 #
-# [*auth_sections*]
-#   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
-#   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
 # [*use_templates*]
 #   Default: true
 #   Whether or not to use the SIMP templates to populate the pam configuration.
@@ -206,6 +203,7 @@
 #   Default: ''
 #   The content that should be used to fill the /etc/pam.d/other file instead
 #   of the templated content.
+#
 # [*auth_sections*]
 #   Default: [ 'fingerprint', 'system', 'password', 'smartcard' ]
 #   The PAM '*-auth' files to manage. Set to an empty Array to not manage any sections by default.
