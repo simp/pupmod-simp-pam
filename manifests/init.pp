@@ -283,7 +283,7 @@ class pam (
   Boolean                 $enable_warning            = true,
 ) {
 
-  if lookup( { 'name' => 'simp_options::pam', 'default_value' => true } )
+  if simp::lookup('simp_options::pam', { 'default_value' => true } )
   {
     if $enable {
       file { '/etc/pam.d':
