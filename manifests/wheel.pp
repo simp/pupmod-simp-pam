@@ -2,7 +2,6 @@
 #
 # Enable wheel restrictions for su access.
 #
-class pam::wheel (
 # _Variables_
 #
 # $wheel_group
@@ -13,6 +12,7 @@ class pam::wheel (
 # $use_openshift
 #    Whether or not to configure things in such a way that the
 #    openshift_origin puppet code is compatible.
+class pam::wheel (
   String   $wheel_group   = 'wheel',
   Boolean  $root_only     = false,
   Boolean  $use_openshift = $::pam::use_openshift,
