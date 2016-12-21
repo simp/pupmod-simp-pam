@@ -1,5 +1,10 @@
+* Wed Dec 21 2016 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.0.0-0
+- corrected error for lookup
+- Fixed comments and aligned variables to make it look pretty.
+- update simplib version to include new types.
+
 * Mon Dec 12 2016 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.0.0-0
-- Added strong types and updated Global catalists.  
+- Added strong types and updated Global catalists.
 - Removed NSCD logic.
 
 * Wed Nov 30 2016 Nick Miller <nick.miller@onyxpoint.com> - 5.0.1-0

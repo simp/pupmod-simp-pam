@@ -254,7 +254,7 @@ class pam (
   Stdlib::Compat::Integer $cracklib_retry            = '3',
   Stdlib::Compat::Integer $deny                      = '5',
   Boolean                 $display_account_lock      = false,
-  String                  $homedir_umask             = '0077',
+  Simplib::Umask          $homedir_umask             = '0077',
   Stdlib::Compat::Integer $remember                  = '24',
   Stdlib::Compat::Integer $remember_retry            = '1',
   Boolean                 $remember_for_root         = true,

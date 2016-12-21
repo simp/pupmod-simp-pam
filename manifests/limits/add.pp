@@ -22,11 +22,11 @@
 #     you don't specify a order, the rules will be listed in alphabetical order
 #     by name.
 define pam::limits::add (
-  String                  $domain,
+  String                    $domain,
   Pam::Limits::Item         $item,
   Pam::Limits::Value        $value,
-  Enum['hard','soft','-'] $type = '-',
-  Stdlib::Compat::Integer $order = '1000'
+  Enum['hard','soft','-']   $type   = '-',
+  Stdlib::Compat::Integer   $order  = '1000'
   ) {
   include '::pam::limits'
 
