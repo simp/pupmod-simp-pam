@@ -1,8 +1,8 @@
 ---
 fixtures:
   repositories:
+    concat: https://github.com/simp/puppetlabs-concat
     oddjob: https://github.com/simp/pupmod-simp-oddjob
-    simpcat: https://github.com/simp/pupmod-simp-simpcat
     simplib: https://github.com/simp/pupmod-simp-simplib
     simp_options: https://github.com/simp/pupmod-simp-simp_options
     stdlib: https://github.com/simp/puppetlabs-stdlib

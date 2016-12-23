@@ -23,9 +23,9 @@ describe 'pam' do
             )
           }
         end
-        context '/etc/pam.d/other with use_templates => false' do
+
+        context '/etc/pam.d/other with custom content' do
           let(:params) {{
-            :use_templates => false,
             :other_content => 'this is valid pam other configuration, I promise'
           }}
           it { is_expected.to contain_file('/etc/pam.d/other').with_content('this is valid pam other configuration, I promise') }

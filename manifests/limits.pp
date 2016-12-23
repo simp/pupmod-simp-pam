@@ -1,26 +1,15 @@
+# Set up ``/etc/security/limits.conf``
 #
-# Class: pam::limits_conf
+# Add entries with ``pam::limits::rule``
 #
-# Set up /etc/security/limits.conf
-#
-# See limits.conf(5) for additional details.
+# @see limits.conf(5)
 #
 class pam::limits {
-  include '::pam'
-
-  simpcat_build { 'pam_limits':
-    order   => ['*.limit'],
-    target  => '/etc/security/limits.conf',
-    require => Package['pam']
-  }
-
-  file { '/etc/security/limits.conf':
-    ensure    => 'file',
-    owner     => 'root',
-    group     => 'root',
-    mode      => '0640',
-    subscribe => Simpcat_build['pam_limits'],
-    audit     => content
+  concat { '/etc/security/limits.conf':
+    owner          => 'root',
+    group          => 'root',
+    mode           => '0640',
+    ensure_newline => true,
+    warn           => true
   }
 }
-

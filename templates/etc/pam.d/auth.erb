@@ -128,8 +128,8 @@ _session = [
   'session      sufficient    pam_succeed_if.so service in crond quiet use_uid'
 ]
 
-if ['system','password','fingerprint'].include?(@name) and !@tty_audit_enable.empty?
-  _session << "session      required      pam_tty_audit.so disable=* enable=#{@tty_audit_enable.join(',')}"
+if ['system','password','fingerprint'].include?(@name) && !@tty_audit_users.empty?
+  _session << "session      required      pam_tty_audit.so disable=* enable=#{@tty_audit_users.join(',')}"
 end
 
 _session <<  'session      sufficient    pam_succeed_if.so user = root quiet'

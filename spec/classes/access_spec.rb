@@ -8,25 +8,19 @@ describe 'pam::access' do
         let(:facts){ facts }
 
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to create_simpcat_build('pam_access').with({
-            :target         => '/etc/security/access.conf',
-            :squeeze_blank  => true,
-          })
-        }
-        it { is_expected.to create_simpcat_build('pam_access').that_requires('Package[pam]') }
-        it { is_expected.to create_file('/etc/security/access.conf').that_subscribes_to('Simpcat_build[pam_access]') }
-        it { is_expected.to create_pam__access__manage('default_deny').with({
+        it { is_expected.to create_concat('/etc/security/access.conf') }
+        it { is_expected.to create_pam__access__rule('default_deny').with({
             :permission => '-',
-            :users      => 'ALL',
+            :users      => ['ALL'],
             :origins    => ['ALL'],
-            :order      => '9999999999'
+            :order      => 9999999999
           })
         }
-        it { is_expected.to create_pam__access__manage('allow_local_root').with({
+        it { is_expected.to create_pam__access__rule('allow_local_root').with({
             :permission => '+',
-            :users      => 'root',
+            :users      => ['root'],
             :origins    => ['LOCAL'],
-            :order      => '0'
+            :order      => 1
           })
         }
       end
