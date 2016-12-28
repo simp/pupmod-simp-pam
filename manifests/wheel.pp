@@ -1,34 +1,36 @@
-# Enable wheel restrictions for su access.
+# Enable wheel restrictions for su access
 #
-# @param wheel_group [String]
-#     What group should be the 'wheel' equivalent. Set to the traditional
-#     'wheel' by default.
+# @see pam_wheel(8)
 #
-# @param root_only [Boolean]
-#     Set this if you only want to make this effective when su'ing to root.
+# @param wheel_group
+#   What group should be the ``wheel`` equivalent
 #
-# @param use_openshift [Boolean]
-#    Whether or not to configure things in such a way that the
-#    openshift_origin puppet code is compatible.
+# @param root_only
+#   Only enforce ``wheel`` restrictions when changing to the ``root`` user
+#
+# @param use_openshift
+#    Whether or not to configure things in such a way that the ``openshift``
+#    puppet code is compatible
+#
+# @param use_templates
 #
 class pam::wheel (
-  String $wheel_group    = 'wheel',
-  Boolean $root_only     = false,
-  Boolean $use_openshift = pick($::pam::use_openshift, false),
-  Boolean $use_templates = $::pam::use_templates,
-  String $su_content     = $::pam::su_content
+  String           $wheel_group   = 'wheel',
+  Boolean          $root_only     = false,
+  Boolean          $use_openshift = $::pam::use_openshift,
+  Optional[String] $content       = $::pam::su_content
 ) inherits ::pam {
-
-  if $use_templates {
-    $_su_content = template('pam/etc/pam.d/su.erb')
+  if $content {
+    $_content = $content
   }
   else {
-    $_su_content = $su_content
+    $_content = template("${module_name}/etc/pam.d/su.erb")
   }
+
   file { '/etc/pam.d/su':
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => $_su_content
+    content => $_content
   }
 }

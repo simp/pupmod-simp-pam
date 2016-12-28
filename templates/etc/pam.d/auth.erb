@@ -24,13 +24,9 @@ if @name == 'smartcard'
 end
 
 if ['system','password'].include?(@name)
-  # SSSD is mutually exclusive with pam_ldap!
-  if @use_sssd
+  if @sssd
     _auth << 'auth     sufficient    pam_sss.so forward_pass'
     _auth << 'auth     sufficient    pam_unix.so try_first_pass'
-  elsif @use_ldap
-    _auth << 'auth     sufficient    pam_unix.so try_first_pass'
-    _auth << 'auth     sufficient    pam_ldap.so use_first_pass ignore_unknown_user ignore_authinfo_unavail'
   else
     _auth << 'auth     sufficient    pam_unix.so try_first_pass'
   end
@@ -51,16 +47,10 @@ if @use_netgroups
     _account << 'account     required      pam_access.so accessfile=/etc/security/access.conf'
 end
 
-if @use_ldap && !@use_sssd
-  _account << 'account     [success=1]   pam_unix.so broken_shadow'
-  _account << 'account     optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail'
-else
-  _account << 'account     required      pam_unix.so broken_shadow'
-end
-
+_account << 'account     required      pam_unix.so broken_shadow'
 _account << 'account     required      pam_faillock.so'
 
-if @use_sssd
+if @sssd
   if @use_openshift
     _account << 'account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
   end
@@ -112,14 +102,10 @@ if ['system','password'].include?(@name)
   _pam_unix = "password     sufficient    pam_unix.so sha512 rounds=#{@rounds}" +
                 ' shadow try_first_pass use_authtok'
 
-  if @use_sssd
+  if @sssd
     _password << _pam_pwhistory
     _password << 'password     sufficient    pam_sss.so use_authtok'
     _password << _pam_unix
-  elsif @use_ldap
-    _password << _pam_pwhistory
-    _password << _pam_unix
-    _password << 'password     sufficient    pam_ldap.so use_authtok ignore_unknown_user ignore_authinfo_unavail'
   else
     _password << _pam_pwhistory
     _password << _pam_unix
@@ -142,8 +128,8 @@ _session = [
   'session      sufficient    pam_succeed_if.so service in crond quiet use_uid'
 ]
 
-if ['system','password','fingerprint'].include?(@name) and !@tty_audit_enable.empty?
-  _session << "session      required      pam_tty_audit.so disable=* enable=#{@tty_audit_enable.join(',')}"
+if ['system','password','fingerprint'].include?(@name) && !@tty_audit_users.empty?
+  _session << "session      required      pam_tty_audit.so disable=* enable=#{@tty_audit_users.join(',')}"
 end
 
 _session <<  'session      sufficient    pam_succeed_if.so user = root quiet'
@@ -156,11 +142,8 @@ end
 
 _session << 'session      requisite     pam_access.so nodefgroup'
 
-if @use_sssd
+if @sssd
   _session << 'session      optional      pam_sss.so'
-elsif @use_ldap
-  _session << 'session      [success=1]   pam_unix.so'
-  _session << 'session      optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail'
 else
   _session << 'session      required      pam_unix.so'
 end

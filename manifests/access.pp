@@ -1,49 +1,39 @@
-# == Class: pam::access
+# Set up ``/etc/security/access.conf`` with a default to allow root to login
+# locally.
 #
-# Set up /etc/security/access.conf with a default to allow root to
-# login locally and deny everyone else from all locations.
+# Use ``pam::access::rule`` to manage ``access.conf`` entries and remember
+# that **order matters** (first match wins)!
 #
-# Use pam::access::manage to manage access.conf entries and
-# remember that order matters!
+# @param default_deny
+#   Add a "default deny" rule as the last match of the rule set
 #
-# See access.conf(5) for details.
+# @see access.conf(5)
 #
-# == Authors
-#   * Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
-class pam::access {
+class pam::access (
+  Boolean $default_deny = true
+){
   include '::pam'
 
-  simpcat_build { 'pam_access':
-    target        => '/etc/security/access.conf',
-    order         => '*.access',
-    squeeze_blank => true,
-    require       => Package['pam']
+  if $default_deny {
+    include '::pam::access::default_deny'
   }
 
-  file { '/etc/security/access.conf':
-    ensure    => 'file',
-    owner     => 'root',
-    group     => 'root',
-    mode      => '0644',
-    subscribe => Simpcat_build['pam_access'],
-    audit     => content
-  }
-
-  # Deny everyone at the end
-  pam::access::manage { 'default_deny':
-    permission => '-',
-    users      => 'ALL',
-    origins    => ['ALL'],
-    order      => '9999999999'
+  concat { '/etc/security/access.conf':
+    owner          => 'root',
+    group          => 'root',
+    mode           => '0644',
+    ensure_newline => true,
+    warn           => true
   }
 
   # Allow root locally by default.
-  pam::access::manage { 'allow_local_root':
+  pam::access::rule { 'allow_local_root':
     permission => '+',
-    users      => 'root',
+    users      => ['root'],
     origins    => ['LOCAL'],
-    order      => '0'
+    order      => 1
   }
 }
 

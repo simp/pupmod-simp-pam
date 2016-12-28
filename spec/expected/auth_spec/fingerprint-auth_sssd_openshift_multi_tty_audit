@@ -8,13 +8,14 @@ auth     sufficient    pam_fprintd.so
 auth     requisite     pam_succeed_if.so uid >= 500 quiet
 auth     required      pam_deny.so
 
-account     [success=1]   pam_unix.so broken_shadow
-account     optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail
+account     required      pam_unix.so broken_shadow
 account     required      pam_faillock.so
-account     [success=3 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
-account     [success=2 default=ignore] pam_succeed_if.so service = crond quiet
+account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+account     [success=3 default=ignore] pam_succeed_if.so service = crond quiet
 account     sufficient    pam_succeed_if.so uid < 500 quiet
 account     requisite     pam_access.so nodefgroup
+account     [success=1 default=ignore] pam_localuser.so
+account     [default=bad success=ok system_err=ignore user_unknown=ignore] pam_sss.so
 account     required      pam_permit.so
 
 password     required      pam_deny.so
@@ -30,7 +31,6 @@ session      [default=1 success=ignore] pam_succeed_if.so quiet shell = /usr/bin
 session      required      pam_namespace.so no_unmount_on_close
 session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
 session      requisite     pam_access.so nodefgroup
-session      [success=1]   pam_unix.so
-session      optional      pam_ldap.so ignore_unknown_user ignore_authinfo_unavail
+session      optional      pam_sss.so
 session      optional      pam_oddjob_mkhomedir.so silent
 session      required      pam_lastlog.so showfailed
