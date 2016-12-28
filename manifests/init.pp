@@ -294,10 +294,10 @@ class pam (
     }
   }
   else {
-  # The global catalyst was set to false but the module was included 
+  # The global catalyst was set to false but the module was included
     if $enable_warning {
       if simplib::lookup('simp_options::pam', { 'default_value' => true }) == false {
-        warning("Module pupmod-simp-pam was included but global catalyst simp_options::pam is set to false. This could have unexpected effects.")
+        warning('Module pupmod-simp-pam was included but global catalyst simp_options::pam is set to false. This could have unexpected effects.')
       }
     }
   }

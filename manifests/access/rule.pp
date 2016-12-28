@@ -99,7 +99,7 @@ define pam::access::rule (
     $_content = "${permission} : ${_users} : ${_origins}\n"
   }
 
-  concat::fragment { "pam_access_rule_$_name":
+  concat::fragment { "pam_access_rule_${_name}":
     order   => $order,
     target  => '/etc/security/access.conf',
     content => $_content
