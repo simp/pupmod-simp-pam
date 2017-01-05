@@ -8,33 +8,33 @@
 # @example Add administrator group access
 #   pam::access::rule { 'administrators':
 #     permission => '+',
-#     users => ['(administrators)'],
-#     origins => ['ALL'],
-#     order => 1000
+#     users      => ['(administrators)'],
+#     origins    => ['ALL'],
+#     order      => 1000
 #   }
 #
 # @example Add everyone except group ``bad_guys``
 #   pam::access::rule { 'bad_guys':
 #     permission => '+',
-#     users => ['ALL EXCEPT (bad_guys)'],
-#     origins => ['ALL'],
-#     order => 1000
+#     users      => ['ALL EXCEPT (bad_guys)'],
+#     origins    => ['ALL'],
+#     order      => 1000
 #   }
 #
 # @example Add everyone except the hippopotamus
 #   pam::access::rule { 'but_not_the_hippopotamus':
 #     permission => '+',
-#     users => ['ALL EXCEPT hippopotamus'],
-#     origins => ['ALL'],
-#     order => 1000
+#     users      => ['ALL EXCEPT hippopotamus'],
+#     origins    => ['ALL'],
+#     order      => 1000
 #   }
 #
 # @example Allow group auditors from two specific hosts
 #   pam::access::rule { 'auditors_from_trusted_nodes':
 #     permission => '+',
-#     users => ['(auditors)'],
-#     origins => ['1.2.3.4','5.6.7.8'],
-#     order => 1000
+#     users      => ['(auditors)'],
+#     origins    => ['1.2.3.4','5.6.7.8'],
+#     order      => 1000
 #   }
 #
 # @aaram name [String]
@@ -73,11 +73,11 @@
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 define pam::access::rule (
-  Array[String]           $users,
-  Array[String]           $origins,
-  Enum['+','-']           $permission   = '+',
-  Optional[String]        $comment      = undef,
-  Integer[1,9999999999]   $order        = 1000
+  Array[String]         $users,
+  Array[String]         $origins,
+  Enum['+','-']         $permission = '+',
+  Optional[String]      $comment    = undef,
+  Integer[1,9999999999] $order      = 1000
 ) {
   include '::pam::access'
 
