@@ -275,8 +275,8 @@ class pam (
         content => $_other_content
       }
 
-    # Get rid of authconfig so that the tool can't be used to modify PAM.
-      case $::operatingsystem {
+      # Get rid of authconfig so that the tool can't be used to modify PAM.
+      case $facts['os']['name'] {
         'RedHat','CentOS': {
           file { [
             '/etc/pam.d/authconfig',

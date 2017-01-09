@@ -32,7 +32,6 @@ class pam::access (
   Boolean        $default_deny = true,
   Optional[Hash] $users        = undef
 ){
-  include '::pam'
 
   if $default_deny {
     include '::pam::access::default_deny'
