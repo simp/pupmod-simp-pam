@@ -207,7 +207,7 @@ class pam (
   Integer          $cracklib_lcredit          = -1,
   Integer          $cracklib_ocredit          = -1,
   Integer[0]       $cracklib_minclass         = 3,
-  Integer[0]       $cracklib_minlen           = 14,
+  Integer[0]       $cracklib_minlen           = 15,
   Integer[0]       $cracklib_retry            = 3,
   Integer[0]       $deny                      = 5,
   Boolean          $display_account_lock      = false,
