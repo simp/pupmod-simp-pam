@@ -24,6 +24,56 @@ describe 'pam::access' do
           })
         }
       end
+
+      context 'create pam::access::rule resources with an iterator' do
+        context 'with a well-formatted data structure' do
+          let(:hieradata) { 'pam__access__users' }
+          it { is_expected.to create_pam__access__rule('rule_vagrant').with({
+            :users      => ['vagrant'],
+            :origins    => ['ALL'],
+            :permission => '+'
+          }) }
+          it { is_expected.to create_pam__access__rule('rule_(simp)').with({
+            :users      => ['(simp)'],
+            :origins    => ['ALL'],
+            :permission => '+'
+          }) }
+          it { is_expected.to create_pam__access__rule('rule_test').with({
+            :users      => ['test'],
+            :origins    => ['192.168.0.1/24'],
+            :permission => '+'
+          }) }
+          it { is_expected.to create_pam__access__rule('rule_baddude').with({
+            :users      => ['baddude'],
+            :origins    => ['ALL'],
+            :permission => '-'
+          }) }
+        end
+        context 'without a defaults hash' do
+          let(:hieradata) { 'pam__access__users_no_defaults' }
+          it { is_expected.to create_pam__access__rule('rule_vagrant').with({
+            :users      => ['vagrant'],
+            :origins    => ['ALL'],
+            :permission => '+'
+          }) }
+          it { is_expected.to create_pam__access__rule('rule_(simp)').with({
+            :users      => ['(simp)'],
+            :origins    => ['ALL'],
+            :permission => '+'
+          }) }
+          it { is_expected.to create_pam__access__rule('rule_test').with({
+            :users      => ['test'],
+            :origins    => ['192.168.0.1/24'],
+            :permission => '+'
+          }) }
+          it { is_expected.to create_pam__access__rule('rule_baddude').with({
+            :users      => ['baddude'],
+            :origins    => ['ALL'],
+            :permission => '-'
+          }) }
+        end
+      end
+
     end
   end
 end

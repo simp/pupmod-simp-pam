@@ -1,3 +1,6 @@
+* Tue Jan 17 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.0.0-0
+- Added feature to add pam::access::manage resources from hiera
+
 * Thu Jan 12 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.0.0-0
 - Changed the following for the SSG:
   - minimum length now set to 15

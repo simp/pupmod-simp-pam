@@ -1,0 +1,13 @@
+---
+pam::access::users:
+  defaults:
+    origins:
+      - ALL
+    permission: '+'
+  vagrant:
+  '(simp)':
+  test:
+    origins:
+      - 192.168.0.1/24
+  baddude:
+    permission: '-'

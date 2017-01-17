@@ -7,14 +7,31 @@
 # @param default_deny
 #   Add a "default deny" rule as the last match of the rule set
 #
+# @param users
+#   A hash that can be used to create several pam::access::manage resources set in Hiera.
+#   Each member of the hash will be a resource (this example is from hiera):
+#
+#     pam::access::users:
+#       defaults:
+#         origins:
+#           - ALL
+#         permission: '+'
+#       vagrant:
+#       '(simp)':
+#       test:
+#         origins:
+#           - 192.168.0.1/24
+#       baddude:
+#         permission: '-'
+#
 # @see access.conf(5)
 #
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class pam::access (
-  Boolean $default_deny = true
+  Boolean        $default_deny = true,
+  Optional[Hash] $users        = undef
 ){
-  include '::pam'
 
   if $default_deny {
     include '::pam::access::default_deny'
@@ -35,5 +52,32 @@ class pam::access (
     origins    => ['LOCAL'],
     order      => 1
   }
+
+  if $users {
+    # extract defaults and remove that hash from iteration
+    if $users['defaults'].is_a(Hash) {
+      $defaults  = $users['defaults']
+      $raw_users = $users - 'defaults'
+    }
+    else {
+      $defaults  = {}
+      $raw_users = $users
+    }
+
+    $raw_users.each |$pam_user, $options| {
+      if $options.is_a(Hash) {
+        $args = { 'users' => [$pam_user] } + $options
+      }
+      else {
+        $args = { 'users' => [$pam_user] }
+      }
+
+      pam::access::rule {
+        default:   * => $defaults;
+        "rule_${pam_user}": * => $args;
+      }
+    }
+  }
+
 }
 
