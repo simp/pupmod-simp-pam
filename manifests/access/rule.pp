@@ -37,7 +37,7 @@
 #     order      => 1000
 #   }
 #
-# @aaram name [String]
+# @param name [String]
 #   A unique name for the resource
 #
 # @param comment
@@ -46,7 +46,7 @@
 # @param permission
 #   If +, grant access. If -, revoke access
 #
-# users
+# @param users
 #   The users, groups, or netgroups to allow access to the system.
 #
 #   Syntax:
@@ -74,7 +74,7 @@
 #
 define pam::access::rule (
   Array[String]         $users,
-  Array[String]         $origins,
+  Simplib::Netlist      $origins    = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] }),
   Enum['+','-']         $permission = '+',
   Optional[String]      $comment    = undef,
   Integer[1,9999999999] $order      = 1000
