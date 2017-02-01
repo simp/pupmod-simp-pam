@@ -194,6 +194,9 @@
 #   Will issue a warning if this module is included but global catalyst
 #   ``simp_options::pam`` is set to ``false``
 #
+# @param separator
+#   Separator to use for user and origin lists
+#
 class pam (
   Integer[0]       $cracklib_difok            = 4,
   Integer[0]       $cracklib_maxrepeat        = 2,
@@ -226,6 +229,7 @@ class pam (
   Boolean          $use_netgroups             = false,
   Boolean          $use_openshift             = false,
   Boolean          $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
+  String           $separator                 = ',',
   Array[String]    $tty_audit_users           = [ 'root' ],
   Array[Enum[
     'fingerprint',

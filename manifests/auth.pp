@@ -67,6 +67,7 @@ define pam::auth (
   Boolean          $use_openshift             = $::pam::use_openshift,
   Boolean          $sssd                      = $::pam::sssd,
   Array[String]    $tty_audit_users           = $::pam::tty_audit_users,
+  String           $separator                 = $::pam::separator,
   Optional[String] $content                   = undef
 ) {
   include '::oddjob::mkhomedir'

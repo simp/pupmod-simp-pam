@@ -119,6 +119,23 @@ describe 'pam::auth' do
             end
           end
         end
+        context 'Generate file with varying list separators' do
+          ['!', ',', '@'].each_with_index do |separator, index|
+            context "auth type separator = '#{separator}'" do
+            let(:params){{
+              :separator => separator,
+              :tty_audit_users => ['root']
+            }}
+
+              let(:title){ 'password' }
+              let(:filename){ "/etc/pam.d/password-auth" }
+              let(:file_content) { get_expected("password-separator-#{index}") }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
+            end
+          end
+        end
       end
     end
   end

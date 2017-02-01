@@ -81,9 +81,10 @@ define pam::access::rule (
 ) {
   include '::pam::access'
 
+  $_separator = simplib::lookup('pam::separator', { 'default_value' => ','})
   $_name = regsubst($name,'/','_')
-  $_origins = join($origins,' ')
-  $_users = join($users,' ')
+  $_origins = join($origins, $_separator)
+  $_users = join($users,$_separator)
 
   if $comment {
     if $comment =~ /^\s*#/ {
