@@ -194,6 +194,11 @@
 #   Will issue a warning if this module is included but global catalyst
 #   ``simp_options::pam`` is set to ``false``
 #
+# @param enable_separator
+#   Enable a custom list separator.
+#   **WARNING** this setting may break pam_access on some platforms.
+#     Use with caution
+#
 # @param separator
 #   Separator to use for user and origin lists
 #
@@ -229,6 +234,7 @@ class pam (
   Boolean          $use_netgroups             = false,
   Boolean          $use_openshift             = false,
   Boolean          $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
+  Boolean          $enable_separator          = false,
   String           $separator                 = ',',
   Array[String]    $tty_audit_users           = [ 'root' ],
   Array[Enum[

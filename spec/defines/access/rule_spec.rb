@@ -17,7 +17,7 @@ describe 'pam::access::rule' do
         it { is_expected.to compile.with_all_deps }
 
         it { is_expected.to create_concat__fragment("pam_access_rule_#{title}").with_content(
-          %{+ : #{params[:users].join(',')} : #{params[:origins].join(',')}\n}
+          %{+ : #{params[:users].join(' ')} : #{params[:origins].join(' ')}\n}
         )}
 
         context 'with_comment' do
@@ -32,7 +32,7 @@ describe 'pam::access::rule' do
             # foo
             # bar
             # baz
-            + : #{params[:users].join(',')} : #{params[:origins].join(',')}
+            + : #{params[:users].join(' ')} : #{params[:origins].join(' ')}
             EOM
           )}
         end

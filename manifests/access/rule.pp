@@ -80,8 +80,11 @@ define pam::access::rule (
   Integer[1,9999999999] $order      = 1000
 ) {
   include '::pam::access'
-
-  $_separator = simplib::lookup('pam::separator', { 'default_value' => ','})
+  if (simplib::lookup('pam::enable_separator', { 'default_value'    => false }) == true) {
+    $_separator = simplib::lookup('pam::separator', { 'default_value' => ','})
+  } else {
+    $_separator = ' '
+  }
   $_name = regsubst($name,'/','_')
   $_origins = join($origins, $_separator)
   $_users = join($users,$_separator)

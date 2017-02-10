@@ -119,10 +119,11 @@ describe 'pam::auth' do
             end
           end
         end
-        context 'Generate file with varying list separators' do
+	context 'Generate file with varying list separators when list_separator == true' do
           ['!', ',', '@'].each_with_index do |separator, index|
             context "auth type separator = '#{separator}'" do
             let(:params){{
+              :enable_separator => true,
               :separator => separator,
               :tty_audit_users => ['root']
             }}
