@@ -44,7 +44,7 @@ _auth << 'auth     required      pam_deny.so'
 _account = []
 
 if @use_netgroups
-  _account << "account     required      pam_access.so listsep=#{@separator} accessfile=/etc/security/access.conf"
+  _account << "account     required      pam_access.so  accessfile=/etc/security/access.conf"
 end
 
 _account << 'account     required      pam_unix.so broken_shadow'
@@ -56,7 +56,7 @@ if @sssd
   end
   _account << 'account     [success=3 default=ignore] pam_succeed_if.so service = crond quiet'
   _account << "account     sufficient    pam_succeed_if.so uid < #{@uid} quiet"
-  _account << "account     requisite     pam_access.so listsep=#{@separator} nodefgroup"
+  _account << "account     requisite     pam_access.so  nodefgroup"
   _account << 'account     [success=1 default=ignore] pam_localuser.so'
   _account << 'account     [default=bad success=ok system_err=ignore user_unknown=ignore] pam_sss.so'
 else
@@ -65,7 +65,7 @@ else
   end
   _account << 'account     [success=2 default=ignore] pam_succeed_if.so service = crond quiet'
   _account << "account     sufficient    pam_succeed_if.so uid < #{@uid} quiet"
-  _account << "account     requisite     pam_access.so listsep=#{@separator} nodefgroup"
+  _account << "account     requisite     pam_access.so  nodefgroup"
 end
 _account << 'account     required      pam_permit.so'
 
@@ -140,7 +140,7 @@ if @use_openshift
   _session << 'session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user'
 end
 
-_session << "session      requisite     pam_access.so listsep=#{@separator} nodefgroup"
+_session << "session      requisite     pam_access.so  nodefgroup"
 
 if @sssd
   _session << 'session      optional      pam_sss.so'
