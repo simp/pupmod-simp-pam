@@ -1,3 +1,10 @@
+* Mon Feb 13 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.0.0-0
+- When using list separator  you can't have spaces between
+  identifiers in access.conf if your separator is not a space. 
+  It then includes spaces as part of the name so we are removing spaces
+  from the access file.  Dylan also added changes that wrap the use 
+  of separator in boolean.
+
 * Tue Jan 17 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.0.0-0
 - Added feature to add pam::access::manage resources from hiera
 

@@ -80,8 +80,11 @@ define pam::access::rule (
   Integer[1,9999999999] $order      = 1000
 ) {
   include '::pam::access'
-
-  $_separator = simplib::lookup('pam::separator', { 'default_value' => ','})
+  if (simplib::lookup('pam::enable_separator', { 'default_value'    => true }) == true) {
+    $_separator = simplib::lookup('pam::separator', { 'default_value' => ','})
+  } else {
+    $_separator = ' '
+  }
   $_name = regsubst($name,'/','_')
   $_origins = join($origins, $_separator)
   $_users = join($users,$_separator)
@@ -94,10 +97,10 @@ define pam::access::rule (
       $_comment = regsubst("# ${comment}","\n","\n# ",'G')
     }
 
-    $_content = "${_comment}\n${permission} : ${_users} : ${_origins}\n"
+    $_content = "${_comment}\n${permission}:${_users}:${_origins}\n"
   }
   else {
-    $_content = "${permission} : ${_users} : ${_origins}\n"
+    $_content = "${permission}:${_users}:${_origins}\n"
   }
 
   concat::fragment { "pam_access_rule_${_name}":
