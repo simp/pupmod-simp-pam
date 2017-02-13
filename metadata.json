@@ -48,11 +48,11 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": "4.x"
+      "version_requirement": "> 4.7"
     },
     {
       "name": "pe",
-      "version_requirement": ">= 2016.2.0"
+      "version_requirement": ">= 2016.4.0"
     }
   ],
   "data_provider": "hiera"
