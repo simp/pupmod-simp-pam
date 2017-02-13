@@ -12,7 +12,7 @@ account     required      pam_unix.so broken_shadow
 account     required      pam_faillock.so
 account     [success=2 default=ignore] pam_succeed_if.so service = crond quiet
 account     sufficient    pam_succeed_if.so uid < 500 quiet
-account     requisite     pam_access.so nodefgroup
+account     requisite     pam_access.so listsep=, nodefgroup
 account     required      pam_permit.so
 
 password     requisite     pam_cracklib.so try_first_pass difok=4 retry=3 minlen=15 minclass=3 maxrepeat=2 maxclassrepeat=0 maxsequence=4 dcredit=-1 ucredit=-1 lcredit=-1 ocredit=-1 gecoscheck reject_username enforce_for_root
@@ -27,7 +27,7 @@ session      sufficient    pam_succeed_if.so service = gdm-launch-environment qu
 session      sufficient    pam_succeed_if.so service in crond quiet use_uid
 session      required      pam_tty_audit.so disable=* enable=root
 session      sufficient    pam_succeed_if.so user = root quiet
-session      requisite     pam_access.so nodefgroup
+session      requisite     pam_access.so listsep=, nodefgroup
 session      required      pam_unix.so
 session      optional      pam_oddjob_mkhomedir.so silent
 session      required      pam_lastlog.so showfailed

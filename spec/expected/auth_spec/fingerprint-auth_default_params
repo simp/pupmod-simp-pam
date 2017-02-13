@@ -12,7 +12,7 @@ account     required      pam_unix.so broken_shadow
 account     required      pam_faillock.so
 account     [success=2 default=ignore] pam_succeed_if.so service = crond quiet
 account     sufficient    pam_succeed_if.so uid < 500 quiet
-account     requisite     pam_access.so nodefgroup
+account     requisite     pam_access.so listsep=, nodefgroup
 account     required      pam_permit.so
 
 password     required      pam_deny.so
@@ -24,7 +24,7 @@ session      sufficient    pam_succeed_if.so service = gdm-launch-environment qu
 session      sufficient    pam_succeed_if.so service in crond quiet use_uid
 session      required      pam_tty_audit.so disable=* enable=root
 session      sufficient    pam_succeed_if.so user = root quiet
-session      requisite     pam_access.so nodefgroup
+session      requisite     pam_access.so listsep=, nodefgroup
 session      required      pam_unix.so
 session      optional      pam_oddjob_mkhomedir.so silent
 session      required      pam_lastlog.so showfailed

@@ -234,7 +234,7 @@ class pam (
   Boolean          $use_netgroups             = false,
   Boolean          $use_openshift             = false,
   Boolean          $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
-  Boolean          $enable_separator          = false,
+  Boolean          $enable_separator          = true,
   String           $separator                 = ',',
   Array[String]    $tty_audit_users           = [ 'root' ],
   Array[Enum[

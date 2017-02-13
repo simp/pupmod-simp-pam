@@ -137,6 +137,17 @@ describe 'pam::auth' do
             end
           end
         end
+	context 'Generate file with when enable_separator == false`' do
+          let(:params){{
+            :enable_separator => false,
+          }}
+              let(:title){ 'password' }
+              let(:filename){ "/etc/pam.d/password-auth" }
+              let(:file_content) { get_expected("password-separator-false") }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
+        end
       end
     end
   end

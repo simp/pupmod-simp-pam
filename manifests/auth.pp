@@ -68,7 +68,7 @@ define pam::auth (
   Boolean          $sssd                      = $::pam::sssd,
   Array[String]    $tty_audit_users           = $::pam::tty_audit_users,
   String           $separator                 = $::pam::separator,
-  Boolean           $enable_separator          = $::pam::enable_separator,
+  Boolean          $enable_separator          = $::pam::enable_separator,
   Optional[String] $content                   = undef
 ) {
   include '::oddjob::mkhomedir'
