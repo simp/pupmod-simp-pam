@@ -289,8 +289,8 @@ class pam (
       case $facts['os']['name'] {
         'RedHat','CentOS': {
           file { [
-            '/etc/pam.d/authconfig',
-            '/etc/pam.d/authconfig-tui'
+            '/usr/sbin/authconfig',
+            '/usr/sbin/authconfig-tui'
             ]:
               ensure => 'absent'
           }
