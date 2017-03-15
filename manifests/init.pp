@@ -202,6 +202,10 @@
 # @param separator
 #   Separator to use for user and origin lists
 #
+#
+# @param disable_authconfig
+#   Disable authconfig from being used, as it breaks this module's reconfiguration
+#   of PAM.
 class pam (
   Integer[0]       $cracklib_difok            = 4,
   Integer[0]       $cracklib_maxrepeat        = 2,
@@ -250,7 +254,8 @@ class pam (
   Optional[String] $password_auth_content     = undef,
   Optional[String] $smartcard_auth_content    = undef,
   Boolean          $enable                    = true,
-  Boolean          $enable_warning            = true
+  Boolean          $enable_warning            = true,
+  Boolean          $disable_authconfig        = true,
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
@@ -284,19 +289,20 @@ class pam (
         mode    => '0644',
         content => $_other_content
       }
-
-      # Get rid of authconfig so that the tool can't be used to modify PAM.
-      case $facts['os']['name'] {
-        'RedHat','CentOS': {
-          file { [
-            '/etc/pam.d/authconfig',
-            '/etc/pam.d/authconfig-tui'
-            ]:
-              ensure => 'absent'
+      if ($disable_authconfig == true) {
+        # Get rid of authconfig so that the tool can't be used to modify PAM.
+        case $facts['os']['name'] {
+          'RedHat','CentOS': {
+            file { [
+              '/usr/sbin/authconfig',
+              '/usr/sbin/authconfig-tui'
+              ]:
+                ensure => 'absent'
+            }
           }
-        }
-        default: {
-          warning('Only RedHat and CentOS are currently supported by the pam module.')
+          default: {
+            warning('Only RedHat and CentOS are currently supported by the pam module.')
+          }
         }
       }
 
