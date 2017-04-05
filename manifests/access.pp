@@ -8,7 +8,7 @@
 #   Add a "default deny" rule as the last match of the rule set
 #
 # @param users
-#   A hash that can be used to create several pam::access::manage resources set in Hiera.
+#   A hash that can be used to create several pam::access::rule resources set in Hiera.
 #   Each member of the hash will be a resource (this example is from hiera):
 #
 #     pam::access::users:
