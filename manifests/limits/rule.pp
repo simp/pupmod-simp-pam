@@ -17,7 +17,7 @@
 #
 # @example Only allow 2 administrators to login at once
 #   pam::limits::rule { 'limit_admins':
-#     domains => ['administrators','wheel'],
+#     domains => ['%administrators', '%wheel'],
 #     type    => 'hard',
 #     item    => 'maxlogins',
 #     value   => 2,
