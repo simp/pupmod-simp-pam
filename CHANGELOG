@@ -1,3 +1,6 @@
+* Fri Sep 22 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.1.0-0
+- changed password checking from pam_cracklib.so to pam_pwquality.so
+
 * Fri Sep 22 2017 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.1.0-0
 - Enable pam_tty_audit for sudo
 

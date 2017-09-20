@@ -86,23 +86,67 @@ _account << 'account     required      pam_permit.so'
 _password = []
 
 if ['system','password'].include?(@name)
-  _cracklib = "password     requisite     pam_cracklib.so try_first_pass difok=#{@cracklib_difok}" +
-              " retry=#{@cracklib_retry} minlen=#{@cracklib_minlen} minclass=#{@cracklib_minclass}" +
-              " maxrepeat=#{@cracklib_maxrepeat} maxclassrepeat=#{@cracklib_maxclassrepeat}" +
-              " maxsequence=#{@cracklib_maxsequence} dcredit=#{@cracklib_dcredit} ucredit=#{@cracklib_ucredit}" +
-              " lcredit=#{@cracklib_lcredit} ocredit=#{@cracklib_ocredit}"
+  _cracklib = "password     requisite     pam_pwquality.so retry=#{@cracklib_retry}"
 
-  if @cracklib_gecoscheck
-    _cracklib += " gecoscheck"
+  if @cracklib_enforce_for_root
+    _cracklib += " enforce_for_root"
   end
 
   if @cracklib_reject_username
     _cracklib += " reject_username"
   end
 
-  if @cracklib_enforce_for_root
-    _cracklib += " enforce_for_root"
+  unless @cracklib_minlen.nil?
+    _cracklib += " minlen=#{@cracklib_minlen}"
   end
+
+  unless @cracklib_minclass.nil?
+    _cracklib += " minclass=#{@cracklib_minclass}"
+  end
+
+  unless @cracklib_maxrepeat.nil?
+    _cracklib += " maxrepeat=#{@cracklib_maxrepeat}"
+  end
+
+  unless @cracklib_difok.nil?
+    _cracklib += " difok=#{@cracklib_difok}"
+  end
+
+  unless @cracklib_maxsequence.nil?
+    _cracklib += " maxsequence=#{@cracklib_maxsequence}"
+  end
+
+  unless @cracklib_maxclassrepeat.nil?
+    _cracklib += " maxclassrepeat=#{@cracklib_maxclassrepeat}"
+  end
+
+  unless @cracklib_dcredit.nil?
+    _cracklib += " dcredit=#{@cracklib_dcredit}"
+  end
+
+  unless @cracklib_ucredit.nil?
+    _cracklib += " ucredit=#{@cracklib_ucredit}"
+  end
+
+  unless @cracklib_lcredit.nil?
+    _cracklib += " lcredit=#{@cracklib_lcredit}"
+  end
+
+  unless @cracklib_ocredit.nil?
+    _cracklib += " ocredit=#{@cracklib_ocredit}"
+  end
+
+  unless @cracklib_gecoscheck.nil?
+    if ! @cracklib_gecoscheck
+      _cracklib += " gecoscheck=0"
+    else
+      _cracklib += " gecoscheck=#{@cracklib_gecoscheck}"
+    end
+  end
+
+
+
+
 
   _password << _cracklib
   _pam_pwhistory  = "password     required      pam_pwhistory.so use_authtok remember=#{@remember} retry=#{@remember_retry}"
