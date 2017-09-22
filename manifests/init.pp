@@ -269,12 +269,6 @@ class pam (
         recurse => true
       }
 
-      file { [ '/etc/pam.d/atd', '/etc/pam.d/crond' ]:
-        owner => 'root',
-        group => 'root',
-        mode  => '0640'
-      }
-
       if $other_content {
         $_other_content = $other_content
       }
@@ -282,35 +276,35 @@ class pam (
         $_other_content = template('pam/etc/pam.d/other.erb')
       }
 
-      $_pamd_sudo_content = epp('pam/etc/pam.d/sudo', {
-        'pam_module_path' => 'system-auth',
-        'force_revoke'    => false,
-        'tty_audit_users' => $tty_audit_users,
-      })
-
-      $_pamd_sudo_i_content = epp('pam/etc/pam.d/sudo', {
-        'pam_module_path' => 'sudo',
-        'force_revoke'    => true,
-        'tty_audit_users' => $tty_audit_users,
-      })
-
-      file { ['/etc/pam.d/sudo','/etc/pam.d/sudo-i']:
-        ensure  => 'file',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
+      file {
+        default:
+          ensure => 'file',
+          owner  => 'root',
+          group  => 'root',
+          mode   => '0644',
+        ;
+        [ '/etc/pam.d/atd', '/etc/pam.d/crond' ]:
+        ;
+        '/etc/pam.d/sudo':
+            content => epp('pam/etc/pam.d/sudo', {
+              'pam_module_path' => 'system-auth',
+              'force_revoke'    => false,
+              'tty_audit_users' => $tty_audit_users,
+            })
+        ;
+        '/etc/pam.d/sudo-i':
+            content => epp('pam/etc/pam.d/sudo', {
+              'pam_module_path' => 'sudo',
+              'force_revoke'    => true,
+              'tty_audit_users' => $tty_audit_users,
+            })
+        ;
+        '/etc/pam.d/other':
+          content => $_other_content,
+        ;
       }
-      File['/etc/pam.d/sudo']{ content => $_pamd_sudo_content }
-      File['/etc/pam.d/sudo-i']{ content => $_pamd_sudo_i_content }
 
 
-      file { '/etc/pam.d/other':
-        ensure  => 'file',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        content => $_other_content
-      }
       if ($disable_authconfig == true) {
         # Get rid of authconfig so that the tool can't be used to modify PAM.
         case $facts['os']['name'] {
