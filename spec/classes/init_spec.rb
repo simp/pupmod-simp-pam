@@ -7,6 +7,85 @@ describe 'pam' do
       context "on #{os}" do
         let(:facts){ facts }
 
+        context '/etc/pam.d/sudo and /etc/pam.d/sudo-i' do
+          context 'with default values' do
+            it { is_expected.to contain_file('/etc/pam.d/sudo').with_content(<<-EOM.gsub(/^\s+/,'')
+                #%PAM-1.0
+                auth include system-auth
+                account include system-auth
+                password include system-auth
+                session optional pam_keyinit.so revoke
+                session required pam_limits.so
+                session required pam_tty_audit.so disable=* enable=root open_only
+                EOM
+              )
+            }
+            it { is_expected.to contain_file('/etc/pam.d/sudo-i').with_content(<<-EOM.gsub(/^\s+/,'')
+                #%PAM-1.0
+                auth include sudo
+                account include sudo
+                password include sudo
+                session optional pam_keyinit.so force revoke
+                session required pam_limits.so
+                session required pam_tty_audit.so disable=* enable=root open_only
+                EOM
+              )
+            }
+          end
+          context 'with empty tty_audit_users' do
+            let(:params) {{
+              :tty_audit_users => []
+            }}
+            it { is_expected.to contain_file('/etc/pam.d/sudo').with_content(<<-EOM.gsub(/^\s+/,'')
+                #%PAM-1.0
+                auth include system-auth
+                account include system-auth
+                password include system-auth
+                session optional pam_keyinit.so revoke
+                session required pam_limits.so
+                EOM
+              )
+            }
+            it { is_expected.to contain_file('/etc/pam.d/sudo-i').with_content(<<-EOM.gsub(/^\s+/,'')
+                #%PAM-1.0
+                auth include sudo
+                account include sudo
+                password include sudo
+                session optional pam_keyinit.so force revoke
+                session required pam_limits.so
+                EOM
+              )
+            }
+          end
+          context 'with multiple tty_audit_users' do
+            let(:params) {{
+              :tty_audit_users => ['root','foo','bar']
+            }}
+            it { is_expected.to contain_file('/etc/pam.d/sudo').with_content(<<-EOM.gsub(/^\s+/,'')
+                #%PAM-1.0
+                auth include system-auth
+                account include system-auth
+                password include system-auth
+                session optional pam_keyinit.so revoke
+                session required pam_limits.so
+                session required pam_tty_audit.so disable=* enable=root,foo,bar open_only
+                EOM
+              )
+            }
+            it { is_expected.to contain_file('/etc/pam.d/sudo-i').with_content(<<-EOM.gsub(/^\s+/,'')
+                #%PAM-1.0
+                auth include sudo
+                account include sudo
+                password include sudo
+                session optional pam_keyinit.so force revoke
+                session required pam_limits.so
+                session required pam_tty_audit.so disable=* enable=root,foo,bar open_only
+                EOM
+              )
+            }
+          end
+        end
+
         context '/etc/pam.d/other with default values' do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to contain_file('/etc/pam.d').with_mode('0644') }

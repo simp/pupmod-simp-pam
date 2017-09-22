@@ -1,0 +1,16 @@
+<%- |
+      Enum['system-auth','sudo'] $pam_module_path,
+      Boolean                    $force_revoke,
+      Array                      $tty_audit_users,
+      Array[String]              $pam_types = ['auth','account','password']
+|
+-%>
+#%PAM-1.0
+<% $pam_types.each |$pam_type| { -%>
+<%= $pam_type %> include <%= $pam_module_path %>
+<%- } -%>
+session optional pam_keyinit.so <%= if $force_revoke { 'force ' } %>revoke
+session required pam_limits.so
+<%- unless empty($tty_audit_users) { -%>
+session required pam_tty_audit.so disable=* enable=<%= $tty_audit_users.join(',') %> open_only
+<%- } -%>

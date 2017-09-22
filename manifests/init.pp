@@ -282,6 +282,28 @@ class pam (
         $_other_content = template('pam/etc/pam.d/other.erb')
       }
 
+      $_pamd_sudo_content = epp('pam/etc/pam.d/sudo', {
+        'pam_module_path' => 'system-auth',
+        'force_revoke'    => false,
+        'tty_audit_users' => $tty_audit_users,
+      })
+
+      $_pamd_sudo_i_content = epp('pam/etc/pam.d/sudo', {
+        'pam_module_path' => 'sudo',
+        'force_revoke'    => true,
+        'tty_audit_users' => $tty_audit_users,
+      })
+
+      file { ['/etc/pam.d/sudo','/etc/pam.d/sudo-i']:
+        ensure  => 'file',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+      }
+      File['/etc/pam.d/sudo']{ content => $_pamd_sudo_content }
+      File['/etc/pam.d/sudo-i']{ content => $_pamd_sudo_i_content }
+
+
       file { '/etc/pam.d/other':
         ensure  => 'file',
         owner   => 'root',
