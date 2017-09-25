@@ -1,3 +1,6 @@
+* Fri Sep 22 2017 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.1.0-0
+- Enable pam_tty_audit for sudo
+
 * Fri Aug 18 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.0.4-0
 - Add concat dependency to metadata.json
 - Update concat dependency in build/rpm_metadata/requires
