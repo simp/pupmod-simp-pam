@@ -11,12 +11,12 @@ minclass = <%= @cracklib_minclass %>
 maxrepeat = <%= @cracklib_maxrepeat %>
 maxclassrepeat = <%= @cracklib_maxclassrepeat %>
 maxsequence = <%= @cracklib_maxsequence %>
-<% if  @cracklib_gecoscheck -%>
+<% if @cracklib_gecoscheck -%>
 gecoscheck = 1
 <% end -%>
-<%  unless @cracklib_badwords.nil? -%>
+<% unless @cracklib_badwords.nil? -%>
 badwords = <%= @cracklib_badwords.join(' ') %>
 <% end -%>
-<%  unless @cracklib_dictpath.nil? -%>
+<% unless @cracklib_dictpath.nil? -%>
 dictpath = <%= @cracklib_dictpath %>
 <% end -%>

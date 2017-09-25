@@ -6,6 +6,12 @@
 # PAM module settings. This is done to provide continuity across the PAM stack
 # where possible.
 #
+# @param password_check_backend
+#   The password checking library to use
+#
+#   * The default is based on the OS being targeted and is pulled from module
+#     data
+#
 # @param cracklib_difok
 #   The number of character changes between the old password and the new
 #   password that are enough to accept the new password
@@ -103,6 +109,12 @@
 #
 # @param cracklib_dictpath
 #   Path to the cracklib dictionaries. Default is to use the cracklib default.
+#
+# @param rm_pwquality_conf_d
+#   Remove the /etc/security/pwquality.conf.d directory and all contents.
+#
+#   * This ensures authoritative management of ``pwquality`` without the
+#     ability of users to override our settings directly on the system.
 #
 # @param deny
 #   The number of failed attempts before PAM denies a user from logging in
@@ -216,6 +228,8 @@
 #   Disable authconfig from being used, as it breaks this module's reconfiguration
 #   of PAM.
 class pam (
+  # Data in modules
+  Pam::PasswordBackends          $password_check_backend,
   Integer[0]                     $cracklib_difok            = 4,
   Integer[0]                     $cracklib_maxrepeat        = 2,
   Integer[0]                     $cracklib_maxsequence      = 4,
@@ -232,6 +246,7 @@ class pam (
   Integer[0]                     $cracklib_retry            = 3,
   Optional[Array[String]]        $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
+  Boolean                        $rm_pwquality_conf_d       = true,
   Integer[0]                     $deny                      = 5,
   Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
@@ -266,11 +281,11 @@ class pam (
   Optional[String]               $smartcard_auth_content    = undef,
   Boolean                        $enable                    = true,
   Boolean                        $enable_warning            = true,
-  Boolean                        $disable_authconfig        = true,
+  Boolean                        $disable_authconfig        = true
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
-      include '::pam::install'
+      include 'pam::install'
 
       file { '/etc/pam.d':
         ensure  => 'directory',
@@ -280,18 +295,22 @@ class pam (
         recurse => true
       }
 
-      file { '/etc/security/pwquality.conf':
-        ensure  => 'file',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        content => template("${module_name}/etc/security/pwquality.conf.erb")
-      }
+      if $password_check_backend == 'pwquality' {
+        file { '/etc/security/pwquality.conf':
+          ensure  => 'file',
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template("${module_name}/etc/security/pwquality.conf.erb")
+        }
 
-      file { [ '/etc/pam.d/atd', '/etc/pam.d/crond' ]:
-        owner => 'root',
-        group => 'root',
-        mode  => '0640'
+        if $rm_pwquality_conf_d {
+          # Ensure that we can't be overridden
+          file { '/etc/security/pwquality.conf.d':
+            ensure => 'absent',
+            force  => true
+          }
+        }
       }
 
       if $other_content {

@@ -1,9 +1,18 @@
 # Install the required PAM packages
 #
-class pam::install {
+# @param ensure
+#   The state in which the packages should be kept
+#
+class pam::install (
+  $ensure = 'present'
+){
   assert_private()
 
-  package { 'pam':        ensure => 'latest' }
-  package { 'pam_pkcs11': ensure => 'latest' }
-  package { 'fprintd-pam': ensure => 'latest' }
+  package { 'pam':        ensure   => $ensure }
+  package { 'pam_pkcs11': ensure   => $ensure }
+  package { 'fprintd-pam': ensure  => $ensure }
+
+  if $::pam::password_check_backend == 'pwquality' {
+    package { 'libpwquality': ensure => $ensure }
+  }
 }

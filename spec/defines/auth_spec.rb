@@ -7,6 +7,10 @@ def get_expected(filename)
   IO.read(path)
 end
 
+def el6?(facts)
+  return ['CentOS', 'RedHat'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
+end
+
 shared_examples_for "a pam.d config file generator" do
   it { is_expected.to compile.with_all_deps }
   it { is_expected.to create_class('oddjob::mkhomedir') }
@@ -30,9 +34,16 @@ describe 'pam::auth' do
         context 'Generate file using default params' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
+              let(:pw_backend) {
+                if el6?(facts)
+                  'cracklib'
+                else
+                  'pwquality'
+                end
+              }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{auth_type}-auth_default_params") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_default_params") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -91,9 +102,16 @@ describe 'pam::auth' do
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
+              let(:pw_backend) {
+                if el6?(facts)
+                  'cracklib'
+                else
+                  'pwquality'
+                end
+              }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{auth_type}-auth_sssd_no_tty_audit") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_no_tty_audit") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -110,16 +128,23 @@ describe 'pam::auth' do
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
+              let(:pw_backend) {
+                if el6?(facts)
+                  'cracklib'
+                else
+                  'pwquality'
+                end
+              }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{auth_type}-auth_sssd_openshift_multi_tty_audit") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_openshift_multi_tty_audit") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
-	context 'Generate file with varying list separators when list_separator == true' do
+        context 'Generate file with varying list separators when list_separator == true' do
           ['!', ',', '@'].each_with_index do |separator, index|
             context "auth type separator = '#{separator}'" do
             let(:params){{
@@ -128,25 +153,39 @@ describe 'pam::auth' do
               :tty_audit_users => ['root']
             }}
 
+              let(:pw_backend) {
+                if el6?(facts)
+                  'cracklib'
+                else
+                  'pwquality'
+                end
+              }
               let(:title){ 'password' }
               let(:filename){ "/etc/pam.d/password-auth" }
-              let(:file_content) { get_expected("password-separator-#{index}") }
+              let(:file_content) { get_expected("#{pw_backend}-password-separator-#{index}") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
-	context 'Generate file with when enable_separator == false`' do
+        context 'Generate file with when enable_separator == false`' do
           let(:params){{
             :enable_separator => false,
           }}
-              let(:title){ 'password' }
-              let(:filename){ "/etc/pam.d/password-auth" }
-              let(:file_content) { get_expected("password-separator-false") }
+            let(:pw_backend) {
+              if el6?(facts)
+                'cracklib'
+              else
+                'pwquality'
+              end
+            }
+            let(:title){ 'password' }
+            let(:filename){ "/etc/pam.d/password-auth" }
+            let(:file_content) { get_expected("#{pw_backend}-password-separator-false") }
 
-              it_should_behave_like "a pam.d config file generator"
-              it { is_expected.to contain_file(filename).with_content(file_content) }
+            it_should_behave_like "a pam.d config file generator"
+            it { is_expected.to contain_file(filename).with_content(file_content) }
         end
       end
     end
