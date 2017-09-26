@@ -22,6 +22,7 @@
 # @param cracklib_retry
 # @param deny
 # @param display_account_lock
+# @param enable_separator
 # @param fail_interval
 # @param remember
 # @param remember_retry
@@ -33,43 +34,45 @@
 # @param preserve_ac
 # @param use_netgroups
 # @param use_openshift
+# @param separator
 # @param sssd
 # @param tty_audit_users
 # @param content
 #
 define pam::auth (
-  Integer          $cracklib_difok            = $::pam::cracklib_difok,
-  Integer          $cracklib_maxrepeat        = $::pam::cracklib_maxrepeat,
-  Integer          $cracklib_maxsequence      = $::pam::cracklib_maxsequence,
-  Integer          $cracklib_maxclassrepeat   = $::pam::cracklib_maxclassrepeat,
-  Boolean          $cracklib_reject_username  = $::pam::cracklib_reject_username,
-  Boolean          $cracklib_gecoscheck       = $::pam::cracklib_gecoscheck,
-  Boolean          $cracklib_enforce_for_root = $::pam::cracklib_enforce_for_root,
-  Integer          $cracklib_dcredit          = $::pam::cracklib_dcredit,
-  Integer          $cracklib_ucredit          = $::pam::cracklib_ucredit,
-  Integer          $cracklib_lcredit          = $::pam::cracklib_lcredit,
-  Integer          $cracklib_ocredit          = $::pam::cracklib_ocredit,
-  Integer          $cracklib_minclass         = $::pam::cracklib_minclass,
-  Integer          $cracklib_minlen           = $::pam::cracklib_minlen,
-  Integer          $cracklib_retry            = $::pam::cracklib_retry,
-  Integer          $deny                      = $::pam::deny,
-  Boolean          $display_account_lock      = $::pam::display_account_lock,
-  Integer          $fail_interval             = $::pam::fail_interval,
-  Integer          $remember                  = $::pam::remember,
-  Integer          $remember_retry            = $::pam::remember_retry,
-  Boolean          $remember_for_root         = $::pam::remember_for_root,
-  Integer          $root_unlock_time          = $::pam::root_unlock_time,
-  Integer          $rounds                    = $::pam::rounds,
-  Integer          $uid                       = $::pam::uid,
-  Integer          $unlock_time               = $::pam::unlock_time,
-  Boolean          $preserve_ac               = $::pam::preserve_ac,
-  Boolean          $use_netgroups             = $::pam::use_netgroups,
-  Boolean          $use_openshift             = $::pam::use_openshift,
-  Boolean          $sssd                      = $::pam::sssd,
-  Array[String]    $tty_audit_users           = $::pam::tty_audit_users,
-  String           $separator                 = $::pam::separator,
-  Boolean          $enable_separator          = $::pam::enable_separator,
-  Optional[String] $content                   = undef
+  Pam::PasswordBackends $password_check_backend    = $::pam::password_check_backend,
+  Boolean               $cracklib_enforce_for_root = $::pam::cracklib_enforce_for_root,
+  Boolean               $cracklib_reject_username  = $::pam::cracklib_reject_username,
+  Integer               $cracklib_retry            = $::pam::cracklib_retry,
+  Optional[Integer]     $cracklib_difok            = $::pam::cracklib_difok,
+  Optional[Integer]     $cracklib_maxrepeat        = $::pam::cracklib_maxrepeat,
+  Optional[Integer]     $cracklib_maxsequence      = $::pam::cracklib_maxsequence,
+  Optional[Integer]     $cracklib_maxclassrepeat   = $::pam::cracklib_maxclassrepeat,
+  Optional[Boolean]     $cracklib_gecoscheck       = $::pam::cracklib_gecoscheck,
+  Optional[Integer]     $cracklib_dcredit          = $::pam::cracklib_dcredit,
+  Optional[Integer]     $cracklib_ucredit          = $::pam::cracklib_ucredit,
+  Optional[Integer]     $cracklib_lcredit          = $::pam::cracklib_lcredit,
+  Optional[Integer]     $cracklib_ocredit          = $::pam::cracklib_ocredit,
+  Optional[Integer]     $cracklib_minclass         = $::pam::cracklib_minclass,
+  Optional[Integer]     $cracklib_minlen           = $::pam::cracklib_minlen,
+  Integer               $deny                      = $::pam::deny,
+  Boolean               $display_account_lock      = $::pam::display_account_lock,
+  Integer               $fail_interval             = $::pam::fail_interval,
+  Integer               $remember                  = $::pam::remember,
+  Integer               $remember_retry            = $::pam::remember_retry,
+  Boolean               $remember_for_root         = $::pam::remember_for_root,
+  Integer               $root_unlock_time          = $::pam::root_unlock_time,
+  Integer               $rounds                    = $::pam::rounds,
+  Integer               $uid                       = $::pam::uid,
+  Integer               $unlock_time               = $::pam::unlock_time,
+  Boolean               $preserve_ac               = $::pam::preserve_ac,
+  Boolean               $use_netgroups             = $::pam::use_netgroups,
+  Boolean               $use_openshift             = $::pam::use_openshift,
+  Boolean               $sssd                      = $::pam::sssd,
+  Array[String]         $tty_audit_users           = $::pam::tty_audit_users,
+  String                $separator                 = $::pam::separator,
+  Boolean               $enable_separator          = $::pam::enable_separator,
+  Optional[String]      $content                   = undef
 ) {
   include '::oddjob::mkhomedir'
 

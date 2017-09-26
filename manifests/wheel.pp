@@ -12,7 +12,8 @@
 #    Whether or not to configure things in such a way that the ``openshift``
 #    puppet code is compatible
 #
-# @param use_templates
+# @param content
+#   Optional custom content for file
 #
 class pam::wheel (
   String           $wheel_group   = 'wheel',

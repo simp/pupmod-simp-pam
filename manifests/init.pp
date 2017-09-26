@@ -6,6 +6,12 @@
 # PAM module settings. This is done to provide continuity across the PAM stack
 # where possible.
 #
+# @param password_check_backend
+#   The password checking library to use
+#
+#   * The default is based on the OS being targeted and is pulled from module
+#     data
+#
 # @param cracklib_difok
 #   The number of character changes between the old password and the new
 #   password that are enough to accept the new password
@@ -24,7 +30,7 @@
 #   * Most such passwords will not pass the simplicity check unless the
 #     sequence is only a minor part of the password
 #
-# @parm cracklib_maxclassrepeat
+# @param cracklib_maxclassrepeat
 #   Reject passwords which contain more than this many consecutive characters
 #   of the **same class**
 #
@@ -33,10 +39,6 @@
 #       * Lower Case
 #       * Digit
 #       * Special Character
-#
-# @param cracklib_reject_username
-#   Check whether the name of the user in straight or reversed form is
-#   contained in the new password
 #
 # @param cracklib_gecoscheck
 #   Check whether the words from the GECOS field (usualy full name of the user)
@@ -95,14 +97,33 @@
 #   The minimum acceptable size for the new password (plus one if credits are
 #   not disabled)
 #
+# @param cracklib_reject_username
+#   Don't let the username be used in password
+#
 # @param cracklib_retry
 #   Prompt user at most N times before returning with error
+#
+# @param cracklib_badwords
+#   Array of words that must not be contained in the password.
+#   These are additional words to the cracklib dictionary check.
+#
+# @param cracklib_dictpath
+#   Path to the cracklib dictionaries. Default is to use the cracklib default.
+#
+# @param rm_pwquality_conf_d
+#   Remove the /etc/security/pwquality.conf.d directory and all contents.
+#
+#   * This ensures authoritative management of ``pwquality`` without the
+#     ability of users to override our settings directly on the system.
 #
 # @param deny
 #   The number of failed attempts before PAM denies a user from logging in
 #
 # @param display_account_lock
 #   Display to the remote user that their account has been locked
+#
+# @param fail_interval
+#   Sets the time until the check fails
 #
 # @param homedir_umask
 #   Sets the file mode creation mask of the user home directories
@@ -170,19 +191,19 @@
 #
 #   * Set to an empty Array to not manage any sections
 #
-# @param fingerprint_content
+# @param fingerprint_auth_content
 #   The content that should be used to fill ``/etc/pam.d/fingerprint_auth``
 #   instead of the templated content
 #
-# @param system_content
+# @param system_auth_content
 #   The content that should be used to fill ``/etc/pam.d/system_auth`` instead
 #   of the templated content
 #
-# @param password_content
+# @param password_auth_content
 #   The content that should be used to fill ``/etc/pam.d/password_auth``
 #   instead of the templated content
 #
-# @param smartcard_content
+# @param smartcard_auth_content
 #   The content that should be used to fill ``/etc/pam.d/smartcard_auth``
 #   instead of the templated content
 #
@@ -207,59 +228,64 @@
 #   Disable authconfig from being used, as it breaks this module's reconfiguration
 #   of PAM.
 class pam (
-  Integer[0]       $cracklib_difok            = 4,
-  Integer[0]       $cracklib_maxrepeat        = 2,
-  Integer[0]       $cracklib_maxsequence      = 4,
-  Integer[0]       $cracklib_maxclassrepeat   = 0,
-  Boolean          $cracklib_reject_username  = true,
-  Boolean          $cracklib_gecoscheck       = true,
-  Boolean          $cracklib_enforce_for_root = true,
-  Integer          $cracklib_dcredit          = -1,
-  Integer          $cracklib_ucredit          = -1,
-  Integer          $cracklib_lcredit          = -1,
-  Integer          $cracklib_ocredit          = -1,
-  Integer[0]       $cracklib_minclass         = 3,
-  Integer[0]       $cracklib_minlen           = 15,
-  Integer[0]       $cracklib_retry            = 3,
-  Integer[0]       $deny                      = 5,
-  Boolean          $display_account_lock      = false,
-  Simplib::Umask   $homedir_umask             = '0077',
-  Integer[0]       $remember                  = 24,
-  Integer[0]       $remember_retry            = 1,
-  Boolean          $remember_for_root         = true,
-  Integer[0]       $root_unlock_time          = 60,
-  Integer[0]       $rounds                    = 10000,
-  Integer[0]       $uid                       = 500,
-  Integer[0]       $unlock_time               = 900,
-  Integer[0]       $fail_interval             = 900,
-  Boolean          $preserve_ac               = false,
-  Boolean          $warn_if_unknown           = true,
-  Boolean          $deny_if_unknown           = true,
-  Boolean          $use_netgroups             = false,
-  Boolean          $use_openshift             = false,
-  Boolean          $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
-  Boolean          $enable_separator          = true,
-  String           $separator                 = ',',
-  Array[String]    $tty_audit_users           = [ 'root' ],
+  # Data in modules
+  Pam::PasswordBackends          $password_check_backend,
+  Integer[0]                     $cracklib_difok            = 4,
+  Integer[0]                     $cracklib_maxrepeat        = 2,
+  Integer[0]                     $cracklib_maxsequence      = 4,
+  Integer[0]                     $cracklib_maxclassrepeat   = 0,
+  Boolean                        $cracklib_gecoscheck       = true,
+  Boolean                        $cracklib_enforce_for_root = true,
+  Boolean                        $cracklib_reject_username  = true,
+  Integer                        $cracklib_dcredit          = -1,
+  Integer                        $cracklib_ucredit          = -1,
+  Integer                        $cracklib_lcredit          = -1,
+  Integer                        $cracklib_ocredit          = -1,
+  Integer[0]                     $cracklib_minclass         = 3,
+  Integer[0]                     $cracklib_minlen           = 15,
+  Integer[0]                     $cracklib_retry            = 3,
+  Optional[Array[String]]        $cracklib_badwords         = undef,
+  Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
+  Boolean                        $rm_pwquality_conf_d       = true,
+  Integer[0]                     $deny                      = 5,
+  Boolean                        $display_account_lock      = false,
+  Simplib::Umask                 $homedir_umask             = '0077',
+  Integer[0]                     $remember                  = 24,
+  Integer[0]                     $remember_retry            = 1,
+  Boolean                        $remember_for_root         = true,
+  Integer[0]                     $root_unlock_time          = 60,
+  Integer[0]                     $rounds                    = 10000,
+  Integer[0]                     $uid                       = 500,
+  Integer[0]                     $unlock_time               = 900,
+  Integer[0]                     $fail_interval             = 900,
+  Boolean                        $preserve_ac               = false,
+  Boolean                        $warn_if_unknown           = true,
+  Boolean                        $deny_if_unknown           = true,
+  Boolean                        $use_netgroups             = false,
+  Boolean                        $use_openshift             = false,
+  Boolean                        $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
+  Boolean                        $enable_separator          = true,
+  String                         $separator                 = ',',
+  Array[String]                  $tty_audit_users           = [ 'root' ],
   Array[Enum[
     'fingerprint',
     'system',
     'password',
     'smartcard'
-  ]]               $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
-  Optional[String] $su_content                = undef,
-  Optional[String] $other_content             = undef,
-  Optional[String] $fingerprint_auth_content  = undef,
-  Optional[String] $system_auth_content       = undef,
-  Optional[String] $password_auth_content     = undef,
-  Optional[String] $smartcard_auth_content    = undef,
-  Boolean          $enable                    = true,
-  Boolean          $enable_warning            = true,
-  Boolean          $disable_authconfig        = true,
+  ]]                             $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
+  Optional[String]               $su_content                = undef,
+  Optional[String]               $other_content             = undef,
+  Optional[String]               $fingerprint_auth_content  = undef,
+  Optional[String]               $system_auth_content       = undef,
+  Optional[String]               $password_auth_content     = undef,
+  Optional[String]               $smartcard_auth_content    = undef,
+  Boolean                        $enable                    = true,
+  Boolean                        $enable_warning            = true,
+  Boolean                        $disable_authconfig        = true
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
-      include '::pam::install'
+      include 'pam::install'
 
       file { '/etc/pam.d':
         ensure  => 'directory',
@@ -267,6 +293,24 @@ class pam (
         group   => 'root',
         mode    => '0644',
         recurse => true
+      }
+
+      if $password_check_backend == 'pwquality' {
+        file { '/etc/security/pwquality.conf':
+          ensure  => 'file',
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template("${module_name}/etc/security/pwquality.conf.erb")
+        }
+
+        if $rm_pwquality_conf_d {
+          # Ensure that we can't be overridden
+          file { '/etc/security/pwquality.conf.d':
+            ensure => 'absent',
+            force  => true
+          }
+        }
       }
 
       if $other_content {
