@@ -255,7 +255,7 @@ class pam (
   Boolean                        $remember_for_root         = true,
   Integer[0]                     $root_unlock_time          = 60,
   Integer[0]                     $rounds                    = 10000,
-  Integer[0]                     $uid                       = 500,
+  Integer[0]                     $uid                       = simplib::lookup('simp_options::uid::min', { 'default_value' => pick(fact('login_defs.uid_min'), 1000) }),
   Integer[0]                     $unlock_time               = 900,
   Integer[0]                     $fail_interval             = 900,
   Boolean                        $preserve_ac               = false,
