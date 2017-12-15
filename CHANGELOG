@@ -1,3 +1,7 @@
+* Wed Dec 13 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.1-0
+- Set the minimum UID allowed onto the system to the default defined in
+  /etc/login.defs or 1000 if not otherwise defined
+
 * Fri Sep 22 2017 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.1.0-0
 - Changed password checking from pam_cracklib.so to pam_pwquality.so for EL7
 
