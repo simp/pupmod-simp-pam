@@ -223,10 +223,15 @@
 # @param separator
 #   Separator to use for user and origin lists
 #
-#
 # @param disable_authconfig
 #   Disable authconfig from being used, as it breaks this module's reconfiguration
 #   of PAM.
+#
+# @param package_ensure
+#   Ensure setting for all packages installed by this module
+#
+# @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
+#
 class pam (
   # Data in modules
   Pam::PasswordBackends          $password_check_backend,
@@ -244,7 +249,7 @@ class pam (
   Integer[0]                     $cracklib_minclass         = 3,
   Integer[0]                     $cracklib_minlen           = 15,
   Integer[0]                     $cracklib_retry            = 3,
-  Optional[Array[String]]        $cracklib_badwords         = undef,
+  Optional[Array[String,1]]      $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
   Boolean                        $rm_pwquality_conf_d       = true,
   Integer[0]                     $deny                      = 5,
@@ -281,92 +286,19 @@ class pam (
   Optional[String]               $smartcard_auth_content    = undef,
   Boolean                        $enable                    = true,
   Boolean                        $enable_warning            = true,
-  Boolean                        $disable_authconfig        = true
+  Boolean                        $disable_authconfig        = true,
+  String                         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
+      simplib::assert_metadata( $module_name )
+
       include 'pam::install'
+      include 'pam::config'
 
-      file { '/etc/pam.d':
-        ensure  => 'directory',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        recurse => true
-      }
+      Class['pam::install']
+      -> Class['pam::config']
 
-      if $password_check_backend == 'pwquality' {
-        file { '/etc/security/pwquality.conf':
-          ensure  => 'file',
-          owner   => 'root',
-          group   => 'root',
-          mode    => '0644',
-          content => template("${module_name}/etc/security/pwquality.conf.erb")
-        }
-
-        if $rm_pwquality_conf_d {
-          # Ensure that we can't be overridden
-          file { '/etc/security/pwquality.conf.d':
-            ensure => 'absent',
-            force  => true
-          }
-        }
-      }
-
-      if $other_content {
-        $_other_content = $other_content
-      }
-      else {
-        $_other_content = template('pam/etc/pam.d/other.erb')
-      }
-
-      file {
-        default:
-          ensure => 'file',
-          owner  => 'root',
-          group  => 'root',
-          mode   => '0644',
-        ;
-        [ '/etc/pam.d/atd', '/etc/pam.d/crond' ]:
-        ;
-        '/etc/pam.d/sudo':
-            content => epp('pam/etc/pam.d/sudo', {
-              'pam_module_path' => 'system-auth',
-              'force_revoke'    => false,
-              'tty_audit_users' => $tty_audit_users,
-            })
-        ;
-        '/etc/pam.d/sudo-i':
-            content => epp('pam/etc/pam.d/sudo', {
-              'pam_module_path' => 'sudo',
-              'force_revoke'    => true,
-              'tty_audit_users' => $tty_audit_users,
-            })
-        ;
-        '/etc/pam.d/other':
-          content => $_other_content,
-        ;
-      }
-
-
-      if ($disable_authconfig == true) {
-        # Get rid of authconfig so that the tool can't be used to modify PAM.
-        case $facts['os']['name'] {
-          'RedHat','CentOS': {
-            file { [
-              '/usr/sbin/authconfig',
-              '/usr/sbin/authconfig-tui'
-              ]:
-                ensure => 'absent'
-            }
-          }
-          default: {
-            warning('Only RedHat and CentOS are currently supported by the pam module.')
-          }
-        }
-      }
-
-      if ! empty($auth_sections) { ::pam::auth { $auth_sections: } }
     }
   }
   else {

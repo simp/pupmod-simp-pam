@@ -1,11 +1,12 @@
 # Set up the various -auth files in /etc/pam.d.
 #
-# This is only meant to be called by the main pam class. Documentation is
+# This is only meant to be called via the main pam class. Documentation is
 # identical to that in the pam class.
 #
 # If you want to change the umask on dynamically created home
 # directories, you'll need to set oddjob::mkhomedir::umask.
 #
+# @param password_check_backend
 # @param cracklib_difok
 # @param cracklib_maxrepeat
 # @param cracklib_maxsequence
