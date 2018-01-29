@@ -1,4 +1,9 @@
-* Wed Dec 13 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.1-0
+* Wed Jan 24 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.0-0
+- Replace authconfig and authconfig-tui links to a no-op script, instead
+  of removing them.  This does not break tools that use authconfig.
+- Use simp_options::package_ensure, when available
+
+* Wed Dec 13 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.0-0
 - Set the minimum UID allowed onto the system to the default defined in
   /etc/login.defs or 1000 if not otherwise defined
 

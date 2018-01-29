@@ -1,18 +1,15 @@
 # Install the required PAM packages
 #
-# @param ensure
-#   The state in which the packages should be kept
+# @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
-class pam::install (
-  $ensure = 'present'
-){
+class pam::install {
   assert_private()
 
-  package { 'pam':        ensure   => $ensure }
-  package { 'pam_pkcs11': ensure   => $ensure }
-  package { 'fprintd-pam': ensure  => $ensure }
+  package { 'pam':        ensure   => $::pam::package_ensure }
+  package { 'pam_pkcs11': ensure   => $::pam::package_ensure }
+  package { 'fprintd-pam': ensure  => $::pam::package_ensure }
 
   if $::pam::password_check_backend == 'pwquality' {
-    package { 'libpwquality': ensure => $ensure }
+    package { 'libpwquality': ensure => $::pam::package_ensure }
   }
 }
