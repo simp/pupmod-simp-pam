@@ -67,6 +67,29 @@ describe 'pam::auth' do
           end
         end
 
+        context 'Generate file using never param for unlock_time' do
+          let(:params) {{
+            :unlock_time => 'never',
+          }}
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:pw_backend) {
+                if el6?(facts)
+                  'cracklib'
+                else
+                  'pwquality'
+                end
+              }
+              let(:title){ auth_type }
+              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_unlock_time_never") }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
+            end
+          end
+        end
+
         context 'Generate file with SSSD and no TTY auditing' do
           # In this context, we will also verify the logic to deliver config to
           # auth.erb works for all config parameters, by setting these parameters
