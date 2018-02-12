@@ -1,4 +1,4 @@
-* Fri Fed 09 2018 Adam Yohrling <adam.yohrling@onyxpoint.com> - 6.2.0-0
+* Fri Feb 09 2018 Adam Yohrling <adam.yohrling@onyxpoint.com> - 6.2.0-0
 - Update the pam::unlock_time parameter to accept 'never' as a value per the
   man page and in accordance with the DISA STIG
 
