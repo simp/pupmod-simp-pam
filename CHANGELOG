@@ -1,3 +1,7 @@
+* Fri Fed 09 2018 Adam Yohrling <adam.yohrling@onyxpoint.com> - 6.2.0-0
+- Update the pam::unlock_time parameter to accept 'never' as a value per the
+  man page and in accordance with the DISA STIG
+
 * Wed Jan 24 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.0-0
 - Replace authconfig and authconfig-tui links to a no-op script, instead
   of removing them.  This does not break tools that use authconfig.
