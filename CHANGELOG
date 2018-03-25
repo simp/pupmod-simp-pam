@@ -1,3 +1,6 @@
+* Thu Jul 12 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.2-0
+- Add support for OEL and Puppet 5
+
 * Mon Apr 30 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.1-0
 - Allow users to change the password hash algorithm
 - Allow users to enable/disable enforcing password policies for `root`

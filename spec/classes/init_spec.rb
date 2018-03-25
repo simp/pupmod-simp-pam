@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 def el6?(facts)
-  return ['CentOS', 'RedHat'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
+  return ['CentOS', 'RedHat', 'OracleLinux'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
 end
 
 describe 'pam' do

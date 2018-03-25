@@ -25,10 +25,6 @@ before_install:
   - rm -f Gemfile.lock
 
 jobs:
-  allow_failures:
-    # https://tickets.puppetlabs.com/browse/PUP-8418
-    - env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
-
   include:
     - stage: check
       rvm: 2.4.1
@@ -87,7 +83,3 @@ jobs:
           user: simp
           password:
             secure: "B/wFlcjh1dYP6uUZBvpbEFPuhgojzCpy2Ebwb2KHEbAlltMzD5HWIeguCWdBTkKLJGiPsX4HpBq9UXQpPu1ZFb4a0dP5oyskNufon8/zozYY3IC23I3I/C2hCkyknxQK8abVW9/JLVKTX/SEX019IFoe7r/cfy3e1qUEehPV//DCdKohzmUfITa8dBE8lgwHK2e7acbhpEJ1j9C2XqnydKFKETHUOidzW4vduM6Lk0/O6ymVHEa/VNWqGpaLjhAkL3zsIOk9B8UR3wQT6sEwP0UQNi3sQyMQm2ECA0zPh3C8/YBdmQDcrrqd9Xq45hoHVZbwJI1MzA+j7yNQIfly7EqXjnvM7yhUJcMBbkb+tKdU0cnELrMgcPaKnDpqI+UpWNwmQUFbiW7R6729YSO4PVcVPOWfgZVdTqX0iuf+66SwaxTHa1DOajs6DGMIx79nPcbUwbvHiJyLyqNNYr8dI6B76ks15ReeSaoDxU1dVc/5VoSHxD6LzNKuv/PDwmRxrpXFtcj8G0fBj2qiWN9Dio/CpnhYYxnvhcg+BKsmV738yADDwJKct7riSDm/J3Z2iG8VNIHFGaH2xVy/GGC9npYay5isH9hHMKiwL4BrA75f5X95Hu+Oqoi8Uw0u18zqSgUC7y8TW9rx5izHCtxIqUhVC7Eu252t3ow75yuEkJw="
-          on:
-            tags: true
-            rvm: 2.4.1
-            condition: '($SKIP_FORGE_PUBLISH != true)'
