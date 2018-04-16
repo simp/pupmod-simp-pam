@@ -38,7 +38,7 @@ describe 'pam' do
               ocredit = -1
               minclass = 3
               maxrepeat = 2
-              maxclassrepeat = 0
+              maxclassrepeat = 3
               maxsequence = 4
               gecoscheck = 1
               EOM
