@@ -238,7 +238,7 @@ class pam (
   Integer[0]                     $cracklib_difok            = 4,
   Integer[0]                     $cracklib_maxrepeat        = 2,
   Integer[0]                     $cracklib_maxsequence      = 4,
-  Integer[0]                     $cracklib_maxclassrepeat   = 0,
+  Integer[0]                     $cracklib_maxclassrepeat   = 3,
   Boolean                        $cracklib_gecoscheck       = true,
   Boolean                        $cracklib_enforce_for_root = true,
   Boolean                        $cracklib_reject_username  = true,
