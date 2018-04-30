@@ -7,6 +7,7 @@
 # directories, you'll need to set oddjob::mkhomedir::umask.
 #
 # @param password_check_backend
+# @param cracklib_enforce_for_root
 # @param cracklib_reject_username
 # @param cracklib_difok
 # @param cracklib_maxrepeat
@@ -40,7 +41,7 @@
 # @param separator
 # @param enable_separator
 # @param content
-
+#
 define pam::auth (
   Pam::PasswordBackends  $password_check_backend    = $::pam::password_check_backend,
   Boolean                $cracklib_enforce_for_root = $::pam::cracklib_enforce_for_root,
