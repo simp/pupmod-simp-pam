@@ -1,8 +1,8 @@
 * Mon Apr 30 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.1-0
-- Allow users to change the password hash algorithm
-- Allow users to enable/disable enforcing password policies for `root`
 - Update compliance tests to work with inspec profiles and compliance engine
   enforcement.
+- Allow users to change the password hash algorithm
+- Allow users to enable/disable enforcing password policies for `root`
 
 * Mon Apr 16 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.2.1-0
 - Set the default cracklib_maxclassrepeat to 3.
