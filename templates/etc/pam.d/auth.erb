@@ -5,15 +5,18 @@
 # Build the auth section:
 # Remember: ORDER MATTERS!
 
+_even_deny_root = @even_deny_root ? " even_deny_root root_unlock_time=#{@root_unlock_time}" : ''
+
 _auth = [
   "auth     optional      pam_faildelay.so",
   "auth     required      pam_env.so"
 ]
 
 _auth << "auth     required      pam_faillock.so preauth" +
-        " #{!@display_account_lock ? 'silent' : ''}" +
-        " deny=#{@deny} even_deny_root audit unlock_time=#{@unlock_time} root_unlock_time=#{@root_unlock_time}" +
-        " fail_interval=#{@fail_interval}"
+        "#{!@display_account_lock ? ' silent' : ''}" +
+        " deny=#{@deny} audit unlock_time=#{@unlock_time}" +
+        " fail_interval=#{@fail_interval}" +
+        _even_deny_root
 
 if @name == 'fingerprint'
   _auth << 'auth     sufficient    pam_fprintd.so'
@@ -33,7 +36,7 @@ if ['system','password'].include?(@name)
 end
 
 if @name == 'password'
-  _auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} even_deny_root audit unlock_time=#{@unlock_time} root_unlock_time=#{@root_unlock_time}"
+  _auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} audit unlock_time=#{@unlock_time}" + _even_deny_root
 end
 
 _auth << "auth     requisite     pam_succeed_if.so uid >= #{@uid} quiet"
@@ -152,7 +155,8 @@ if ['system','password'].include?(@name)
     _pam_pwhistory << ' enforce_for_root'
   end
 
-  _pam_unix = "password     sufficient    pam_unix.so sha512 rounds=#{@rounds}" +
+  _pam_unix = 'password     sufficient    pam_unix.so' +
+                " #{@hash_algorithm} rounds=#{@rounds}" +
                 ' shadow try_first_pass use_authtok'
 
   if @sssd
