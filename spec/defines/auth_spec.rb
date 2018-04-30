@@ -7,8 +7,8 @@ def get_expected(filename)
   IO.read(path)
 end
 
-def el6?(facts)
-  return ['CentOS', 'RedHat'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
+def el6?(os_facts)
+  return ['CentOS', 'RedHat'].include?(os_facts[:os][:name]) && os_facts[:os][:release][:major] == '6'
 end
 
 shared_examples_for "a pam.d config file generator" do
@@ -20,10 +20,10 @@ end
 
 describe 'pam::auth' do
   context 'supported operating systems' do
-    on_supported_os.each do |os, facts|
+    on_supported_os.each do |os, os_facts|
       context "on #{os}" do
 
-        let(:facts){ facts }
+        let(:facts){ os_facts }
         let(:pre_condition){
           'class { "::pam": auth_sections => [] }'
         }
@@ -35,7 +35,7 @@ describe 'pam::auth' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) {
-                if el6?(facts)
+                if el6?(os_facts)
                   'cracklib'
                 else
                   'pwquality'
@@ -74,7 +74,7 @@ describe 'pam::auth' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) {
-                if el6?(facts)
+                if el6?(os_facts)
                   'cracklib'
                 else
                   'pwquality'
@@ -86,6 +86,52 @@ describe 'pam::auth' do
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
+            end
+          end
+        end
+
+        context 'Generate file with disabled root_unlock_time' do
+          let(:params) {{
+            :even_deny_root => false
+          }}
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title){ auth_type }
+              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.not_to contain_file(filename).with_content('even_deny_root') }
+              it { is_expected.not_to contain_file(filename).with_content('root_unlock_time') }
+            end
+          end
+        end
+
+        context 'Generate file using different hash algorithm' do
+          ['password', 'system'].each do |auth_type|
+            let(:title){ auth_type }
+            let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+            let(:params) {{
+              :hash_algorithm => 'blowfish',
+            }}
+
+            context "auth type '#{auth_type}'" do
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(/blowfish/) }
+            end
+
+            context 'in FIPS mode' do
+              let(:facts) {
+                os_facts.merge({
+                  :fips_enabled => true
+                })
+              }
+
+              it {
+                expect {
+                  should compile.with_all_deps
+                }.to raise_error(/Only sha256 and sha512/)
+              }
             end
           end
         end
@@ -126,7 +172,7 @@ describe 'pam::auth' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) {
-                if el6?(facts)
+                if el6?(os_facts)
                   'cracklib'
                 else
                   'pwquality'
@@ -152,7 +198,7 @@ describe 'pam::auth' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) {
-                if el6?(facts)
+                if el6?(os_facts)
                   'cracklib'
                 else
                   'pwquality'
@@ -177,7 +223,7 @@ describe 'pam::auth' do
             }}
 
               let(:pw_backend) {
-                if el6?(facts)
+                if el6?(os_facts)
                   'cracklib'
                 else
                   'pwquality'
@@ -197,7 +243,7 @@ describe 'pam::auth' do
             :enable_separator => false,
           }}
             let(:pw_backend) {
-              if el6?(facts)
+              if el6?(os_facts)
                 'cracklib'
               else
                 'pwquality'

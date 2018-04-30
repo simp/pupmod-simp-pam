@@ -139,8 +139,16 @@
 # @param remember_for_root
 #   Remember the last ``$remember`` passwords for the root user
 #
+# @param even_deny_root
+#   Enforce an account lockout for the ``root`` account
+#
 # @param root_unlock_time
 #   Allow access after N seconds to root account after failed attempt
+#
+#   * Has no effect if ``even_deny_root`` is not set
+#
+# @param hash_algorithm
+#   The password hashing algorithm to use
 #
 # @param rounds
 #   Set the optional number of rounds of the ``SHA256``, ``SHA512`` and
@@ -242,10 +250,10 @@ class pam (
   Boolean                        $cracklib_gecoscheck       = true,
   Boolean                        $cracklib_enforce_for_root = true,
   Boolean                        $cracklib_reject_username  = true,
-  Integer                        $cracklib_dcredit          = -1,
-  Integer                        $cracklib_ucredit          = -1,
-  Integer                        $cracklib_lcredit          = -1,
-  Integer                        $cracklib_ocredit          = -1,
+  Integer[-1]                    $cracklib_dcredit          = -1,
+  Integer[-1]                    $cracklib_ucredit          = -1,
+  Integer[-1]                    $cracklib_lcredit          = -1,
+  Integer[-1]                    $cracklib_ocredit          = -1,
   Integer[0]                     $cracklib_minclass         = 3,
   Integer[0]                     $cracklib_minlen           = 15,
   Integer[0]                     $cracklib_retry            = 3,
@@ -258,11 +266,12 @@ class pam (
   Integer[0]                     $remember                  = 24,
   Integer[0]                     $remember_retry            = 1,
   Boolean                        $remember_for_root         = true,
+  Boolean                        $even_deny_root            = true,
   Integer[0]                     $root_unlock_time          = 60,
+  Pam::HashAlgorithm             $hash_algorithm            = 'sha512',
   Integer[0]                     $rounds                    = 10000,
   Integer[0]                     $uid                       = simplib::lookup('simp_options::uid::min', { 'default_value' => pick(fact('login_defs.uid_min'), 1000) }),
-  Variant[Enum['never'],
-    Integer[0]]                  $unlock_time               = 900,
+  Pam::AccountUnlockTime         $unlock_time               = 900,
   Integer[0]                     $fail_interval             = 900,
   Boolean                        $preserve_ac               = false,
   Boolean                        $warn_if_unknown           = true,
@@ -271,14 +280,9 @@ class pam (
   Boolean                        $use_openshift             = false,
   Boolean                        $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
   Boolean                        $enable_separator          = true,
-  String                         $separator                 = ',',
-  Array[String]                  $tty_audit_users           = [ 'root' ],
-  Array[Enum[
-    'fingerprint',
-    'system',
-    'password',
-    'smartcard'
-  ]]                             $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
+  String[0]                      $separator                 = ',',
+  Array[String[0]]               $tty_audit_users           = [ 'root' ],
+  Pam::AuthSections              $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
   Optional[String]               $su_content                = undef,
   Optional[String]               $other_content             = undef,
   Optional[String]               $fingerprint_auth_content  = undef,
@@ -288,7 +292,7 @@ class pam (
   Boolean                        $enable                    = true,
   Boolean                        $enable_warning            = true,
   Boolean                        $disable_authconfig        = true,
-  String                         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
+  Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
