@@ -21,16 +21,15 @@ compliance_markup::enforcement:
     context 'when enforcing the STIG' do
       let(:hiera_yaml) { <<-EOM
 ---
-:backends:
-  - yaml
-  - simp_compliance_enforcement
-:yaml:
-  :datadir: "#{hiera_datadir(host)}"
-:simp_compliance_enforcement:
-  :datadir: "#{hiera_datadir(host)}"
-:hierarchy:
-  - default
-:logger: console
+version: 5
+hierarchy:
+  - name: Common
+    path: default.yaml
+  - name: Compliance
+    lookup_key: compliance_markup::enforcement
+defaults:
+  data_hash: yaml_data
+  datadir: "#{hiera_datadir(host)}"
   EOM
       }
 
