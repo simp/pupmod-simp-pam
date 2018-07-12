@@ -8,7 +8,7 @@ def get_expected(filename)
 end
 
 def el6?(facts)
-  return ['CentOS', 'RedHat', 'OracleLinux'].include?(os_facts[:os][:name]) && os_facts[:os][:release][:major] == '6'
+  return ['CentOS', 'RedHat', 'OracleLinux'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
 end
 
 shared_examples_for "a pam.d config file generator" do
