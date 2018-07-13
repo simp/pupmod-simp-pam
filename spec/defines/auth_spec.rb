@@ -7,8 +7,8 @@ def get_expected(filename)
   IO.read(path)
 end
 
-def el6?(os_facts)
-  return ['CentOS', 'RedHat'].include?(os_facts[:os][:name]) && os_facts[:os][:release][:major] == '6'
+def el6?(facts)
+  return ['CentOS', 'RedHat', 'OracleLinux'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
 end
 
 shared_examples_for "a pam.d config file generator" do
@@ -23,7 +23,15 @@ describe 'pam::auth' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
 
-        let(:facts){ os_facts }
+        let(:facts){
+          os_facts.merge(
+            {
+              'login_defs' => {
+                'uid_min' => 1000
+              }
+            }
+          )
+        }
         let(:pre_condition){
           'class { "::pam": auth_sections => [] }'
         }
