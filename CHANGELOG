@@ -1,3 +1,7 @@
+* Fri Jul 20 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.3.0-0
+- Added the reading of the system locale settings during the session activation
+  of users.
+
 * Thu Jul 12 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.2-0
 - Add support for OEL and Puppet 5
 

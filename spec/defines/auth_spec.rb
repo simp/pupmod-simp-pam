@@ -75,6 +75,22 @@ describe 'pam::auth' do
           end
         end
 
+        context 'Generate file without locale_file' do
+          let(:params) {{
+            :locale_file => :undef
+          }}
+
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title){ auth_type }
+              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).without_content(%r(/envfile=.*locale/)) }
+            end
+          end
+        end
+
         context 'Generate file using never param for unlock_time' do
           let(:params) {{
             :unlock_time => 'never',

@@ -1,2 +1,3 @@
 ---
 pam::password_check_backend: 'pwquality'
+pam::locale_file: '/etc/locale.conf'

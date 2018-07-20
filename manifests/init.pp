@@ -12,6 +12,11 @@
 #   * The default is based on the OS being targeted and is pulled from module
 #     data
 #
+# @param locale_file
+#   The path to the `locale` configuration file on the system
+#
+#   * Explicitly set to `undef` to disable
+#
 # @param cracklib_difok
 #   The number of character changes between the old password and the new
 #   password that are enough to accept the new password
@@ -243,6 +248,7 @@
 class pam (
   # Data in modules
   Pam::PasswordBackends          $password_check_backend,
+  Optional[Stdlib::Absolutepath] $locale_file               = undef,
   Integer[0]                     $cracklib_difok            = 4,
   Integer[0]                     $cracklib_maxrepeat        = 2,
   Integer[0]                     $cracklib_maxsequence      = 4,
