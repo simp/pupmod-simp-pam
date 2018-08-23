@@ -12,6 +12,14 @@ _auth = [
   "auth     required      pam_env.so"
 ]
 
+
+
+if ['system','password'].include?(@name)
+  if @sssd
+    _auth << 'auth     sufficient    pam_sss.so forward_pass'
+  end
+end
+
 _auth << "auth     required      pam_faillock.so preauth" +
         "#{!@display_account_lock ? ' silent' : ''}" +
         " deny=#{@deny} audit unlock_time=#{@unlock_time}" +
@@ -27,15 +35,7 @@ if @name == 'smartcard'
 end
 
 if ['system','password'].include?(@name)
-  if @sssd
-    _auth << 'auth     sufficient    pam_sss.so forward_pass'
-    _auth << 'auth     sufficient    pam_unix.so try_first_pass'
-  else
-    _auth << 'auth     sufficient    pam_unix.so try_first_pass'
-  end
-end
-
-if @name == 'password'
+  _auth << 'auth     sufficient    pam_unix.so try_first_pass'
   _auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} audit unlock_time=#{@unlock_time}" + _even_deny_root
 end
 
@@ -54,8 +54,8 @@ if @use_netgroups
   end
 end
 
-_account << 'account     required      pam_unix.so broken_shadow'
 _account << 'account     required      pam_faillock.so'
+_account << 'account     required      pam_unix.so broken_shadow'
 
 if @sssd
   if @use_openshift
