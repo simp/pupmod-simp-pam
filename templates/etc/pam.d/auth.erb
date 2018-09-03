@@ -189,6 +189,10 @@ if ['system','password','fingerprint'].include?(@name) && !@tty_audit_users.empt
   _session << "session      required      pam_tty_audit.so disable=* enable=#{@tty_audit_users.join(',')}"
 end
 
+if @locale_file
+  _session << "session      optional      pam_env.so readenv=1 envfile=#{@locale_file}"
+end
+
 _session <<  'session      sufficient    pam_succeed_if.so user = root quiet'
 
 if @use_openshift
