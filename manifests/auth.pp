@@ -107,7 +107,7 @@ define pam::auth (
     $_content = $content
   }
   else {
-    $_top_var = getvar("iptables::${name}")
+    $_top_var = getvar("pam::${name}_auth_content")
     if $_top_var {
       $_content = $_top_var
     }
