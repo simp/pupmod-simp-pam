@@ -41,6 +41,10 @@
 # @param separator
 # @param enable_separator
 # @param content
+# @param auth_extra
+# @param auth_post
+# @param password_post
+# @param session_post
 #
 define pam::auth (
   Pam::PasswordBackends          $password_check_backend    = $::pam::password_check_backend,
@@ -78,7 +82,11 @@ define pam::auth (
   Array[String[0]]               $tty_audit_users           = $::pam::tty_audit_users,
   String[0]                      $separator                 = $::pam::separator,
   Boolean                        $enable_separator          = $::pam::enable_separator,
-  Optional[String]               $content                   = undef
+  Optional[String]               $content                   = undef,
+  Optional[Array[String]]        $auth_extra                = getvar("pam::${name}_auth_extra"),
+  Optional[Array[String]]        $auth_post                 = getvar("pam::${name}_auth_post"),
+  Optional[Array[String]]        $password_post             = getvar("pam::${name}_password_post"),
+  Optional[Array[String]]        $session_post              = getvar("pam::${name}_session_post"),
 ) {
   include '::oddjob::mkhomedir'
 

@@ -220,6 +220,23 @@
 #   The content that should be used to fill ``/etc/pam.d/smartcard_auth``
 #   instead of the templated content
 #
+# @param fingerprint_auth_extra
+# @param system_auth_extra
+# @param password_auth_extra
+# @param smartcard_auth_extra
+# @param fingerprint_auth_post
+# @param system_auth_post
+# @param password_auth_post
+# @param smartcard_auth_post
+# @param fingerprint_password_post
+# @param system_password_post
+# @param password_password_post
+# @param smartcard_password_post
+# @param fingerprint_session_post
+# @param system_session_post
+# @param password_session_post
+# @param smartcard_session_post
+#
 # @param enable
 #   If you have included this module but want it to stop managing your
 #   configuration files set this to ``false``
@@ -295,6 +312,22 @@ class pam (
   Optional[String]               $system_auth_content       = undef,
   Optional[String]               $password_auth_content     = undef,
   Optional[String]               $smartcard_auth_content    = undef,
+  Optional[Array[String]]        $fingerprint_auth_extra    = undef,
+  Optional[Array[String]]        $system_auth_extra         = undef,
+  Optional[Array[String]]        $password_auth_extra       = undef,
+  Optional[Array[String]]        $smartcard_auth_extra      = undef,
+  Optional[Array[String]]        $fingerprint_auth_post     = undef,
+  Optional[Array[String]]        $system_auth_post          = undef,
+  Optional[Array[String]]        $password_auth_post        = undef,
+  Optional[Array[String]]        $smartcard_auth_post       = undef,
+  Optional[Array[String]]        $fingerprint_password_post = undef,
+  Optional[Array[String]]        $system_password_post      = undef,
+  Optional[Array[String]]        $password_password_post    = undef,
+  Optional[Array[String]]        $smartcard_password_post   = undef,
+  Optional[Array[String]]        $fingerprint_session_post  = undef,
+  Optional[Array[String]]        $system_session_post       = undef,
+  Optional[Array[String]]        $password_session_post     = undef,
+  Optional[Array[String]]        $smartcard_session_post    = undef,
   Boolean                        $enable                    = true,
   Boolean                        $enable_warning            = true,
   Boolean                        $disable_authconfig        = true,

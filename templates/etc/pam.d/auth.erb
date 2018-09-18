@@ -27,6 +27,12 @@ if @name == 'smartcard'
 end
 
 if ['system','password'].include?(@name)
+  unless @auth_extra.nil?
+    @auth_extra.each do |line|
+      _auth << "auth     #{line}"
+    end
+  end
+
   if @sssd
     _auth << 'auth     sufficient    pam_sss.so forward_pass'
     _auth << 'auth     sufficient    pam_unix.so try_first_pass'
@@ -40,6 +46,13 @@ if @name == 'password'
 end
 
 _auth << "auth     requisite     pam_succeed_if.so uid >= #{@uid} quiet"
+
+unless @auth_post.nil?
+  @auth_post.each do |line|
+    _auth << "auth     #{line}"
+  end
+end
+
 _auth << 'auth     required      pam_deny.so'
 
 # Build the account section:
@@ -169,6 +182,12 @@ if ['system','password'].include?(@name)
   end
 end
 
+unless @password_post.nil?
+  @password_post.each do |line|
+    _password << "password     #{line}"
+  end
+end
+
 if @name == 'smartcard'
   _password << 'password     required      pam_pkcs11.so'
 else
@@ -209,6 +228,12 @@ if @sssd
   _session << 'session      optional      pam_sss.so'
 else
   _session << 'session      required      pam_unix.so'
+end
+
+unless @session_post.nil?
+  @session_post.each do |line|
+    _session << "session      #{line}"
+  end
 end
 
 _session << 'session      optional      pam_oddjob_mkhomedir.so silent'
