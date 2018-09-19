@@ -1,3 +1,10 @@
+<%
+  if ENV['BEAKER_HYPERVISOR']
+    hypervisor = ENV['BEAKER_HYPERVISOR']
+  else
+    hypervisor = 'vagrant'
+  end
+-%>
 HOSTS:
   oel6:
     roles:
@@ -24,5 +31,8 @@ HOSTS:
         gpgkeys:
           - https://getfedora.org/static/352C64E5.txt
 CONFIG:
+<% if ENV['BEAKER_PUPPET_COLLECTION'] -%>
+  puppet_collection: <%= ENV['BEAKER_PUPPET_COLLECTION'] %>
+<% end -%>
   log_level: verbose
   type: aio

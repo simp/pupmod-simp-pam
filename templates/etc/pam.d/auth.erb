@@ -33,9 +33,6 @@ if ['system','password'].include?(@name)
   else
     _auth << 'auth     sufficient    pam_unix.so try_first_pass'
   end
-end
-
-if @name == 'password'
   _auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} audit unlock_time=#{@unlock_time}" + _even_deny_root
 end
 

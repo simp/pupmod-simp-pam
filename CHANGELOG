@@ -1,3 +1,6 @@
+* Thu Oct 04 2018 Zach <turtles.be.the.best@gmail.com> - 6.3.0-0
+- Fix 'faillock' bug in system-auth
+
 * Tue Sep 11 2018 Steven Pritchard <steven.pritchard@onyxpoint.com> - 6.3.0-0
 - Fix *_auth_content pam class parameters
 
