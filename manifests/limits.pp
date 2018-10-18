@@ -9,6 +9,7 @@ class pam::limits {
     owner          => 'root',
     group          => 'root',
     mode           => '0640',
+    order          => 'numeric',
     ensure_newline => true,
     warn           => true
   }
