@@ -1,0 +1,4 @@
+# This file is managed by Puppet. DO NOT EDIT.
+*	soft	nproc	50
+test	soft	nproc	20
+test	hard	nproc	50
