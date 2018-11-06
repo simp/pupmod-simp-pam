@@ -13,7 +13,7 @@ HOSTS:
       - el7
       - el7-server
     platform:   el-7-x86_64
-    box:        elastic/oel-7-x86_64
+    box:        onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
   oel7-client:
     roles:
@@ -21,7 +21,7 @@ HOSTS:
       - el7
       - el7-client
     platform:   el-7-x86_64
-    box:        elastic/oel-7-x86_64
+    box:        onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
   oel6-server:
     roles:
@@ -29,7 +29,7 @@ HOSTS:
       - el6
       - el6-server
     platform:   el-6-x86_64
-    box:        elastic/oel-6-x86_64
+    box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
   oel6-client:
     roles:
@@ -37,7 +37,7 @@ HOSTS:
       - el6
       - el6-client
     platform:   el-6-x86_64
-    box:        elastic/oel-6-x86_64
+    box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
 CONFIG:
   log_level:       verbose
