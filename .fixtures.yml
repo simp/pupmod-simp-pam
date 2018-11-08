@@ -4,7 +4,9 @@ fixtures:
     auditd: https://github.com/simp/pupmod-simp-auditd
     augeasproviders_core: https://github.com/simp/augeasproviders_core
     augeasproviders_ssh: https://github.com/simp/augeasproviders_ssh
-    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
+    compliance_markup:
+      repo: "https://github.com/simp/pupmod-simp-compliance_markup"
+      branch: "testing_hotfix_06062019"
     concat: https://github.com/simp/puppetlabs-concat
     haveged: https://github.com/simp/pupmod-simp-haveged
     iptables: https://github.com/simp/pupmod-simp-iptables
