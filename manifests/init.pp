@@ -172,6 +172,14 @@
 #   If you make it to the ``other`` PAM configuration file, then provide a
 #   warning that the login method was uncaught by other PAM stacks
 #
+# @param oath  Configures  to use pam_oath TOTP in the system-auth pam stack.
+#   Inherits from simp_options::oath, defaults to false if not found. 
+#   WARNING: pupmod-simp-oath is a dependency of this option. If this is 
+#            set to true without the oath module, you will be unable to
+#            log in locally!
+#
+# @param oath_window  Sets the TOTP window (Defined in RFC 6238 section 5.2)
+#
 # @param deny_if_unknown
 #   If true, deny any access to an application that falls all the way through
 #   the PAM stack to ``other``
@@ -266,6 +274,8 @@ class pam (
   Optional[Array[String,1]]      $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
   Boolean                        $rm_pwquality_conf_d       = true,
+  Boolean                        $oath                      = simplib::lookup('simp_options::oath', { 'default_value'           => false }),
+  Integer[0]                     $oath_window               = 1,
   Integer[0]                     $deny                      = 5,
   Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
@@ -276,7 +286,7 @@ class pam (
   Integer[0]                     $root_unlock_time          = 60,
   Pam::HashAlgorithm             $hash_algorithm            = 'sha512',
   Integer[0]                     $rounds                    = 10000,
-  Integer[0]                     $uid                       = simplib::lookup('simp_options::uid::min', { 'default_value' => pick(fact('login_defs.uid_min'), 1000) }),
+  Integer[0]                     $uid                       = simplib::lookup('simp_options::uid::min', { 'default_value'       => pick(fact('login_defs.uid_min'), 1000) }),
   Pam::AccountUnlockTime         $unlock_time               = 900,
   Integer[0]                     $fail_interval             = 900,
   Boolean                        $preserve_ac               = false,
@@ -284,7 +294,7 @@ class pam (
   Boolean                        $deny_if_unknown           = true,
   Boolean                        $use_netgroups             = false,
   Boolean                        $use_openshift             = false,
-  Boolean                        $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
+  Boolean                        $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value'           => false}),
   Boolean                        $enable_separator          = true,
   String[0]                      $separator                 = ',',
   Array[String[0]]               $tty_audit_users           = [ 'root' ],
@@ -300,6 +310,8 @@ class pam (
   Boolean                        $disable_authconfig        = true,
   Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
 ) {
+
+
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
       simplib::assert_metadata( $module_name )

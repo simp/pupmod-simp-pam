@@ -26,6 +26,15 @@ if @name == 'smartcard'
   _auth << 'auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only'
 end
 
+if ['system'].include?(@name)
+  if @oath
+    _auth << 'auth     [success=3 default=ignore] pam_listfile.so item=group sense=allow file=/etc/liboath/exclude_groups.oath'
+    _auth << 'auth     [success=2 default=ignore] pam_listfile.so item=user sense=allow file=/etc/liboath/exclude_users.oath'
+    _auth << "auth     [success=1 default=bad]    pam_oath.so usersfile=/etc/liboath/users.oath window=#{@oath_window}"
+    _auth << 'auth     requisite     pam_deny.so'
+  end
+end
+
 if ['system','password'].include?(@name)
   if @sssd
     _auth << 'auth     sufficient    pam_sss.so forward_pass'
@@ -33,7 +42,7 @@ if ['system','password'].include?(@name)
   else
     _auth << 'auth     sufficient    pam_unix.so try_first_pass'
   end
-  _auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} audit unlock_time=#{@unlock_time}" + _even_deny_root
+    _auth << "auth     [default=die] pam_faillock.so authfail deny=#{@deny} audit unlock_time=#{@unlock_time}" + _even_deny_root
 end
 
 _auth << "auth     requisite     pam_succeed_if.so uid >= #{@uid} quiet"

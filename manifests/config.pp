@@ -103,5 +103,5 @@ class pam::config {
     }
   }
 
-  if ! empty($::pam::auth_sections) { ::pam::auth { $::pam::auth_sections: } }
+  if ! empty($::pam::auth_sections) { ::pam::auth { $::pam::auth_sections: }}
 }

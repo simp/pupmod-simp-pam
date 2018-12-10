@@ -1,0 +1,38 @@
+#!/usr/bin/expect -f
+
+set user [lindex $argv 0]
+set key [lindex $argv 1]
+set pass [lindex $argv 2]
+set output [exec oathtool --totp $key]
+set timeout 10
+
+spawn su -l $user
+
+expect {
+    "*One-time password*" {
+        send "$output\r"
+        expect "*assword:*" {
+            send_user "password (for $user)"
+            send "$pass\r"
+            exp_continue
+        }
+        exp_continue
+    } "*su: incorrect password*" {
+        send_user "Bad password or error in pam stack on EL6\n"
+        send_user "TOTP test: failure\n"
+        exit 1
+    } "*su: Authentication failure*" {
+        send_user "Invalid TOTP code\n"
+        send_user "TOTP test: failure\n"
+        exit 1
+    } "*su: Permission denied*" {
+        send_user "Invalid password\n"
+        send_user "TOTP test: failure\n"
+        exit 1
+    } -re "$user@.+\[\$#]*" {
+        send_user "\nTOTP test: success\n"
+        exit 0
+    } 
+}
+send_user "TOTP test: failure\n"
+exit 1
