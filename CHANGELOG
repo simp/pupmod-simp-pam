@@ -1,3 +1,7 @@
+* Mon Mar 04 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.3.1-0
+- Expanded the upper limit of the concat and stdlib Puppet module versions
+- Updated a URL in the README.md
+
 * Thu Oct 04 2018 Zach <turtles.be.the.best@gmail.com> - 6.3.0-0
 - Fix 'faillock' bug in system-auth
 - Update badges and contribution guide URL in README.md
