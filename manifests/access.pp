@@ -24,13 +24,17 @@
 #       baddude:
 #         permission: '-'
 #
+# @param access_file_mode
+#   File mode for /etc/security/access.conf
+#
 # @see access.conf(5)
 #
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class pam::access (
-  Boolean        $default_deny = true,
-  Optional[Hash] $users        = undef
+  Boolean        $default_deny     = true,
+  Optional[Hash] $users            = undef,
+  String         $access_file_mode = '0644',
 ){
 
   if $default_deny {
@@ -40,7 +44,7 @@ class pam::access (
   concat { '/etc/security/access.conf':
     owner          => 'root',
     group          => 'root',
-    mode           => '0644',
+    mode           => $access_file_mode,
     ensure_newline => true,
     warn           => true
   }
