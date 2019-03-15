@@ -1,3 +1,8 @@
+* Fri Mar 15 2019 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 6.4.0-0
+- Added pam::access::access_file_mode parameter to allow users to manage
+  access.conf file permissions
+- Updated lower bound on stdlib to 4.22.0 to add Filemode strong type support
+
 * Mon Mar 04 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.3.1-0
 - Expanded the upper limit of the concat and stdlib Puppet module versions
 - Updated a URL in the README.md
