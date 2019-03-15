@@ -32,9 +32,9 @@
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class pam::access (
-  Boolean        $default_deny     = true,
-  Optional[Hash] $users            = undef,
-  String         $access_file_mode = '0644',
+  Boolean          $default_deny     = true,
+  Optional[Hash]   $users            = undef,
+  Stdlib::Filemode $access_file_mode = '0644',
 ){
 
   if $default_deny {
