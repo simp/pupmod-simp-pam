@@ -1,4 +1,4 @@
-* Mon Apr 01 2019 Zach <turtles.be.the.best@gmail.com> - 6.5.0-0
+* Tue Apr 16 2019 Zach <turtles.be.the.best@gmail.com> - 6.5.0-0
 - Add totp support through pam_oath
 
 * Fri Mar 15 2019 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 6.4.0-0
