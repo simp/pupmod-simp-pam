@@ -172,6 +172,15 @@
 #   If you make it to the ``other`` PAM configuration file, then provide a
 #   warning that the login method was uncaught by other PAM stacks
 #
+# @param oath  Configures  to use pam_oath TOTP in the system-auth pam stack.
+#   **EXPERIMENTAL**: Inherits from simp_options::oath, defaults to false if
+#   not found.
+#
+#   * WARNING: pupmod-simp-oath is a dependency of this option. If this is set
+#     to ``true`` without the oath module, you will be unable to log in locally!
+#
+# @param oath_window  Sets the TOTP window (Defined in RFC 6238 section 5.2)
+#
 # @param deny_if_unknown
 #   If true, deny any access to an application that falls all the way through
 #   the PAM stack to ``other``
@@ -266,6 +275,8 @@ class pam (
   Optional[Array[String,1]]      $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
   Boolean                        $rm_pwquality_conf_d       = true,
+  Boolean                        $oath                      = simplib::lookup('simp_options::oath', { 'default_value' => false }),
+  Integer[0]                     $oath_window               = 1,
   Integer[0]                     $deny                      = 5,
   Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
@@ -300,6 +311,8 @@ class pam (
   Boolean                        $disable_authconfig        = true,
   Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
 ) {
+
+
   if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
     if $enable {
       simplib::assert_metadata( $module_name )

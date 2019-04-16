@@ -280,6 +280,24 @@ describe 'pam::auth' do
             it_should_behave_like "a pam.d config file generator"
             it { is_expected.to contain_file(filename).with_content(file_content) }
         end
+        context 'Generate file with when oath == true' do
+          let(:params){{
+            :oath => true,
+          }}
+            let(:pw_backend) {
+              if el6?(os_facts)
+                'cracklib'
+              else
+                'pwquality'
+              end
+            }
+            let(:title){ 'system' }
+            let(:filename){ "/etc/pam.d/system-auth" }
+            let(:file_content) { get_expected("#{pw_backend}-system-auth_oath_enabled") }
+
+            it_should_behave_like "a pam.d config file generator"
+            it { is_expected.to contain_file(filename).with_content(file_content) }
+        end
       end
     end
   end

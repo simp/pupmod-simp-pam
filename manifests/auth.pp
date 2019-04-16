@@ -21,6 +21,8 @@
 # @param cracklib_minclass
 # @param cracklib_minlen
 # @param cracklib_retry
+# @param oath
+# @param oath_window
 # @param deny
 # @param display_account_lock
 # @param fail_interval
@@ -78,9 +80,14 @@ define pam::auth (
   Array[String[0]]               $tty_audit_users           = $::pam::tty_audit_users,
   String[0]                      $separator                 = $::pam::separator,
   Boolean                        $enable_separator          = $::pam::enable_separator,
+  Boolean                        $oath                      = $::pam::oath,
+  Integer[0]                     $oath_window               = $::pam::oath_window,
   Optional[String]               $content                   = undef
 ) {
   include '::oddjob::mkhomedir'
+  if $oath == true {
+    simplib::assert_optional_dependency($module_name, 'simp/oath')
+  }
 
   if fact('fips_enabled') {
     unless $hash_algorithm =~ Enum['sha256', 'sha512'] {
