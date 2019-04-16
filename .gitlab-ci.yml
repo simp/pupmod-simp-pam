@@ -185,17 +185,17 @@ pup5.5.7-oel-fips:
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
 
-pup5.5.7-faillock:
+pup5.5.7-security_modules:
   <<: *pup_5_5_7
   <<: *acceptance_base
   script:
-    - 'bundle exec rake beaker:suites[faillock]'
+    - 'bundle exec rake beaker:suites[security_modules]'
 
-pup5.5.7-faillock-fips:
+pup5.5.7-security_modules-fips:
   <<: *pup_5_5_7
   <<: *acceptance_base
   script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[faillock]'
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[security_modules]'
 
 pup5.5.7-oel:
   <<: *pup_5_5_7
@@ -210,18 +210,18 @@ pup5.5.7-oel-fips:
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
 
-pup5.5.7-oel-faillock:
+pup5.5.7-oel-security_modules:
   <<: *pup_5_5_7
   <<: *acceptance_base
   script:
-    - 'bundle exec rake beaker:suites[faillock,oel]'
+    - 'bundle exec rake beaker:suites[security_modules,oel]'
 
-pup5.5.7-oel-faillock-fips:
+pup5.5.7-oel-security_modules-fips:
   <<: *pup_5_5_7
   <<: *acceptance_base
   <<: *only_with_SIMP_FULL_MATRIX
   script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[faillock,oel]'
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[security_modules,oel]'
 
 pup5.5.7-compliance-fips:
   <<: *pup_5_5_7
