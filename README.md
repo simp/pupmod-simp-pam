@@ -6,6 +6,25 @@
 
 #### Table of Contents
 
+<!-- vim-markdown-toc GFM -->
+
+* [Overview](#overview)
+* [This is a SIMP module](#this-is-a-simp-module)
+* [Module Description](#module-description)
+* [Setup](#setup)
+  * [Setup Requirements](#setup-requirements)
+  * [What ``pam`` Affects](#what-pam-affects)
+* [Usage](#usage)
+  * [Basic Usage](#basic-usage)
+  * [Restricting System Logins (pam_access)](#restricting-system-logins-pam_access)
+    * [Managing System Access](#managing-system-access)
+  * [Restricting Resource Usage (pam_limits)](#restricting-resource-usage-pam_limits)
+  * [Restricting ``su`` to the ``wheel`` Group](#restricting-su-to-the-wheel-group)
+* [Development](#development)
+  * [Acceptance tests](#acceptance-tests)
+
+<!-- vim-markdown-toc -->
+
 ## Overview
 
 This module configures PAM in an authoritative, but flexible, manner.
