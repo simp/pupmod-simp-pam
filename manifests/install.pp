@@ -1,4 +1,4 @@
-# Install the required PAM packages
+# @summary Install the required PAM packages
 #
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #

@@ -5,25 +5,23 @@
 
 **Classes**
 
-* [`pam`](#pam): This class ensures that reasonable PAM security options are applied.  It also takes into account the global SIMP settings for LDAP and SSSD. 
-* [`pam::access`](#pamaccess): Set up ``/etc/security/access.conf`` with a default to allow root to login locally.  Use ``pam::access::rule`` to manage ``access.conf`` entr
-* [`pam::access::default_deny`](#pamaccessdefault_deny): Add a "default deny" rule to ``pam_access``  Always allow ``root`` locally for safety
+* [`pam`](#pam): Ensure that reasonable PAM security options are applied.
+* [`pam::access`](#pamaccess): Set up ``/etc/security/access.conf`` with a default to allow root to login locally.
+* [`pam::access::default_deny`](#pamaccessdefault_deny): Add a "default deny" rule to ``pam_access``
 * [`pam::config`](#pamconfig): Configuration class called from pam.
 * [`pam::install`](#paminstall): Install the required PAM packages
-* [`pam::limits`](#pamlimits): Set up ``/etc/security/limits.conf``  Add entries with ``pam::limits::rule``
+* [`pam::limits`](#pamlimits): Set up ``/etc/security/limits.conf``
 * [`pam::wheel`](#pamwheel): Enable wheel restrictions for su access
 
 **Defined types**
 
-* [`pam::access::rule`](#pamaccessrule): Set up entries in ``/etc/security/access.conf``  These entries are the ``permission:users:origins`` sets as defined in ``access.conf(5)``.
-* [`pam::auth`](#pamauth): Set up the various -auth files in /etc/pam.d.  This is only meant to be called via the main pam class. Documentation is identical to that in 
-* [`pam::limits::rule`](#pamlimitsrule): These entries are the ``domain type item value`` resource limiting sets as defined in ``limits.conf(5)``.  Be aware that order matters and th
+* [`pam::access::rule`](#pamaccessrule): Set up entries in ``/etc/security/access.conf``
+* [`pam::auth`](#pamauth): Set up the various -auth files in /etc/pam.d.
+* [`pam::limits::rule`](#pamlimitsrule): ``domain type item value`` resource limiting sets as defined in ``limits.conf(5)``.
 
 ## Classes
 
 ### pam
-
-This class ensures that reasonable PAM security options are applied.
 
 It also takes into account the global SIMP settings for LDAP and SSSD.
 
@@ -106,7 +104,7 @@ Default value: 3
 
 Data type: `Boolean`
 
-Check whether the words from the GECOS field (usualy full name of the user)
+Check whether the words from the GECOS field (usually full name of the user)
 longer than 3 characters in straight or reversed form are contained in the
 new password
 
@@ -217,7 +215,7 @@ Default value: 3
 
 ##### `cracklib_badwords`
 
-Data type: `Optional[Array[String,1]]`
+Data type: `Optional[Array[String[1],1]]`
 
 Array of words that must not be contained in the password.
 These are additional words to the cracklib dictionary check.
@@ -250,6 +248,14 @@ Data type: `Integer[0]`
 The number of failed attempts before PAM denies a user from logging in
 
 Default value: 5
+
+##### `faillock`
+
+Data type: `Boolean`
+
+Enable or disable the use of ``faillock``
+
+Default value: `true`
 
 ##### `display_account_lock`
 
@@ -340,7 +346,7 @@ Default value: 10000
 
 Data type: `Integer[0]`
 
-Allow user logins for userse with UID higher than N
+Allow user logins for users with UID higher than N
 
 Default value: simplib::lookup('simp_options::uid::min', { 'default_value' => pick(fact('login_defs.uid_min'), 1000) })
 
@@ -553,9 +559,6 @@ Default value: simplib::lookup('simp_options::package_ensure', { 'default_value'
 
 ### pam::access
 
-Set up ``/etc/security/access.conf`` with a default to allow root to login
-locally.
-
 Use ``pam::access::rule`` to manage ``access.conf`` entries and remember
 that **order matters** (first match wins)!
 
@@ -606,8 +609,6 @@ Default value: '0644'
 
 ### pam::access::default_deny
 
-Add a "default deny" rule to ``pam_access``
-
 Always allow ``root`` locally for safety
 
 ### pam::config
@@ -619,8 +620,6 @@ Configuration class called from pam.
 Install the required PAM packages
 
 ### pam::limits
-
-Set up ``/etc/security/limits.conf``
 
 Add entries with ``pam::limits::rule``
 
@@ -640,7 +639,7 @@ The following parameters are available in the `pam::wheel` class.
 
 ##### `wheel_group`
 
-Data type: `String`
+Data type: `String[1]`
 
 What group should be the ``wheel`` equivalent
 
@@ -661,21 +660,19 @@ Data type: `Boolean`
 Whether or not to configure things in such a way that the ``openshift``
 puppet code is compatible
 
-Default value: $::pam::use_openshift
+Default value: $pam::use_openshift
 
 ##### `content`
 
-Data type: `Optional[String]`
+Data type: `Optional[String[1]]`
 
 Optional custom content for file
 
-Default value: $::pam::su_content
+Default value: $pam::su_content
 
 ## Defined types
 
 ### pam::access::rule
-
-Set up entries in ``/etc/security/access.conf``
 
 These entries are the ``permission:users:origins`` sets as defined in
 ``access.conf(5)``.
@@ -791,8 +788,6 @@ order by name
 Default value: 1000
 
 ### pam::auth
-
-Set up the various -auth files in /etc/pam.d.
 
 This is only meant to be called via the main pam class. Documentation is
 identical to that in the pam class.
@@ -947,6 +942,14 @@ Data type: `Integer[0]`
 
 
 Default value: $::pam::deny
+
+##### `faillock`
+
+Data type: `Boolean`
+
+
+
+Default value: $::pam::faillock
 
 ##### `display_account_lock`
 
@@ -1109,9 +1112,6 @@ Data type: `Optional[Stdlib::Absolutepath]`
 Default value: $::pam::locale_file
 
 ### pam::limits::rule
-
-These entries are the ``domain type item value`` resource limiting sets as
-defined in ``limits.conf(5)``.
 
 Be aware that order matters and the **LAST** item that matches in the
 ``limits.conf`` file will take effect.

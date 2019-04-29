@@ -1,5 +1,4 @@
-# Set up ``/etc/security/access.conf`` with a default to allow root to login
-# locally.
+# @summary Set up ``/etc/security/access.conf`` with a default to allow root to login locally.
 #
 # Use ``pam::access::rule`` to manage ``access.conf`` entries and remember
 # that **order matters** (first match wins)!
@@ -29,7 +28,7 @@
 #
 # @see access.conf(5)
 #
-# @author Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
 class pam::access (
   Boolean          $default_deny     = true,
@@ -38,7 +37,7 @@ class pam::access (
 ){
 
   if $default_deny {
-    include '::pam::access::default_deny'
+    include 'pam::access::default_deny'
   }
 
   concat { '/etc/security/access.conf':

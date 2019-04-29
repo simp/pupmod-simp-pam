@@ -1,4 +1,4 @@
-# Set up the various -auth files in /etc/pam.d.
+# @summary Set up the various -auth files in /etc/pam.d.
 #
 # This is only meant to be called via the main pam class. Documentation is
 # identical to that in the pam class.
@@ -24,6 +24,7 @@
 # @param oath
 # @param oath_window
 # @param deny
+# @param faillock
 # @param display_account_lock
 # @param fail_interval
 # @param remember
@@ -44,6 +45,8 @@
 # @param enable_separator
 # @param content
 #
+# @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
+#
 define pam::auth (
   Pam::PasswordBackends          $password_check_backend    = $::pam::password_check_backend,
   Optional[Stdlib::Absolutepath] $locale_file               = $::pam::locale_file,
@@ -62,6 +65,7 @@ define pam::auth (
   Optional[Integer[0]]           $cracklib_minlen           = $::pam::cracklib_minlen,
   Integer[0]                     $cracklib_retry            = $::pam::cracklib_retry,
   Integer[0]                     $deny                      = $::pam::deny,
+  Boolean                        $faillock                  = $::pam::faillock,
   Boolean                        $display_account_lock      = $::pam::display_account_lock,
   Integer[0]                     $fail_interval             = $::pam::fail_interval,
   Integer[0]                     $remember                  = $::pam::remember,
@@ -119,7 +123,47 @@ define pam::auth (
       $_content = $_top_var
     }
     else {
-      $_content = template("${module_name}/etc/pam.d/auth.erb")
+      $_content = epp("${module_name}/etc/pam.d/auth.epp", {
+        name                      => $name,
+        password_check_backend    => $password_check_backend,
+        locale_file               => $locale_file,
+        cracklib_enforce_for_root => $cracklib_enforce_for_root,
+        cracklib_reject_username  => $cracklib_reject_username,
+        cracklib_difok            => $cracklib_difok,
+        cracklib_maxrepeat        => $cracklib_maxrepeat,
+        cracklib_maxsequence      => $cracklib_maxsequence,
+        cracklib_maxclassrepeat   => $cracklib_maxclassrepeat,
+        cracklib_gecoscheck       => $cracklib_gecoscheck,
+        cracklib_dcredit          => $cracklib_dcredit,
+        cracklib_ucredit          => $cracklib_ucredit,
+        cracklib_lcredit          => $cracklib_lcredit,
+        cracklib_ocredit          => $cracklib_ocredit,
+        cracklib_minclass         => $cracklib_minclass,
+        cracklib_minlen           => $cracklib_minlen,
+        cracklib_retry            => $cracklib_retry,
+        deny                      => $deny,
+        faillock                  => $faillock,
+        display_account_lock      => $display_account_lock,
+        fail_interval             => $fail_interval,
+        remember                  => $remember,
+        remember_retry            => $remember_retry,
+        remember_for_root         => $remember_for_root,
+        even_deny_root            => $even_deny_root,
+        root_unlock_time          => $root_unlock_time,
+        hash_algorithm            => $hash_algorithm,
+        rounds                    => $rounds,
+        uid                       => $uid,
+        unlock_time               => $unlock_time,
+        preserve_ac               => $preserve_ac,
+        use_netgroups             => $use_netgroups,
+        use_openshift             => $use_openshift,
+        sssd                      => $sssd,
+        tty_audit_users           => $tty_audit_users,
+        separator                 => $separator,
+        enable_separator          => $enable_separator,
+        oath                      => $oath,
+        oath_window               => $oath_window
+      })
     }
   }
 
