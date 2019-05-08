@@ -52,8 +52,7 @@ else {
 -%>
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
-<%
-if $faillock {
+<% if $faillock {
   if $display_account_lock {
     $_display_account_lock = ''
   }
@@ -77,10 +76,10 @@ auth     requisite     pam_deny.so
 <% } -%>
 <% if $name in ['system', 'password'] { -%>
 <%   if $sssd { -%>
-auth     sufficient    pam_sss.so forward_pass
-auth     sufficient    pam_unix.so try_first_pass
+auth     [success=2 default=ignore] pam_sss.so forward_pass
+auth     required      pam_unix.so try_first_pass
 <%   } else { -%>
-auth     sufficient    pam_unix.so try_first_pass
+auth     [success=1 default=ignore] pam_unix.so try_first_pass
 <%   } -%>
 <%   if $faillock { -%>
 auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
@@ -97,10 +96,10 @@ account     required      pam_access.so listsep=<%= $separator %> accessfile=/et
 account     required      pam_access.so accessfile=/etc/security/access.conf
 <%   } -%>
 <% } -%>
-account     required      pam_unix.so broken_shadow
 <% if $faillock { -%>
 account     required      pam_faillock.so
 <% } -%>
+account     required      pam_unix.so broken_shadow
 <% if $sssd { -%>
 <%   if $use_openshift { -%>
 account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user

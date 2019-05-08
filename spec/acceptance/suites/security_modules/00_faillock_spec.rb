@@ -88,12 +88,12 @@ describe 'pam check faillock' do
         end
 
       end
-      
+
       context "Test /etc/pam.d/password-auth faillock through ssh" do
 
         let(:test_user) { 'tst0_usr' }
         let(:vagrant_user) { 'vagrant' }
-        
+
         it 'activate faillock for test user over ssh' do
           5.times do
           on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", :acceptable_exit_codes => [255])
@@ -114,7 +114,7 @@ describe 'pam check faillock' do
         let(:test_user) { 'tst0_usr' }
         let(:vagrant_user) { 'vagrant' }
 
-        it 'check that the test user can su' do  
+        it 'check that the test user can su' do
           on(server, "su -l #{vagrant_user} -c '/usr/local/bin/su_test_script.rb -u #{test_user} -p #{password}'")
         end
 
@@ -124,7 +124,7 @@ describe 'pam check faillock' do
           end
         end
 
-        it 'check that vagrant user cant su to tst0_usr' do  
+        it 'check that vagrant user cant su to tst0_usr' do
           on(server, %Q[su -l #{vagrant_user} -c "/usr/local/bin/su_test_script.rb -u #{test_user} -p #{password}"], :acceptable_exit_codes => [1])
         end
 
