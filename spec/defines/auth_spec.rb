@@ -1,8 +1,10 @@
 require 'spec_helper'
 
 def get_expected(filename)
-  path = File.join(File.dirname(__FILE__), '..', 'expected', File.basename(__FILE__, '.rb'),
-    filename)
+  path = File.join(
+    File.dirname(__FILE__), '..', 'expected', File.basename(__FILE__, '.rb'),
+    filename
+  )
 
   IO.read(path)
 end
