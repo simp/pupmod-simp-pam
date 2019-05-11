@@ -75,15 +75,18 @@ auth     [success=1 default=bad]    pam_oath.so usersfile=/etc/liboath/users.oat
 auth     requisite     pam_deny.so
 <% } -%>
 <% if $name in ['system', 'password'] { -%>
-<%   if $sssd { -%>
-auth     [success=2 default=ignore] pam_sss.so forward_pass
-auth     required      pam_unix.so try_first_pass
-<%   } else { -%>
-auth     [success=1 default=ignore] pam_unix.so try_first_pass
-<%   } -%>
 <%   if $faillock { -%>
+<%     if $sssd { -%>
+auth     [success=2 default=ignore] pam_sss.so forward_pass
+<%     } -%>
+auth     [success=1 default=ignore] pam_unix.so try_first_pass
 auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
 auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
+<%   } else { -%>
+<%     if $sssd { -%>
+auth     [success=1 default=ignore] pam_sss.so forward_pass
+<%     } -%>
+auth     required      pam_unix.so try_first_pass
 <%   } -%>
 <% } -%>
 auth     requisite     pam_succeed_if.so uid >= <%= $uid %> quiet

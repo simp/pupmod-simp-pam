@@ -6,6 +6,8 @@ def get_expected(filename)
     filename
   )
 
+  puts "FILENAME: " + filename
+
   IO.read(path)
 end
 
