@@ -84,9 +84,11 @@ auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_t
 auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
 <%   } else { -%>
 <%     if $sssd { -%>
-auth     [success=1 default=ignore] pam_sss.so forward_pass
+auth     sufficient    pam_sss.so forward_pass
 <%     } -%>
-auth     required      pam_unix.so try_first_pass
+auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= <%= $uid %> quiet
+auth     [default=1 success=ok] pam_localuser.so
+auth     sufficient    pam_unix.so try_first_pass
 <%   } -%>
 <% } -%>
 auth     requisite     pam_succeed_if.so uid >= <%= $uid %> quiet

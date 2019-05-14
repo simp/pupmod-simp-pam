@@ -14,7 +14,7 @@ describe 'pam check faillock' do
       'ssh::server::conf::authorizedkeysfile'     => '.ssh/authorized_keys'
     }
   end
-  #
+
   # NOTE: by default, include 'ssh' will automatically include the ssh_server
   let(:client_manifest) { "include 'ssh::client'" }
 
@@ -24,6 +24,8 @@ describe 'pam check faillock' do
          include 'pam'
      SERVER_CONFIG
   }
+  let(:test_user) { 'tst0_usr' }
+  let(:vagrant_user) { 'vagrant' }
   let(:password) {"suP3rF00B@rB@11bx23"}
 
   let(:files_dir) { File.join(File.dirname(__FILE__), 'files') }
@@ -62,11 +64,6 @@ describe 'pam check faillock' do
 
 
       context 'create and test the test user' do
-
-        let(:test_user) { 'tst0_usr' }
-        let(:vagrant_user) { 'vagrant' }
-
-
         it 'should have a test user' do
           on(server, "puppet resource user #{test_user} ensure=present comment='Tst0 User'")
         end
@@ -90,10 +87,6 @@ describe 'pam check faillock' do
       end
 
       context "Test /etc/pam.d/password-auth faillock through ssh" do
-
-        let(:test_user) { 'tst0_usr' }
-        let(:vagrant_user) { 'vagrant' }
-
         it 'activate faillock for test user over ssh' do
           5.times do
           on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", :acceptable_exit_codes => [255])
@@ -110,10 +103,6 @@ describe 'pam check faillock' do
       end
 
       context "Test /etc/pam.d/system-auth faillock through su" do
-
-        let(:test_user) { 'tst0_usr' }
-        let(:vagrant_user) { 'vagrant' }
-
         it 'check that the test user can su' do
           on(server, "su -l #{vagrant_user} -c '/usr/local/bin/su_test_script.rb -u #{test_user} -p #{password}'")
         end
@@ -124,12 +113,35 @@ describe 'pam check faillock' do
           end
         end
 
-        it 'check that vagrant user cant su to tst0_usr' do
+        it 'check that vagrant user can not su to tst0_usr' do
           on(server, %Q[su -l #{vagrant_user} -c "/usr/local/bin/su_test_script.rb -u #{test_user} -p #{password}"], :acceptable_exit_codes => [1])
         end
 
         it 'clear faillock' do
           on(server, "faillock --user #{test_user} --reset")
+        end
+      end
+
+      context "With faillock disabled" do
+        it 'should disable faillock' do
+          set_hieradata_on(server, server_hieradata.merge({'pam::faillock' => false}))
+          apply_manifest_on(server, server_manifest, expect_changes: true)
+        end
+
+        it 'should be idempotent' do
+          apply_manifest_on(server, server_manifest, catch_changes: true)
+        end
+
+        it 'should fail login 5 times' do
+          5.times do
+            output = on(server, %Q[su -l #{vagrant_user} -c "/usr/local/bin/su_test_script.rb -u #{test_user} -p badPassword"], :accept_all_exit_codes => true)
+
+            expect(output.exit_code).to_not eq(0)
+          end
+        end
+
+        it 'should not lock out the user' do
+          on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'")
         end
       end
     end
