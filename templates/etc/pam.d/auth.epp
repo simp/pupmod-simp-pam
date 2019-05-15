@@ -1,0 +1,202 @@
+<%-|
+  String[1]                      $name,
+  Pam::PasswordBackends          $password_check_backend,
+  Optional[Stdlib::Absolutepath] $locale_file,
+  Boolean                        $cracklib_enforce_for_root,
+  Boolean                        $cracklib_reject_username,
+  Optional[Integer[0]]           $cracklib_difok,
+  Optional[Integer[0]]           $cracklib_maxrepeat,
+  Optional[Integer[0]]           $cracklib_maxsequence,
+  Optional[Integer[0]]           $cracklib_maxclassrepeat,
+  Optional[Boolean]              $cracklib_gecoscheck,
+  Optional[Integer]              $cracklib_dcredit,
+  Optional[Integer]              $cracklib_ucredit,
+  Optional[Integer]              $cracklib_lcredit,
+  Optional[Integer]              $cracklib_ocredit,
+  Optional[Integer[0]]           $cracklib_minclass,
+  Optional[Integer[0]]           $cracklib_minlen,
+  Integer[0]                     $cracklib_retry,
+  Integer[0]                     $deny,
+  Boolean                        $faillock,
+  Boolean                        $display_account_lock,
+  Integer[0]                     $fail_interval,
+  Integer[0]                     $remember,
+  Integer[0]                     $remember_retry,
+  Boolean                        $remember_for_root,
+  Boolean                        $even_deny_root,
+  Integer[0]                     $root_unlock_time,
+  Pam::HashAlgorithm             $hash_algorithm,
+  Integer[0]                     $rounds,
+  Integer[0]                     $uid,
+  Pam::AccountUnlockTime         $unlock_time,
+  Boolean                        $preserve_ac,
+  Boolean                        $use_netgroups,
+  Boolean                        $use_openshift,
+  Boolean                        $sssd,
+  Array[String[0]]               $tty_audit_users,
+  String[0]                      $separator,
+  Boolean                        $enable_separator,
+  Boolean                        $oath,
+  Integer[0]                     $oath_window
+|-%>
+#%PAM-1.0
+# This file managed by Puppet
+# User changes will be lost!
+<%
+if $even_deny_root {
+  $_even_deny_root = " even_deny_root root_unlock_time=${root_unlock_time}"
+}
+else {
+  $_even_deny_root = ''
+}
+-%>
+auth     optional      pam_faildelay.so
+auth     required      pam_env.so
+<% if $faillock {
+  if $display_account_lock {
+    $_display_account_lock = ''
+  }
+  else {
+    $_display_account_lock = ' silent'
+  }
+-%>
+auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny=<%= $deny %> audit unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_even_deny_root %>
+<% } -%>
+<% if $name == 'fingerprint' { -%>
+auth     sufficient    pam_fprintd.so
+<% } -%>
+<% if $name == 'smartcard' { -%>
+auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only
+<% } -%>
+<% if $oath and ($name == 'system') { -%>
+auth     [success=3 default=ignore] pam_listfile.so item=group sense=allow file=/etc/liboath/exclude_groups.oath
+auth     [success=2 default=ignore] pam_listfile.so item=user sense=allow file=/etc/liboath/exclude_users.oath
+auth     [success=1 default=bad]    pam_oath.so usersfile=/etc/liboath/users.oath window=<%= $oath_window %>
+auth     requisite     pam_deny.so
+<% } -%>
+<% if $name in ['system', 'password'] { -%>
+<%   if $faillock { -%>
+<%     if $sssd { -%>
+auth     [success=2 default=ignore] pam_sss.so forward_pass
+<%     } -%>
+auth     [success=1 default=ignore] pam_unix.so try_first_pass
+auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
+auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
+<%   } else { -%>
+<%     if $sssd { -%>
+auth     sufficient    pam_sss.so forward_pass
+<%     } -%>
+auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= <%= $uid %> quiet
+auth     [default=1 success=ok] pam_localuser.so
+auth     sufficient    pam_unix.so try_first_pass
+<%   } -%>
+<% } -%>
+auth     requisite     pam_succeed_if.so uid >= <%= $uid %> quiet
+auth     required      pam_deny.so
+
+<% if $use_netgroups { -%>
+<%   if $enable_separator { -%>
+account     required      pam_access.so listsep=<%= $separator %> accessfile=/etc/security/access.conf
+<%   } else { -%>
+account     required      pam_access.so accessfile=/etc/security/access.conf
+<%   } -%>
+<% } -%>
+<% if $faillock { -%>
+account     required      pam_faillock.so
+<% } -%>
+account     required      pam_unix.so broken_shadow
+<% if $sssd { -%>
+<%   if $use_openshift { -%>
+account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+<%   } -%>
+account     [success=3 default=ignore] pam_succeed_if.so service = crond quiet
+account     sufficient    pam_succeed_if.so uid < <%= $uid %> quiet
+<%   if $enable_separator { -%>
+account     requisite     pam_access.so listsep=<%= $separator %> nodefgroup
+<%   } else { -%>
+account     requisite     pam_access.so nodefgroup
+<%   } -%>
+account     [success=1 default=ignore] pam_localuser.so
+account     [default=bad success=ok system_err=ignore user_unknown=ignore] pam_sss.so
+<% } else { -%>
+<%   if $use_openshift { -%>
+account     [success=3 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+<%   } -%>
+account     [success=2 default=ignore] pam_succeed_if.so service = crond quiet
+account     sufficient    pam_succeed_if.so uid < <%= $uid %> quiet
+<%   if $enable_separator { -%>
+account     requisite     pam_access.so listsep=<%= $separator %> nodefgroup
+<%   } else { -%>
+account     requisite     pam_access.so nodefgroup
+<%   } -%>
+<% } -%>
+account     required      pam_permit.so
+
+<% if $name in ['system', 'password'] { -%>
+password     requisite     pam_<%= $password_check_backend %>.so retry=<%= $cracklib_retry -%>
+<%   if $cracklib_enforce_for_root { %> enforce_for_root<% } -%>
+<%   if $cracklib_reject_username { %> reject_username<% } -%>
+<%   if ($password_check_backend == 'cracklib') { -%>
+<%     if $cracklib_minlen { %> minlen=<%= $cracklib_minlen %><% } -%>
+<%     if $cracklib_minclass { %> minclass=<%= $cracklib_minclass %><% } -%>
+<%     if $cracklib_maxrepeat { %> maxrepeat=<%= $cracklib_maxrepeat %><% } -%>
+<%     if $cracklib_difok { %> difok=<%= $cracklib_difok %><% } -%>
+<%     if $cracklib_maxsequence { %> maxsequence=<%= $cracklib_maxsequence %><% } -%>
+<%     if $cracklib_maxclassrepeat { %> maxclassrepeat=<%= $cracklib_maxclassrepeat %><% } -%>
+<%     if $cracklib_dcredit { %> dcredit=<%= $cracklib_dcredit %><% } -%>
+<%     if $cracklib_ucredit { %> ucredit=<%= $cracklib_ucredit %><% } -%>
+<%     if $cracklib_lcredit { %> lcredit=<%= $cracklib_lcredit %><% } -%>
+<%     if $cracklib_ocredit { %> ocredit=<%= $cracklib_ocredit %><% } -%>
+<%     if $cracklib_gecoscheck { %> gecoscheck<% } -%>
+<%   } -%>
+
+<%   if $remember_for_root { -%>
+<%     $_pam_pwhistory = "password     required      pam_pwhistory.so use_authtok remember=${remember} retry=${remember_retry} enforce_for_root" -%>
+<%   } else { -%>
+<%     $_pam_pwhistory = "password     required      pam_pwhistory.so use_authtok remember=${remember} retry=${remember_retry}" -%>
+<%   } -%>
+<%   $_pam_unix = "password     sufficient    pam_unix.so ${hash_algorithm} rounds=${rounds} shadow try_first_pass use_authtok" -%>
+<%   if $sssd { -%>
+<%= $_pam_pwhistory %>
+password     sufficient    pam_sss.so use_authtok
+<%= $_pam_unix %>
+<%   } else { -%>
+<%= $_pam_pwhistory %>
+<%= $_pam_unix %>
+<%   } -%>
+<% } -%>
+<% if $name == 'smartcard' { -%>
+password     required      pam_pkcs11.so
+<% } else { -%>
+password     required      pam_deny.so
+<% } -%>
+
+session      optional      pam_keyinit.so revoke
+session      required      pam_limits.so
+-session     optional      pam_systemd.so
+session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet
+session      sufficient    pam_succeed_if.so service in crond quiet use_uid
+<% if ($name in ['system','password','fingerprint']) and !empty($tty_audit_users) { -%>
+session      required      pam_tty_audit.so disable=* enable=<%= join($tty_audit_users, ',') %>
+<% } -%>
+<% if $locale_file { -%>
+session      optional      pam_env.so readenv=1 envfile=<%= $locale_file %>
+<% } -%>
+session      sufficient    pam_succeed_if.so user = root quiet
+<% if $use_openshift { -%>
+session      [default=1 success=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+session      required      pam_namespace.so no_unmount_on_close
+session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+<% } -%>
+<% if $enable_separator { -%>
+session      requisite     pam_access.so listsep=<%= $separator %> nodefgroup
+<% } else { -%>
+session      requisite     pam_access.so nodefgroup
+<% } -%>
+<% if $sssd { -%>
+session      optional      pam_sss.so
+<% } else { -%>
+session      required      pam_unix.so
+<% } -%>
+session      optional      pam_oddjob_mkhomedir.so silent
+session      required      pam_lastlog.so showfailed

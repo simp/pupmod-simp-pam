@@ -1,4 +1,4 @@
-# This class ensures that reasonable PAM security options are applied.
+# @summary Ensure that reasonable PAM security options are applied.
 #
 # It also takes into account the global SIMP settings for LDAP and SSSD.
 #
@@ -46,7 +46,7 @@
 #       * Special Character
 #
 # @param cracklib_gecoscheck
-#   Check whether the words from the GECOS field (usualy full name of the user)
+#   Check whether the words from the GECOS field (usually full name of the user)
 #   longer than 3 characters in straight or reversed form are contained in the
 #   new password
 #
@@ -124,6 +124,9 @@
 # @param deny
 #   The number of failed attempts before PAM denies a user from logging in
 #
+# @param faillock
+#   Enable or disable the use of ``faillock``
+#
 # @param display_account_lock
 #   Display to the remote user that their account has been locked
 #
@@ -160,7 +163,7 @@
 #   ``Blowfish`` password hashing algorithms to N
 #
 # @param uid
-#   Allow user logins for userse with UID higher than N
+#   Allow user logins for users with UID higher than N
 #
 # @param unlock_time
 #   Allow acesss after N seconds to user account after failed attempt
@@ -272,12 +275,13 @@ class pam (
   Integer[0]                     $cracklib_minclass         = 3,
   Integer[0]                     $cracklib_minlen           = 15,
   Integer[0]                     $cracklib_retry            = 3,
-  Optional[Array[String,1]]      $cracklib_badwords         = undef,
+  Optional[Array[String[1],1]]   $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
   Boolean                        $rm_pwquality_conf_d       = true,
   Boolean                        $oath                      = simplib::lookup('simp_options::oath', { 'default_value' => false }),
   Integer[0]                     $oath_window               = 1,
   Integer[0]                     $deny                      = 5,
+  Boolean                        $faillock                  = true,
   Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
   Integer[0]                     $remember                  = 24,

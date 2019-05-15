@@ -8,8 +8,8 @@ auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card ca
 auth     requisite     pam_succeed_if.so uid >= 1000 quiet
 auth     required      pam_deny.so
 
-account     required      pam_unix.so broken_shadow
 account     required      pam_faillock.so
+account     required      pam_unix.so broken_shadow
 account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
 account     [success=3 default=ignore] pam_succeed_if.so service = crond quiet
 account     sufficient    pam_succeed_if.so uid < 1000 quiet

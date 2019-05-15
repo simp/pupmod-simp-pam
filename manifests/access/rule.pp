@@ -1,4 +1,4 @@
-# Set up entries in ``/etc/security/access.conf``
+# @summary Set up entries in ``/etc/security/access.conf``
 #
 # These entries are the ``permission:users:origins`` sets as defined in
 # ``access.conf(5)``.
@@ -70,7 +70,7 @@
 #   * If you do not specify a order, the rules will be listed in alphanumeric
 #   order by name
 #
-# @author Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
 define pam::access::rule (
   Array[String]         $users,

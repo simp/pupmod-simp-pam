@@ -1,3 +1,13 @@
+* Mon Apr 29 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.0-0
+- Fix bug where the ending faillock items were not being called due to the
+  'sufficient' lines on pam_unix and pam_sssd.
+- Add option to allow users to disable faillock if desired
+- Fix bug where 'authsucc' was not set at the end of the 'auth' section for
+  faillock (SIMP-6306)
+- Update all comments for puppet strings
+- Converted all templates to EPP for performance
+- Fully updated the README
+
 * Tue Apr 16 2019 Zach <turtles.be.the.best@gmail.com> - 6.5.0-0
 - Add totp support through pam_oath
 

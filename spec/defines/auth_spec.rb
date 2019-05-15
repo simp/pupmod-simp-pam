@@ -1,8 +1,10 @@
 require 'spec_helper'
 
 def get_expected(filename)
-  path = File.join(File.dirname(__FILE__), '..', 'expected', File.basename(__FILE__, '.rb'),
-    filename)
+  path = File.join(
+    File.dirname(__FILE__), '..', 'expected', File.basename(__FILE__, '.rb'),
+    filename
+  )
 
   IO.read(path)
 end
@@ -180,6 +182,7 @@ describe 'pam::auth' do
             :cracklib_retry            => 10,
             :cracklib_ucredit          => 11,
             :deny                      => 12,
+            :faillock                  => false,
             :display_account_lock      => true,
             :fail_interval             => 13,
             :remember                  => 14,
@@ -237,6 +240,7 @@ describe 'pam::auth' do
             end
           end
         end
+
         context 'Generate file with varying list separators when list_separator == true' do
           ['!', ',', '@'].each_with_index do |separator, index|
             context "auth type separator = '#{separator}'" do
@@ -262,6 +266,7 @@ describe 'pam::auth' do
             end
           end
         end
+
         context 'Generate file with when enable_separator == false`' do
           let(:params){{
             :enable_separator => false,
@@ -280,6 +285,7 @@ describe 'pam::auth' do
             it_should_behave_like "a pam.d config file generator"
             it { is_expected.to contain_file(filename).with_content(file_content) }
         end
+
         context 'Generate file with when oath == true' do
           let(:params){{
             :oath => true,

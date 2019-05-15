@@ -1,5 +1,4 @@
-# These entries are the ``domain type item value`` resource limiting sets as
-# defined in ``limits.conf(5)``.
+# @summary ``domain type item value`` resource limiting sets as defined in ``limits.conf(5)``.
 #
 # Be aware that order matters and the **LAST** item that matches in the
 # ``limits.conf`` file will take effect.
@@ -53,6 +52,8 @@
 #
 #   * If you don't specify a order, the rules will be listed in alphanumeric
 #     order by name
+#
+# @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
 define pam::limits::rule (
   Array[String]             $domains,
