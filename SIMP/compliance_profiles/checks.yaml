@@ -7,13 +7,14 @@ checks:
       value: -1
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010110: true
       SRG-OS-000071-GPOS-00039: true
       cci:CCI-000194: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010110
@@ -25,13 +26,14 @@ checks:
       value: 8
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010130: true
       SRG-OS-000072-GPOS-00040: true
       cci:CCI-000195: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010130
@@ -46,9 +48,10 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5
   oval:com.puppet.forge.simp.pam.cracklib_gecoscheck:
     settings:
@@ -56,9 +59,10 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
   oval:com.puppet.forge.simp.pam.cracklib_lcredit:
     settings:
@@ -66,13 +70,14 @@ checks:
       value: -1
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010100: true
       SRG-OS-000070-GPOS-00038: true
       cci:CCI-000193: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010100
@@ -84,13 +89,14 @@ checks:
       value: 4
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010190: true
       SRG-OS-000072-GPOS-00040: true
       cci:CCI-000195: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010190
@@ -102,11 +108,12 @@ checks:
       value: 4
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       cci:CCI-000195: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - CCI-000195
@@ -116,13 +123,14 @@ checks:
       value: 4
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010140: true
       SRG-OS-000072-GPOS-00040: true
       cci:CCI-000195: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010140
@@ -137,13 +145,14 @@ checks:
       value: 15
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010250: true
       SRG-OS-000078-GPOS-00046: true
       cci:CCI-000205: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010250
@@ -155,13 +164,14 @@ checks:
       value: -1
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010120: true
       SRG-OS-000266-GPOS-00101: true
       cci:CCI-001619: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010120
@@ -173,9 +183,10 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
   oval:com.puppet.forge.simp.pam.cracklib_retry:
     settings:
@@ -183,13 +194,14 @@ checks:
       value: 3
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-7:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:a: true
       disa_stig: true
       RHEL-07-010410: true
       SRG-OS-000480-GPOS-00225: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-7:a
       disa_stig:
       - RHEL-07-010410
@@ -204,13 +216,14 @@ checks:
       value: -1
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
       disa_stig: true
       RHEL-07-010090: true
       SRG-OS-000069-GPOS-00037: true
       cci:CCI-000192: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
       disa_stig:
       - RHEL-07-010090
@@ -222,13 +235,14 @@ checks:
       value: 3
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
       disa_stig: true
       RHEL-07-010370: true
       SRG-OS-000329-GPOS-00128: true
       cci:CCI-002238: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
       disa_stig:
       - RHEL-07-010370
@@ -243,9 +257,10 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
   oval:com.puppet.forge.simp.pam.display_account_lock:
     settings:
@@ -253,9 +268,10 @@ checks:
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-7: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-7
   oval:com.puppet.forge.simp.pam.fail_interval:
     settings:
@@ -263,14 +279,15 @@ checks:
       value: 900
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-7:b: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
       disa_stig: true
       RHEL-07-010370: true
       SRG-OS-000329-GPOS-00128: true
       SRG-OS-000021-GPOS-00005: true
       cci:CCI-002238: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-7:b
       disa_stig:
       - RHEL-07-010370
@@ -283,15 +300,16 @@ checks:
       value: '0077'
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-2: true
-      nist_800_53_rev4:AC-2:4: true
-      nist_800_53_rev4:AC-6: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-2: true
+      nist_800_53:rev4:AC-2:4: true
+      nist_800_53:rev4:AC-6: true
       disa_stig: true
       RHEL-07-020230: true
       SRG-OS-000480-GPOS-00228: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-2
       - AC-2:4
       - AC-6
@@ -305,9 +323,10 @@ checks:
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
   oval:com.puppet.forge.simp.pam.remember:
     settings:
@@ -315,13 +334,14 @@ checks:
       value: 24
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:e: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:e: true
       disa_stig: true
       RHEL-07-010240: true
       SRG-OS-000077-GPOS-00045: true
       cci:CCI-000200: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:e
       disa_stig:
       - RHEL-07-010240
@@ -333,9 +353,10 @@ checks:
       value: 60
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-7:b: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-7:b
   oval:com.puppet.forge.simp.pam.rounds:
     settings:
@@ -343,9 +364,10 @@ checks:
       value: 10000
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:c: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:c: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:c
   oval:com.puppet.forge.simp.pam.uid:
     settings:
@@ -353,13 +375,14 @@ checks:
       value: 500
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
       disa_stig: true
       RHEL-07-010000: true
       SRG-OS-000001-GPOS-00001: true
       cci:CCI-000015: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
       disa_stig:
       - RHEL-07-010000
@@ -371,13 +394,14 @@ checks:
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
       disa_stig: true
       RHEL-07-010000: true
       SRG-OS-000001-GPOS-00001: true
       cci:CCI-000015: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
       disa_stig:
       - RHEL-07-010000
@@ -389,9 +413,10 @@ checks:
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
   oval:com.puppet.forge.simp.pam.wheel.wheel_group:
     settings:
@@ -399,9 +424,10 @@ checks:
       value: wheel
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-1: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-1
   oval:com.puppet.forge.simp.pam.cracklib_maxrepeat.el6:
     settings:
@@ -409,9 +435,10 @@ checks:
       value: 2
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
     confine:
       osfamily: RedHat
@@ -422,9 +449,10 @@ checks:
       value: 900
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-7:b: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-7:b
     confine:
       osfamily: RedHat
@@ -506,28 +534,30 @@ checks:
     oval-ids:
     - xccdf_org:ssgproject:content_rule_accounts_passwords_pam_faillock_unlock_time
     - accounts_passwords_pam_faillock_unlock_time
-  oval:com.puppet.forge.simp.pam.cracklib_maxrepeat.nist_800_53_rev4:
+  oval:com.puppet.forge.simp.pam.cracklib_maxrepeat.nist_800_53:rev4:
     settings:
       parameter: pam::cracklib_maxrepeat
       value: 2
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:IA-5:1:a: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - IA-5:1:a
     confine:
       osfamily: RedHat
       operatingsystemmajrelease: '7'
-  oval:com.puppet.forge.simp.pam.unlock_time.nist_800_53_rev4:
+  oval:com.puppet.forge.simp.pam.unlock_time.nist_800_53:rev4:
     settings:
       parameter: pam::unlock_time
       value: 900
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-7:b: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-7:b
     confine:
       osfamily: RedHat
