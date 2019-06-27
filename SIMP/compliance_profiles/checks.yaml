@@ -369,25 +369,6 @@ checks:
     identifiers:
       nist_800_53:rev4:
       - IA-5:c
-  oval:com.puppet.forge.simp.pam.uid:
-    settings:
-      parameter: pam::uid
-      value: 500
-    type: puppet-class-parameter
-    controls:
-      nist_800_53:rev4: true
-      nist_800_53:rev4:IA-1: true
-      disa_stig: true
-      RHEL-07-010000: true
-      SRG-OS-000001-GPOS-00001: true
-      cci:CCI-000015: true
-    identifiers:
-      nist_800_53:rev4:
-      - IA-1
-      disa_stig:
-      - RHEL-07-010000
-      - SRG-OS-000001-GPOS-00001
-      - CCI-000015
   oval:com.puppet.forge.simp.pam.use_netgroups:
     settings:
       parameter: pam::use_netgroups
