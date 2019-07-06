@@ -1,0 +1,515 @@
+---
+version: 2.0.0
+checks:
+  oval:com.puppet.forge.simp.pam.cracklib_dcredit:
+    settings:
+      parameter: pam::cracklib_dcredit
+      value: -1
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010110: true
+      SRG-OS-000071-GPOS-00039: true
+      cci:CCI-000194: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010110
+      - SRG-OS-000071-GPOS-00039
+      - CCI-000194
+  oval:com.puppet.forge.simp.pam.cracklib_difok:
+    settings:
+      parameter: pam::cracklib_difok
+      value: 8
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010130: true
+      SRG-OS-000072-GPOS-00040: true
+      cci:CCI-000195: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010130
+      - SRG-OS-000072-GPOS-00040
+      - CCI-000195
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_accounts_password_pam_difok
+    - accounts_password_pam_difok
+  oval:com.puppet.forge.simp.pam.cracklib_enforce_for_root:
+    settings:
+      parameter: pam::cracklib_enforce_for_root
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5
+  oval:com.puppet.forge.simp.pam.cracklib_gecoscheck:
+    settings:
+      parameter: pam::cracklib_gecoscheck
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+  oval:com.puppet.forge.simp.pam.cracklib_lcredit:
+    settings:
+      parameter: pam::cracklib_lcredit
+      value: -1
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010100: true
+      SRG-OS-000070-GPOS-00038: true
+      cci:CCI-000193: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010100
+      - SRG-OS-000070-GPOS-00038
+      - CCI-000193
+  oval:com.puppet.forge.simp.pam.cracklib_maxclassrepeat:
+    settings:
+      parameter: pam::cracklib_maxclassrepeat
+      value: 4
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010190: true
+      SRG-OS-000072-GPOS-00040: true
+      cci:CCI-000195: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010190
+      - SRG-OS-000072-GPOS-00040
+      - CCI-000195
+  oval:com.puppet.forge.simp.pam.cracklib_maxsequence:
+    settings:
+      parameter: pam::cracklib_maxsequence
+      value: 4
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      cci:CCI-000195: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - CCI-000195
+  oval:com.puppet.forge.simp.pam.cracklib_minclass:
+    settings:
+      parameter: pam::cracklib_minclass
+      value: 4
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010140: true
+      SRG-OS-000072-GPOS-00040: true
+      cci:CCI-000195: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010140
+      - SRG-OS-000072-GPOS-00040
+      - CCI-000195
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_accounts_password_pam_minclass
+    - accounts_password_pam_minclass
+  oval:com.puppet.forge.simp.pam.cracklib_minlen:
+    settings:
+      parameter: pam::cracklib_minlen
+      value: 15
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010250: true
+      SRG-OS-000078-GPOS-00046: true
+      cci:CCI-000205: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010250
+      - SRG-OS-000078-GPOS-00046
+      - CCI-000205
+  oval:com.puppet.forge.simp.pam.cracklib_ocredit:
+    settings:
+      parameter: pam::cracklib_ocredit
+      value: -1
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010120: true
+      SRG-OS-000266-GPOS-00101: true
+      cci:CCI-001619: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010120
+      - SRG-OS-000266-GPOS-00101
+      - CCI-001619
+  oval:com.puppet.forge.simp.pam.cracklib_reject_username:
+    settings:
+      parameter: pam::cracklib_reject_username
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+  oval:com.puppet.forge.simp.pam.cracklib_retry:
+    settings:
+      parameter: pam::cracklib_retry
+      value: 3
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:a: true
+      disa_stig: true
+      RHEL-07-010410: true
+      SRG-OS-000480-GPOS-00225: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-7:a
+      disa_stig:
+      - RHEL-07-010410
+      - SRG-OS-000480-GPOS-00225
+      - CCI-000366
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_accounts_password_pam_retry
+    - accounts_password_pam_retry
+  oval:com.puppet.forge.simp.pam.cracklib_ucredit:
+    settings:
+      parameter: pam::cracklib_ucredit
+      value: -1
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+      disa_stig: true
+      RHEL-07-010090: true
+      SRG-OS-000069-GPOS-00037: true
+      cci:CCI-000192: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+      disa_stig:
+      - RHEL-07-010090
+      - SRG-OS-000069-GPOS-00037
+      - CCI-000192
+  oval:com.puppet.forge.simp.pam.deny:
+    settings:
+      parameter: pam::deny
+      value: 3
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
+      disa_stig: true
+      RHEL-07-010370: true
+      SRG-OS-000329-GPOS-00128: true
+      cci:CCI-002238: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-1
+      disa_stig:
+      - RHEL-07-010370
+      - SRG-OS-000329-GPOS-00128
+      - CCI-002238
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_accounts_passwords_pam_faillock_deny
+    - accounts_passwords_pam_faillock_deny
+  oval:com.puppet.forge.simp.pam.deny_if_unknown:
+    settings:
+      parameter: pam::deny_if_unknown
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-1
+  oval:com.puppet.forge.simp.pam.display_account_lock:
+    settings:
+      parameter: pam::display_account_lock
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-7
+  oval:com.puppet.forge.simp.pam.fail_interval:
+    settings:
+      parameter: pam::fail_interval
+      value: 900
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
+      disa_stig: true
+      RHEL-07-010370: true
+      SRG-OS-000329-GPOS-00128: true
+      SRG-OS-000021-GPOS-00005: true
+      cci:CCI-002238: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-7:b
+      disa_stig:
+      - RHEL-07-010370
+      - SRG-OS-000329-GPOS-00128
+      - SRG-OS-000021-GPOS-00005
+      - CCI-002238
+  oval:com.puppet.forge.simp.pam.homedir_umask:
+    settings:
+      parameter: pam::homedir_umask
+      value: '0077'
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-2: true
+      nist_800_53:rev4:AC-2:4: true
+      nist_800_53:rev4:AC-6: true
+      disa_stig: true
+      RHEL-07-020230: true
+      SRG-OS-000480-GPOS-00228: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-2
+      - AC-2:4
+      - AC-6
+      disa_stig:
+      - RHEL-07-020230
+      - SRG-OS-000480-GPOS-00228
+      - CCI-000366
+  oval:com.puppet.forge.simp.pam.preserve_ac:
+    settings:
+      parameter: pam::preserve_ac
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-1
+  oval:com.puppet.forge.simp.pam.remember:
+    settings:
+      parameter: pam::remember
+      value: 24
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:e: true
+      disa_stig: true
+      RHEL-07-010240: true
+      SRG-OS-000077-GPOS-00045: true
+      cci:CCI-000200: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:e
+      disa_stig:
+      - RHEL-07-010240
+      - SRG-OS-000077-GPOS-00045
+      - CCI-000200
+  oval:com.puppet.forge.simp.pam.root_unlock_time:
+    settings:
+      parameter: pam::root_unlock_time
+      value: 60
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-7:b
+  oval:com.puppet.forge.simp.pam.rounds:
+    settings:
+      parameter: pam::rounds
+      value: 10000
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:c: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:c
+  oval:com.puppet.forge.simp.pam.use_netgroups:
+    settings:
+      parameter: pam::use_netgroups
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
+      disa_stig: true
+      RHEL-07-010000: true
+      SRG-OS-000001-GPOS-00001: true
+      cci:CCI-000015: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-1
+      disa_stig:
+      - RHEL-07-010000
+      - SRG-OS-000001-GPOS-00001
+      - CCI-000015
+  oval:com.puppet.forge.simp.pam.wheel.root_only:
+    settings:
+      parameter: pam::wheel::root_only
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-1
+  oval:com.puppet.forge.simp.pam.wheel.wheel_group:
+    settings:
+      parameter: pam::wheel::wheel_group
+      value: wheel
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-1: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-1
+  oval:com.puppet.forge.simp.pam.cracklib_maxrepeat:
+    settings:
+      parameter: pam::cracklib_maxrepeat
+      value: 2
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:IA-5:1:a: true
+    identifiers:
+      nist_800_53:rev4:
+      - IA-5:1:a
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '6'
+  oval:com.puppet.forge.simp.pam.unlock_time:
+    settings:
+      parameter: pam::unlock_time
+      value: 900
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-7:b: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-7:b
+    confine:
+      osfamily: RedHat
+  oval:com.puppet.forge.simp.pam.cracklib_maxrepeat:
+    settings:
+      parameter: pam::cracklib_maxrepeat
+      value: 3
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-010180: true
+      SRG-OS-000072-GPOS-00040: true
+      cci:CCI-000195: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-010180
+      - SRG-OS-000072-GPOS-00040
+      - CCI-000195
+    confine:
+      osfamily: RedHat
+  oval:com.puppet.forge.simp.pam.even_deny_root:
+    settings:
+      parameter: pam::even_deny_root
+      value: true
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-010330: true
+      SRG-OS-000329-GPOS-00128: true
+      SRG-OS-000021-GPOS-00005: true
+      cci:CCI-002238: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-010330
+      - SRG-OS-000329-GPOS-00128
+      - SRG-OS-000021-GPOS-00005
+      - CCI-002238
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+  oval:com.puppet.forge.simp.pam.hash_algorithm:
+    settings:
+      parameter: pam::hash_algorithm
+      value: sha512
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-010200: true
+      SRG-OS-000073-GPOS-00041: true
+      cci:CCI-000196: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-010200
+      - SRG-OS-000073-GPOS-00041
+      - CCI-000196
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+  oval:com.puppet.forge.simp.pam.unlock_time:
+    settings:
+      parameter: pam::unlock_time
+      value: 604800
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-010320: true
+      SRG-OS-000329-GPOS-00128: true
+      cci:CCI-002238: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-010320
+      - SRG-OS-000329-GPOS-00128
+      - CCI-002238
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_accounts_passwords_pam_faillock_unlock_time
+    - accounts_passwords_pam_faillock_unlock_time

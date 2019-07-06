@@ -12,6 +12,7 @@ fixtures:
     pki: https://github.com/simp/pupmod-simp-pki
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog
     oddjob: https://github.com/simp/pupmod-simp-oddjob
+    simp_options: https://github.com/simp/pupmod-simp-simp_options
     simplib: https://github.com/simp/pupmod-simp-simplib
     ssh: https://github.com/simp/pupmod-simp-ssh
     sssd: https://github.com/simp/pupmod-simp-sssd
