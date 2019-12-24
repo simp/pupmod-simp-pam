@@ -1,5 +1,8 @@
 skips = {
-  'V-71965' => 'N/A'
+  'V-71965' => 'N/A',
+  'V-71943' => 'Check needs to be fixed',
+  'V-71945' => 'Check needs to be fixed',
+  'V-72275' => 'Check needs to be fixed'
 }
 overrides = []
 subsystems = [ 'pam' ]

@@ -6,21 +6,37 @@
   end
 -%>
 HOSTS:
-  el6:
-    roles:
-      - default
-      - master
-      - client
-    platform:   el-6-x86_64
-    box:        centos/6
-    hypervisor: vagrant
-
   el7:
     roles:
-      - client
+      - default
     platform: el-7-x86_64
     box: centos/7
     hypervisor: vagrant
+    yum_repos:
+      chef-current:
+        baseurl: 'https://packages.chef.io/repos/yum/current/el/$releasever/$basearch'
+        gpgkeys:
+          - https://packages.chef.io/chef.asc
+
+  el6:
+    platform:   el-6-x86_64
+    box:        centos/6
+    hypervisor: vagrant
+    yum_repos:
+      chef-current:
+        baseurl: 'https://packages.chef.io/repos/yum/current/el/$releasever/$basearch'
+        gpgkeys:
+          - https://packages.chef.io/chef.asc
+
+  el8:
+    platform:   el-8-x86_64
+    box:        centos/8
+    hypervisor: vagrant
+    yum_repos:
+      chef-current:
+        baseurl: 'https://packages.chef.io/repos/yum/current/el/$releasever/$basearch'
+        gpgkeys:
+          - https://packages.chef.io/chef.asc
 
 CONFIG:
 <% if ENV['BEAKER_PUPPET_COLLECTION'] -%>

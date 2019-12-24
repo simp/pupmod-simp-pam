@@ -7,6 +7,7 @@
 # directories, you'll need to set oddjob::mkhomedir::umask.
 #
 # @param password_check_backend
+# @param locale_file
 # @param cracklib_enforce_for_root
 # @param cracklib_reject_username
 # @param cracklib_difok

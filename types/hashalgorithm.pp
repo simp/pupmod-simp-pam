@@ -1,3 +1,4 @@
+# Valid PAM password hash algorithms
 type Pam::HashAlgorithm = Enum[
   'md5',
   'bigcrypt',
