@@ -229,5 +229,6 @@ pup6-fips:
 pup5_compliance:
   <<: *pup_5_5_16
   <<: *compliance_base
+  allow_failure: true
   script:
     - 'bundle exec rake beaker:suites[compliance,default]'
