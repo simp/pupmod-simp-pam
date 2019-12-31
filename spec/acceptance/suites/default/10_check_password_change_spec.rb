@@ -99,8 +99,8 @@ describe 'pam check password change' do
         end
 
         it 'should reject passwords that have a monotonic character sequence that is too long' do
-          if host.name =~ /el7/
-            skip 'unable to cause failure on el7 without first hitting other password restrictions'
+          if host.name !~ /el6/
+            skip "unable to cause failure on #{host} without first hitting other password restrictions"
           end
 
           stdin = "123=456=789=0Qw\n"*repeat_when_failure       # el6: 'too simplistic/systematic'

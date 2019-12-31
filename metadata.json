@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "6.6.1",
+  "version": "6.7.0",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -26,7 +26,7 @@
     },
     {
       "name": "simp/simplib",
-      "version_requirement": ">= 3.9.0 < 4.0.0"
+      "version_requirement": ">= 3.9.0 < 5.0.0"
     }
   ],
   "simp": {
@@ -42,21 +42,24 @@
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
       ]
     }
   ],

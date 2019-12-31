@@ -15,8 +15,6 @@ describe 'pam' do
         it { is_expected.to create_class('pam::install').that_comes_before('Class[pam::config]') }
         it { is_expected.to contain_class('pam::config') }
         it { is_expected.to contain_package('pam').with_ensure('present') }
-        it { is_expected.to contain_package('pam_pkcs11').with_ensure('present') }
-        it { is_expected.to contain_package('fprintd-pam').with_ensure('present') }
         if el6?(os_facts)
           it { is_expected.to_not contain_package('libpwquality') }
         else
@@ -47,8 +45,6 @@ describe 'pam' do
 
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_package('pam').with_ensure('latest') }
-        it { is_expected.to contain_package('pam_pkcs11').with_ensure('latest') }
-        it { is_expected.to contain_package('fprintd-pam').with_ensure('latest') }
         if el6?(os_facts)
           it { is_expected.to_not contain_package('libpwquality') }
         else

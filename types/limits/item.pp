@@ -1,3 +1,4 @@
+# Valid PAM limits
 type Pam::Limits::Item = Enum[
   'core',
   'data',

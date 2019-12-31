@@ -29,6 +29,8 @@
 
 This module configures PAM in an authoritative, but flexible, manner.
 
+See [REFERENCE.md](./REFERENCE.md) for API details.
+
 ## This is a SIMP module
 
 This module is a component of the [System Integrity Management Platform](https://simp-project.com),

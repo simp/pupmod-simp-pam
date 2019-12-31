@@ -1,4 +1,10 @@
-* Fri Aug 02 2019 Robert Vincent <pillarsdotnet@gmail.com> - 6.6.1-0
+* Tue Dec 24 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.7.0-0
+- Add EL8 support
+- Remove installation of pam_pkcs11 and fprintd-pam by default since they not
+  actually required for basic functionality
+- Update documentation for 'puppet strings'
+
+* Fri Aug 02 2019 Robert Vincent <pillarsdotnet@gmail.com> - 6.7.0-0
 - Support puppetlabs/concat 6.x.
 
 * Thu Jun 06 2019 Steven Pritchard <steven.pritchard@onypoint.com> - 6.6.0-0
