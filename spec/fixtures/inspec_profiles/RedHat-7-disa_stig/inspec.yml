@@ -1,10 +1,10 @@
 name: EL7 pam STIG
-title: PAM STIG for EL 7
+title: pam STIG for EL 7
 supports:
   - os-family: redhat
-maintainer: Trevor Vaughan
+maintainer: SIMP Team
 copyright: Onyx Point, Inc.
-copyright_email: tvaughan@onyxpoint.com
+copyright_email: simp@onyxpoint.com
 license: Apache-2.0
 summary: |
   A collection of InSpec tests for the pam subsystem
@@ -12,3 +12,4 @@ version: 0.0.1
 depends:
   - name: disa_stig-el7-baseline
     path: ../../inspec_deps/inspec_profiles/profiles/disa_stig-el7-baseline
+
