@@ -1,3 +1,8 @@
+* Fri Feb 28 2020 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.7.0-0
+- Ignore authconfig disable on EL8. Authconfig was replaced with authselect
+  and authselect does not overwrite settings unless you select --force
+  option.
+
 * Tue Dec 24 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.7.0-0
 - Add EL8 support
 - Remove installation of pam_pkcs11 and fprintd-pam by default since they not

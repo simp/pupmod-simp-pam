@@ -99,19 +99,26 @@ describe 'pam' do
           )
         }
 
-        it {
-          project_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
-          expected = IO.read(File.join(project_dir, 'files', 'simp_authconfig.sh'))
-          is_expected.to contain_file('/usr/local/sbin/simp_authconfig.sh').with_content(expected)
-        }
-
-        [ '/usr/sbin/authconfig', '/usr/sbin/authconfig-tui'].each do |file|
-          it { is_expected.to contain_file(file).with( {
-              :ensure  => 'link',
-              :target  => '/usr/local/sbin/simp_authconfig.sh',
-              :require => 'File[/usr/local/sbin/simp_authconfig.sh]'
-            } )
+        if os_facts[:os][:release][:major] <= '7'
+          it {
+            project_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+            expected = IO.read(File.join(project_dir, 'files', 'simp_authconfig.sh'))
+            is_expected.to contain_file('/usr/local/sbin/simp_authconfig.sh').with_content(expected)
           }
+
+          [ '/usr/sbin/authconfig', '/usr/sbin/authconfig-tui'].each do |file|
+            it { is_expected.to contain_file(file).with( {
+                :ensure  => 'link',
+                :target  => '/usr/local/sbin/simp_authconfig.sh',
+                :require => 'File[/usr/local/sbin/simp_authconfig.sh]'
+              } )
+            }
+          end
+        else
+          it { is_expected.to_not contain_file('/usr/local/sbin/simp_authconfig.sh')}
+          [ '/usr/sbin/authconfig', '/usr/sbin/authconfig-tui'].each do |file|
+            it { is_expected.to_not contain_file(file)}
+          end
         end
 
         it { is_expected.to contain_pam__auth('fingerprint') }
