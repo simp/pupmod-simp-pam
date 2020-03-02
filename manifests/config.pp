@@ -83,25 +83,25 @@ class pam::config {
     ;
   }
 
-  if ($pam::disable_authconfig == true) {
+  if ($facts['os']['release']['major'] <= '7') and ($pam::disable_authconfig == true) {
     # Replace authconfig and authconfig-tui with a no-op script
     # so that those tools can't be used to modify PAM.
-    file { '/usr/local/sbin/simp_authconfig.sh':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0755',
-      content => file("${module_name}/simp_authconfig.sh")
-    }
+      file { '/usr/local/sbin/simp_authconfig.sh':
+        ensure  => 'file',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        content => file("${module_name}/simp_authconfig.sh")
+      }
 
-    file { [
-      '/usr/sbin/authconfig',
-      '/usr/sbin/authconfig-tui'
-      ]:
-      ensure  => 'link',
-      target  => '/usr/local/sbin/simp_authconfig.sh',
-      require => File['/usr/local/sbin/simp_authconfig.sh']
-    }
+      file { [
+        '/usr/sbin/authconfig',
+        '/usr/sbin/authconfig-tui'
+        ]:
+        ensure  => 'link',
+        target  => '/usr/local/sbin/simp_authconfig.sh',
+        require => File['/usr/local/sbin/simp_authconfig.sh']
+      }
   }
 
   if ! empty($pam::auth_sections) { ::pam::auth { $pam::auth_sections: }}
