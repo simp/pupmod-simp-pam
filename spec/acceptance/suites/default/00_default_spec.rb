@@ -40,11 +40,12 @@ describe 'pam class' do
             apply_manifest_on(host, manifest, {:catch_changes => true})
           end
         else
-          result = on(host, 'ls -l /usr/sbin/authconfig', :accept_all_exit_codes => true)
-          expect(result.stdout).to match(/No such file or directory/)
-          result = on(host,'/usr/bin/authselect select sssd', :accept_all_exit_codes => true)
-          expect(result.stdout).to match(/[error] Refusing to activate profile/)
-          apply_manifest_on(host, manifest, {:catch_changes => true})
+          it 'should not replace authconfig and authselect should do nothing if not forced' do
+            on(host, 'ls -l /usr/sbin/authconfig', :acceptable_exit_codes => [2] )
+            result = on(host,'/usr/bin/authselect select sssd', :accept_all_exit_codes => true)
+            expect(result.stderr).to match(/Refusing to activate profile/)
+            apply_manifest_on(host, manifest, {:catch_changes => true})
+          end
         end
       end
     end
