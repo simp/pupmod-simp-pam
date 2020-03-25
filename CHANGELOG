@@ -1,3 +1,8 @@
+* Wed Mar 25 2020 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.7.1-0
+- Moved the pam_unix.so check before the pam_sss.so check in the password
+  section of the auth files otherwise it returns an "authentication token
+  manipulation" error and local passwords can not be changed.
+
 * Fri Feb 28 2020 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 6.7.0-0
 - Ignore authconfig disable on EL8. Authconfig was replaced with authselect
   and authselect does not overwrite settings unless you select --force

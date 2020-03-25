@@ -22,8 +22,8 @@ account     required      pam_permit.so
 
 password     requisite     pam_cracklib.so retry=10 minlen=8 minclass=7 maxrepeat=5 difok=2 maxsequence=6 maxclassrepeat=4 dcredit=1 ucredit=11 lcredit=3 ocredit=9
 password     required      pam_pwhistory.so use_authtok remember=14 retry=1 enforce_for_root
-password     sufficient    pam_sss.so use_authtok
 password     sufficient    pam_unix.so sha512 rounds=16 shadow try_first_pass use_authtok
+password     sufficient    pam_sss.so use_authtok
 password     required      pam_deny.so
 
 session      optional      pam_keyinit.so revoke
