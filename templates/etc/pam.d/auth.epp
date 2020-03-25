@@ -158,8 +158,8 @@ password     requisite     pam_<%= $password_check_backend %>.so retry=<%= $crac
 <%   $_pam_unix = "password     sufficient    pam_unix.so ${hash_algorithm} rounds=${rounds} shadow try_first_pass use_authtok" -%>
 <%   if $sssd { -%>
 <%= $_pam_pwhistory %>
-password     sufficient    pam_sss.so use_authtok
 <%= $_pam_unix %>
+password     sufficient    pam_sss.so use_authtok
 <%   } else { -%>
 <%= $_pam_pwhistory %>
 <%= $_pam_unix %>
