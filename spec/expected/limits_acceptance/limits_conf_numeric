@@ -2,3 +2,4 @@
 *	soft	nproc	50
 test	soft	nproc	20
 test	hard	nproc	50
+*	hard	core	0

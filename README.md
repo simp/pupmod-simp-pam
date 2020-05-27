@@ -176,6 +176,20 @@ pam::limits::rule { 'Limit Number of Processes for all Users':
 }
 ```
 
+The second method is to define the rule list as a ``Hash`` directly in Hiera:
+
+```yaml
+---
+pam::limits::rules:
+  disable_core_for_all:
+    domains:
+      - '*'
+    type: 'hard'
+    item: 'core'
+    value: 0
+    order: 100
+```
+
 ### Restricting ``su`` to the ``wheel`` Group
 
 To restrict the use of ``su`` to the ``wheel`` group:
