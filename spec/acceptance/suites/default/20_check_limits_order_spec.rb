@@ -3,17 +3,29 @@ require 'spec_helper_acceptance'
 test_name 'pam class'
 
 describe 'pam class' do
+  let(:hieradata) {{
+    'pam::limits::rules' => {
+      'disable_core_for_all' => {
+        'domains' => ['*'],
+        'type'    => 'hard',
+        'item'    => 'core',
+        'value'   => 0,
+        'order'   => 100
+      }
+    }
+  }}
+
   let(:manifest) {
     <<-EOS
-      include '::pam'
-      include '::pam::limits'
+      include 'pam'
+      include 'pam::limits'
 
       pam::limits::rule { 'limit_wild_nproc_soft':
         domains => ['*'],
         type    => 'soft',
         item    => 'nproc',
         value   => 50,
-        order   => 1,
+        order   => 1
       }
 
       pam::limits::rule { 'limit_test_nproc_soft':
@@ -21,7 +33,7 @@ describe 'pam class' do
         type    => 'soft',
         item    => 'nproc',
         value   => 20,
-        order   => 9,
+        order   => 9
       }
 
       pam::limits::rule { 'limit_test_nproc_hard':
@@ -29,7 +41,7 @@ describe 'pam class' do
         type    => 'hard',
         item    => 'nproc',
         value   => 50,
-        order   => 10,
+        order   => 10
       }
     EOS
   }
@@ -40,7 +52,8 @@ describe 'pam class' do
     context "on #{host}" do
       context 'default parameters' do
         it 'should work with no errors' do
-           apply_manifest_on(host, manifest, :catch_failures => true)
+          set_hieradata_on(host, hieradata)
+          apply_manifest_on(host, manifest, :catch_failures => true)
         end
 
         it 'should be idempotent' do

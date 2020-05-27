@@ -635,6 +635,39 @@ Add entries with ``pam::limits::rule``
 * **See also**
 limits.conf(5)
 
+#### Parameters
+
+The following parameters are available in the `pam::limits` class.
+
+##### `rules`
+
+Data type: `Optional[Hash]`
+
+A Hash that can be used to create pam::limits::rule resources via Hiera.
+
+* The Hash must be formatted suitably for passing directly into `create_resource()`
+* Remember that order matters:
+
+@example Hiera formatted rules
+
+  pam::limits::rules:
+    disable_core_for_user1:
+      domains:
+        - 'user1'
+      type: 'hard'
+      item: 'core'
+      value: 0
+      order: 50
+    disable_core_for_all:
+      domains:
+        - '*'
+      type: 'hard'
+      item: 'core'
+      value: 0
+      order: 100
+
+Default value: `undef`
+
 ### pam::wheel
 
 Enable wheel restrictions for su access
