@@ -25,4 +25,3 @@ fixtures:
       target: spec/fixtures/inspec_deps/inspec_profiles/profiles
   symlinks:
     pam: "#{source_dir}"
-

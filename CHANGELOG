@@ -1,3 +1,6 @@
+* Tue Aug 05 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.8.1-0
+- Ensure that pam_tty_audit is optional if auditing is not enabled on the system
+
 * Wed May 27 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.8.0-0
 - Add the ability to specify pam::limits::rules via Hiera
 

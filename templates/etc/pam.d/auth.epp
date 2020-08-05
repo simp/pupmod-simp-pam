@@ -177,7 +177,12 @@ session      required      pam_limits.so
 session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet
 session      sufficient    pam_succeed_if.so service in crond quiet use_uid
 <% if ($name in ['system','password','fingerprint']) and !empty($tty_audit_users) { -%>
-session      required      pam_tty_audit.so disable=* enable=<%= join($tty_audit_users, ',') %>
+<%-   if dig($facts, 'simplib__auditd', 'enabled') { -%>
+session      required      pam_tty_audit.so disable=* enable=<%= $tty_audit_users.join(',') %>
+<%-   } else { -%>
+# auditd disabled: pam_tty_audit set to optional so that all logins do not fail
+session      optional      pam_tty_audit.so disable=* enable=<%= $tty_audit_users.join(',') %>
+<%-  } -%>
 <% } -%>
 <% if $locale_file { -%>
 session      optional      pam_env.so readenv=1 envfile=<%= $locale_file %>
