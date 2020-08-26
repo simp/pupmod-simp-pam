@@ -135,7 +135,7 @@ describe 'pam' do
             .merge(
               {
                 :simplib__auditd => {
-                  'enabled' => true
+                  'enforcing' => true
                 }
               }
             )
