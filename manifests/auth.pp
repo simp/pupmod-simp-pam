@@ -41,6 +41,8 @@
 # @param use_netgroups
 # @param use_openshift
 # @param sssd
+# @param display_manager_user
+#   user that the display manager run as.
 # @param tty_audit_users
 # @param separator
 # @param enable_separator
@@ -82,6 +84,7 @@ define pam::auth (
   Boolean                        $use_netgroups             = $pam::use_netgroups,
   Boolean                        $use_openshift             = $pam::use_openshift,
   Boolean                        $sssd                      = $pam::sssd,
+  String[0]                      $display_manager_user      = $pam::display_manager_user,
   Array[String[0]]               $tty_audit_users           = $pam::tty_audit_users,
   String[0]                      $separator                 = $pam::separator,
   Boolean                        $enable_separator          = $pam::enable_separator,
@@ -146,6 +149,7 @@ define pam::auth (
         deny                      => $deny,
         faillock                  => $faillock,
         display_account_lock      => $display_account_lock,
+        display_manager_user      => $display_manager_user,
         fail_interval             => $fail_interval,
         remember                  => $remember,
         remember_retry            => $remember_retry,
