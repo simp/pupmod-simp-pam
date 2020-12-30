@@ -33,7 +33,6 @@
   Boolean                        $use_netgroups,
   Boolean                        $use_openshift,
   Boolean                        $sssd,
-  String[0]                      $display_manager_user,
   Array[String[0]]               $tty_audit_users,
   String[0]                      $separator,
   Boolean                        $enable_separator,
