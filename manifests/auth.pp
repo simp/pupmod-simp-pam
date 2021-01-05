@@ -41,7 +41,7 @@
 # @param use_netgroups
 # @param use_openshift
 # @param sssd
-#   user that the display manager run as.
+#   user that the display manager runs as.
 # @param tty_audit_users
 # @param separator
 # @param enable_separator
