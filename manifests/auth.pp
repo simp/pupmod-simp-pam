@@ -41,7 +41,6 @@
 # @param use_netgroups
 # @param use_openshift
 # @param sssd
-#   user that the display manager runs as.
 # @param tty_audit_users
 # @param separator
 # @param enable_separator
@@ -147,7 +146,6 @@ define pam::auth (
         deny                      => $deny,
         faillock                  => $faillock,
         display_account_lock      => $display_account_lock,
-        display_manager_user      => $display_manager_user,
         fail_interval             => $fail_interval,
         remember                  => $remember,
         remember_retry            => $remember_retry,

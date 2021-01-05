@@ -1122,14 +1122,6 @@ Data type: `Boolean`
 
 Default value: `$pam::sssd`
 
-##### `display_manager_user`
-
-Data type: `String[0]`
-
-user that the display manager run as.
-
-Default value: `$pam::display_manager_user`
-
 ##### `tty_audit_users`
 
 Data type: `Array[String[0]]`
