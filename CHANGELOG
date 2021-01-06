@@ -1,9 +1,8 @@
 * Wed Dec 23 2020 Jeanne Greulich <jeannegreulich@onyxpoint.com> - 6.8.3-0
-- update the system-auth configuration file to skip pam_tty_audit
-  if the login does not have a tty.  It caused service logins to fail,
+- Fixed a bug in the system-auth configuration file in which it did not skip
+  pam_tty_audit if the login did not have a tty.  This caused service logins to fail,
   specifically the gdm service.
-- Removed test nodesets for EL6 and removed support for EL6 in metadata.json
-  since we are no longer testing EL6.
+- Removed support for EL6.
 
 * Tue Aug 25 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.8.2-0
 - Use the fixed simplib__auditd fact for toggling pam_tty_audit
