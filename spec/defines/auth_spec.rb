@@ -9,10 +9,6 @@ def get_expected(filename)
   IO.read(path)
 end
 
-def el6?(facts)
-  return ['CentOS', 'RedHat', 'OracleLinux'].include?(facts[:os][:name]) && facts[:os][:release][:major] == '6'
-end
-
 shared_examples_for "a pam.d config file generator" do
   it { is_expected.to compile.with_all_deps }
   it { is_expected.to create_class('oddjob::mkhomedir') }
@@ -44,13 +40,7 @@ describe 'pam::auth' do
         context 'Generate file using default params' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:pw_backend) {
-                if el6?(os_facts)
-                  'cracklib'
-                else
-                  'pwquality'
-                end
-              }
+              let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_default_params") }
@@ -99,13 +89,7 @@ describe 'pam::auth' do
           }}
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:pw_backend) {
-                if el6?(os_facts)
-                  'cracklib'
-                else
-                  'pwquality'
-                end
-              }
+              let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_unlock_time_never") }
@@ -198,13 +182,7 @@ describe 'pam::auth' do
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:pw_backend) {
-                if el6?(os_facts)
-                  'cracklib'
-                else
-                  'pwquality'
-                end
-              }
+              let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_no_tty_audit") }
@@ -224,13 +202,7 @@ describe 'pam::auth' do
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:pw_backend) {
-                if el6?(os_facts)
-                  'cracklib'
-                else
-                  'pwquality'
-                end
-              }
+              let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_openshift_multi_tty_audit") }
@@ -250,13 +222,7 @@ describe 'pam::auth' do
               :tty_audit_users => ['root']
             }}
 
-              let(:pw_backend) {
-                if el6?(os_facts)
-                  'cracklib'
-                else
-                  'pwquality'
-                end
-              }
+              let(:pw_backend) { 'pwquality' }
               let(:title){ 'password' }
               let(:filename){ "/etc/pam.d/password-auth" }
               let(:file_content) { get_expected("#{pw_backend}-password-separator-#{index}") }
@@ -271,13 +237,7 @@ describe 'pam::auth' do
           let(:params){{
             :enable_separator => false,
           }}
-            let(:pw_backend) {
-              if el6?(os_facts)
-                'cracklib'
-              else
-                'pwquality'
-              end
-            }
+            let(:pw_backend) { 'pwquality' }
             let(:title){ 'password' }
             let(:filename){ "/etc/pam.d/password-auth" }
             let(:file_content) { get_expected("#{pw_backend}-password-separator-false") }
@@ -290,13 +250,7 @@ describe 'pam::auth' do
           let(:params){{
             :oath => true,
           }}
-            let(:pw_backend) {
-              if el6?(os_facts)
-                'cracklib'
-              else
-                'pwquality'
-              end
-            }
+            let(:pw_backend) { 'pwquality' }
             let(:title){ 'system' }
             let(:filename){ "/etc/pam.d/system-auth" }
             let(:file_content) { get_expected("#{pw_backend}-system-auth_oath_enabled") }
