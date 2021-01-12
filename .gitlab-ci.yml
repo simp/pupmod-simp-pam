@@ -353,53 +353,12 @@ pup5.x:
   script:
     - 'bundle exec rake beaker:suites[default,default]'
 
-pup5.x-fips:
-  <<: *pup_5_x
-  <<: *acceptance_base
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
-
-pup5.x-oel:
-  <<: *pup_5_x
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_2
-  script:
-    - 'bundle exec rake beaker:suites[default,oel]'
-
-pup5.x-oel-fips:
-  <<: *pup_5_x
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
-
 pup5.x-security-modules:
   <<: *pup_5_x
   <<: *acceptance_base
   <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
   script:
     - 'bundle exec rake beaker:suites[security_modules,default]'
-
-pup5.x-security-modules-fips:
-  <<: *pup_5_x
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[security_modules,default]'
-
-pup5.x-security-modules:
-  <<: *pup_5_x
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
-  script:
-    - 'bundle exec rake beaker:suites[security_modules,default]'
-
-pup5.x-security-modules-oel:
-  <<: *pup_5_x
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[security_modules,oel]'
 
 pup6.x:
   <<: *pup_6_x
@@ -407,13 +366,6 @@ pup6.x:
   <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_2
   script:
     - 'bundle exec rake beaker:suites[default,default]'
-
-pup6.x-fips:
-  <<: *pup_6_x
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_2
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
 
 pup6.pe:
   <<: *pup_6_pe
@@ -468,10 +420,16 @@ pup6.pe-security-modules-oel:
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[security_modules,oel]'
 
+pup7.x:
+  <<: *pup_7_x
+  <<: *acceptance_base
+  script:
+    - 'bundle exec rake beaker:suites[default,default]'
+
 #
 # Compliance
-pup5_compliance:
-  <<: *pup_5_x
+pup6_compliance:
+  <<: *pup_6_x
   <<: *compliance_base
   allow_failure: true
   script:
