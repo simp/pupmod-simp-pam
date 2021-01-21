@@ -1,2 +1,0 @@
----
-pam::password_check_backend: 'cracklib'

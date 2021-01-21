@@ -48,9 +48,9 @@ describe 'pam class' do
 
   let(:limits_content) { File.read('spec/expected/limits_acceptance/limits_conf_numeric') }
 
-  hosts.each do |host|
-    context "on #{host}" do
-      context 'default parameters' do
+  context 'default parameters' do
+    hosts.each do |host|
+      context "on #{host}" do
         it 'should work with no errors' do
           set_hieradata_on(host, hieradata)
           apply_manifest_on(host, manifest, :catch_failures => true)
@@ -59,12 +59,13 @@ describe 'pam class' do
         it 'should be idempotent' do
           apply_manifest_on(host, manifest, {:catch_changes => true})
         end
-
-        describe file('/etc/security/limits.conf') do
-          it { should be_file }
-          its(:content) { should eq(limits_content) }
-        end
       end
     end
+
+     # this is executed on all hosts
+     describe file('/etc/security/limits.conf') do
+        it { should be_file }
+        its(:content) { should eq(limits_content) }
+     end
   end
 end

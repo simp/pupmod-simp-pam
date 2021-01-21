@@ -20,8 +20,9 @@ describe 'pam class' do
           apply_manifest_on(host, manifest, {:catch_changes => true})
         end
 
-        case  host[:platform]
-        when /el-[67]-x86_64/
+        os_major = fact_on(host, 'operatingsystemmajrelease')
+
+        if os_major == '7'
           it 'should replace authconfig and authconfi-tui links' do
             result = on(host, 'ls -l /usr/sbin/authconfig')
             expect(result.stdout).to match(/authconfig -> \/usr\/local\/sbin\/simp_authconfig.sh/)
@@ -41,7 +42,10 @@ describe 'pam class' do
           end
         else
           it 'should not replace authconfig and authselect should do nothing if not forced' do
-            on(host, 'ls -l /usr/sbin/authconfig', :acceptable_exit_codes => [2] )
+            # OEL symlinks this internally
+            result = on(host, 'ls -l /usr/sbin/authconfig', :accept_all_exit_codes => true)
+            expect(result.stdout).not_to match(/simp_auth/)
+
             result = on(host,'/usr/bin/authselect select sssd', :accept_all_exit_codes => true)
             expect(result.stderr).to match(/Refusing to activate profile/)
             apply_manifest_on(host, manifest, {:catch_changes => true})

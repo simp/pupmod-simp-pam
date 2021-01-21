@@ -18,7 +18,7 @@ expect {
         }
         exp_continue
     } "*su: incorrect password*" {
-        send_user "Bad password or error in pam stack on EL6\n"
+        send_user "Bad password or error in pam stack\n"
         send_user "TOTP test: failure\n"
         exit 1
     } "*su: Authentication failure*" {
@@ -32,7 +32,7 @@ expect {
     } -re "$user@.+\[\$#]*" {
         send_user "\nTOTP test: success\n"
         exit 0
-    } 
+    }
 }
 send_user "TOTP test: failure\n"
 exit 1

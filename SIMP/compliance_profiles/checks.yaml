@@ -410,20 +410,6 @@ checks:
     identifiers:
       nist_800_53:rev4:
       - IA-1
-  oval:com.puppet.forge.simp.pam.cracklib_maxrepeat:
-    settings:
-      parameter: pam::cracklib_maxrepeat
-      value: 2
-    type: puppet-class-parameter
-    controls:
-      nist_800_53:rev4: true
-      nist_800_53:rev4:IA-5:1:a: true
-    identifiers:
-      nist_800_53:rev4:
-      - IA-5:1:a
-    confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '6'
   oval:com.puppet.forge.simp.pam.unlock_time:
     settings:
       parameter: pam::unlock_time
