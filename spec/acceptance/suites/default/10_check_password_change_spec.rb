@@ -70,12 +70,6 @@ describe 'pam check password change' do
           expect(result.stderr).to match(/password contains more than 2 same characters consecutively/)
         end
 
-        it 'should reject passwords that have a monotonic character sequence that is too long' do
-          stdin = "123=456=789=0Qw\n"*repeat_when_failure       # el6: 'too simplistic/systematic'
-          result = on(host, "passwd #{test_user}", {:stdin => stdin, :acceptable_exit_codes => [1]})
-          expect(result.stderr).to match(/is too simplistic\/systematic/)
-        end
-
         it 'should reject passwords containing the username' do
           stdin = "suPerFo0B@rB@z%#{test_user}\n"*repeat_when_failure
           result = on(host, "passwd #{test_user}", {:stdin => stdin, :acceptable_exit_codes => [1]})
