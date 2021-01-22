@@ -46,7 +46,7 @@ describe 'pam class' do
     EOS
   }
 
-  let(:limits_content) { File.read('spec/expected/limits_acceptance/limits_conf_numeric') }
+  let(:limits_content) { File.read('spec/expected/limits_acceptance/limits_conf_numeric').strip }
 
   context 'default parameters' do
     hosts.each do |host|
@@ -59,13 +59,12 @@ describe 'pam class' do
         it 'should be idempotent' do
           apply_manifest_on(host, manifest, {:catch_changes => true})
         end
+
+        it 'should create /etc/security/limits.conf with correct content' do
+          expect(file_exists_on(host, '/etc/security/limits.conf')).to be true
+          expect(file_contents_on(host, '/etc/security/limits.conf')).to eq(limits_content)
+        end
       end
     end
-
-     # this is executed on all hosts
-     describe file('/etc/security/limits.conf') do
-        it { should be_file }
-        its(:content) { should eq(limits_content) }
-     end
   end
 end
