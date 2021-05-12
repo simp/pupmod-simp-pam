@@ -3,6 +3,8 @@
   pam_tty_audit if the login did not have a tty.  This caused service logins to fail,
   specifically the gdm service.
 - Removed support for EL6.
+- Set the quiet parameter  when doing pam_listfile lookups in auth.pp  so that users
+  don't end up with warnings in the logs that look like authentication failures
 
 * Tue Aug 25 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.8.2-0
 - Use the fixed simplib__auditd fact for toggling pam_tty_audit

@@ -4,8 +4,8 @@
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=900 fail_interval=900 even_deny_root root_unlock_time=60
-auth     [success=3 default=ignore] pam_listfile.so item=group sense=allow file=/etc/liboath/exclude_groups.oath
-auth     [success=2 default=ignore] pam_listfile.so item=user sense=allow file=/etc/liboath/exclude_users.oath
+auth     [success=3 default=ignore] pam_listfile.so item=group sense=allow file=/etc/liboath/exclude_groups.oath quiet
+auth     [success=2 default=ignore] pam_listfile.so item=user sense=allow file=/etc/liboath/exclude_users.oath quiet
 auth     [success=1 default=bad]    pam_oath.so usersfile=/etc/liboath/users.oath window=1
 auth     requisite     pam_deny.so
 auth     [success=1 default=ignore] pam_unix.so try_first_pass
