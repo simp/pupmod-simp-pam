@@ -1,2 +1,12 @@
 ---
+lookup_options:
+  pam::access::users:
+    merge:
+      strategy: deep
+      knockout_prefix: '--'
+  pam::limits::rules:
+    merge:
+      strategy: deep
+      knockout_prefix: '--'
+
 pam::password_check_backend: 'cracklib'

@@ -360,6 +360,7 @@ pup7.x-unit:
 pup5.x:
   <<: *pup_5_x
   <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
   script:
     - 'bundle exec rake beaker:suites[default,default]'
 
