@@ -20,16 +20,19 @@ describe 'pam::auth' do
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-
-        let(:facts){
+        let(:facts) do
           os_facts.merge(
             {
               'login_defs' => {
                 'uid_min' => 1000
+              },
+              'simplib__auditd' => {
+                'enforcing' => false
               }
             }
           )
-        }
+        end
+
         let(:pre_condition){
           'class { "::pam": auth_sections => [] }'
         }

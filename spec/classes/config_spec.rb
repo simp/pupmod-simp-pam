@@ -6,7 +6,16 @@ require 'spec_helper'
 describe 'pam' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
-      let(:facts){ os_facts }
+      let(:facts) do
+        os_facts
+          .merge(
+            {
+              :simplib__auditd => {
+                'enforcing' => false
+              }
+            }
+          )
+      end
 
       context 'with default values' do
         it { is_expected.to compile.with_all_deps }
