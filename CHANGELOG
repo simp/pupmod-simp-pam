@@ -2,7 +2,7 @@
 - Removed support for Puppet 5
 - Ensured support for Puppet 7 in requirements and stdlib
 
-* Tue Jun 08 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.8.4-0
+* Tue Jun 08 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.9.0
 - Fixed
   - Added default Hiera deep merges for `pam::access::users` and
     `pam::limits::rules` based on user feedback
