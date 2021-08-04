@@ -23,7 +23,7 @@ session      required      pam_limits.so
 session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet
 session      sufficient    pam_succeed_if.so service in crond quiet use_uid
 # Check if session has a tty before running pam_tty_audit
-session      [default=ignore success=1] pam_succeed_if.so tty !~ ?*
+session      [default=ignore success=1] pam_succeed_if.so tty !~ ?* quiet
 # auditd disabled: pam_tty_audit set to optional so that all logins do not fail
 session      optional      pam_tty_audit.so disable=* enable=root
 session      optional      pam_env.so readenv=1 envfile=/etc/locale.conf

@@ -178,7 +178,7 @@ session      sufficient    pam_succeed_if.so service = gdm-launch-environment qu
 session      sufficient    pam_succeed_if.so service in crond quiet use_uid
 <% if ($name in ['system','password','fingerprint']) and !empty($tty_audit_users) { -%>
 # Check if session has a tty before running pam_tty_audit
-session      [default=ignore success=1] pam_succeed_if.so tty !~ ?*
+session      [default=ignore success=1] pam_succeed_if.so tty !~ ?* quiet
 <%-   if dig($facts, 'simplib__auditd', 'enforcing') { -%>
 session      required      pam_tty_audit.so disable=* enable=<%= $tty_audit_users.join(',') %>
 <%-   } else { -%>
