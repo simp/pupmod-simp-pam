@@ -216,6 +216,32 @@ describe 'pam::auth' do
           end
         end
 
+        context 'Generate file using auth_content_pre params for Centrify' do
+          let(:params) {{
+            :sssd             => true,
+            :auth_content_pre => [
+              'auth     sufficient pam_centrifydc.so',
+              'auth     requisite  pam_centrifydc.so deny',
+              'account  sufficient pam_centrifydc.so',
+              'account  requisite  pam_centrifydc.so deny',
+              'session  required   pam_centrifydc.so homedir',
+              'password sufficient pam_centrifydc.so try_first_pass',
+              'password requisite  pam_centrifydc.so deny',
+            ]
+          }}
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:pw_backend) { 'pwquality' }
+              let(:title){ auth_type }
+              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_user_specified_centrify") }
+
+              it_should_behave_like "a pam.d config file generator"
+              it { is_expected.to contain_file(filename).with_content(file_content) }
+            end
+          end
+        end
+
         context 'Generate file with varying list separators when list_separator == true' do
           ['!', ',', '@'].each_with_index do |separator, index|
             context "auth type separator = '#{separator}'" do

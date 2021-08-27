@@ -2,6 +2,7 @@
   String[1]                      $name,
   Pam::PasswordBackends          $password_check_backend,
   Optional[Stdlib::Absolutepath] $locale_file,
+  Optional[Array[String]]        $auth_content_pre,
   Boolean                        $cracklib_enforce_for_root,
   Boolean                        $cracklib_reject_username,
   Optional[Integer[0]]           $cracklib_difok,
@@ -50,6 +51,15 @@ else {
   $_even_deny_root = ''
 }
 -%>
+<% unless empty($auth_content_pre) { -%>
+
+# User defined prepended auth content 
+<%   $auth_content_pre.each |String $auth_pre_line| { -%>
+<%= $auth_pre_line %>
+<%   } -%>
+<% } -%>
+
+# SIMP defined auth content
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 <% if $faillock {

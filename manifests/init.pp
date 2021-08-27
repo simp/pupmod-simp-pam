@@ -203,6 +203,10 @@
 #
 #   * Set to an empty Array to not audit TTY actions for any user
 #
+# @param su_content_extra
+#   User-specified content to be added to ``/etc/pam.d/su`` in addition to
+#   the rest of the templated content
+#
 # @param su_content
 #   The content that should be used to fill ``/etc/pam.d/su`` instead of the
 #   templated content
@@ -215,6 +219,11 @@
 #   The PAM ``*-auth`` files to manage
 #
 #   * Set to an empty Array to not manage any sections
+#
+# @param auth_content_pre
+#   Content to prepend to the auth configs in addition to templated content
+#
+#   * Set to an empty Array to not prepend any default content
 #
 # @param fingerprint_auth_content
 #   The content that should be used to fill ``/etc/pam.d/fingerprint_auth``
@@ -304,6 +313,8 @@ class pam (
   String[0]                      $separator                 = ',',
   Array[String[0]]               $tty_audit_users           = [ 'root' ],
   Pam::AuthSections              $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
+  Optional[Array[String]]        $auth_content_pre          = undef,
+  Optional[Array[String]]        $su_content_extra          = undef,
   Optional[String]               $su_content                = undef,
   Optional[String]               $other_content             = undef,
   Optional[String]               $fingerprint_auth_content  = undef,

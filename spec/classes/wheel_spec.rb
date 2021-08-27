@@ -38,6 +38,13 @@ describe 'pam::wheel' do
           it { is_expected.to create_file('/etc/pam.d/su').with_content(/oo-trap/) }
         end
 
+        context 'with extra content' do
+          let(:params){{
+            :su_content_extra => ['auth sufficient pam_centrifydc.so enable_dzpamgate']
+          }}
+          it { is_expected.to create_file('/etc/pam.d/su').with_content(/auth\s+sufficient\s+pam_centrifydc\.so\s+enable_dzpamgate/) }
+        end
+
         context 'with custom content' do
           let(:params) {{
             :content    => 'this is valid pam su configuration, I promise'
