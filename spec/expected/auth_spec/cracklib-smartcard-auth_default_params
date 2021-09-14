@@ -1,6 +1,8 @@
 #%PAM-1.0
 # This file managed by Puppet
 # User changes will be lost!
+
+# SIMP defined auth content
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=900 fail_interval=900 even_deny_root root_unlock_time=60
