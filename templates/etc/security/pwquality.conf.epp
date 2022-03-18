@@ -9,6 +9,7 @@
   Integer[0] $maxrepeat,
   Integer[0] $maxclassrepeat,
   Integer[0] $maxsequence,
+  Integer[0] $dictcheck,
   Boolean $gecoscheck,
   Optional[Array[String[1]]] $badwords,
   Optional[Stdlib::Absolutepath] $dictpath
@@ -26,6 +27,7 @@ minclass = <%= $minclass %>
 maxrepeat = <%= $maxrepeat %>
 maxclassrepeat = <%= $maxclassrepeat %>
 maxsequence = <%= $maxsequence %>
+dictcheck = <%= $dictcheck %>
 <% if $gecoscheck  { -%>
 gecoscheck = 1
 <% } -%>

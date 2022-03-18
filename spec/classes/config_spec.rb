@@ -40,6 +40,7 @@ describe 'pam' do
             maxrepeat = 2
             maxclassrepeat = 3
             maxsequence = 4
+            dictcheck = 1
             gecoscheck = 1
             EOM
           )
