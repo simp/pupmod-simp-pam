@@ -22,7 +22,8 @@ describe 'pam class' do
 
         os_major = fact_on(host, 'operatingsystemmajrelease')
 
-        if os_major == '7'
+        # Total hack to support Amazon without a bunch of logic
+        if ['7','2'].include?(os_major)
           it 'should replace authconfig and authconfi-tui links' do
             result = on(host, 'ls -l /usr/sbin/authconfig')
             expect(result.stdout).to match(/authconfig -> \/usr\/local\/sbin\/simp_authconfig.sh/)

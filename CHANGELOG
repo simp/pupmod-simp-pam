@@ -1,3 +1,6 @@
+* Sun Mar 20 2022 Trevor Vaughan <trevor@sicura.us> - 6.10.1
+- Support Amazon Linux 2
+
 * Thu Aug 26 2021 Kendall Moore <kendall.moore@onyxpoint.com> - 6.10.0
 - Add pre section content for auth files
 - Add extra content for su
