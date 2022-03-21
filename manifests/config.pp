@@ -104,5 +104,18 @@ class pam::config {
       }
   }
 
+  if ($pam::faillock_log_dir) {
+    file { '$pam::faillock_log_dir':
+      ensure   => 'dir',
+      owner    => 'root',
+      group    => 'root',
+      mode     => '0750',
+      seluser  => 'system_u',
+      selrole  => 'object_r',
+      seltype  => 'faillog_t',
+      selrange => 's0'
+    }
+  }
+
   if ! empty($pam::auth_sections) { ::pam::auth { $pam::auth_sections: }}
 }
