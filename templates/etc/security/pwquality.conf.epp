@@ -27,7 +27,9 @@ minclass = <%= $minclass %>
 maxrepeat = <%= $maxrepeat %>
 maxclassrepeat = <%= $maxclassrepeat %>
 maxsequence = <%= $maxsequence %>
+<% if facts['os']['release']['major'] > 7 { %>
 dictcheck = <%= $dictcheck %>
+<% } %>
 <% if $gecoscheck  { -%>
 gecoscheck = 1
 <% } -%>

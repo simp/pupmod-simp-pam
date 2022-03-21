@@ -117,8 +117,9 @@
 #
 # @param dictcheck
 #   If nonzero, check whether the password (with possible modifications) 
-#   matches a #   word in a dictionary. Currently the dictionary check is
-#   performed using the cracklib library.
+#   matches a word in a dictionary. Currently the dictionary check is
+#   performed using the cracklib library. This option will be ignored
+#   unless the OS major version is higher than 7.
 #
 # @param rm_pwquality_conf_d
 #   Remove the /etc/security/pwquality.conf.d directory and all contents.
