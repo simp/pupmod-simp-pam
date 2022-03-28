@@ -32,7 +32,8 @@ class pam::config {
         minclass       => $pam::cracklib_minclass,
         minlen         => $pam::cracklib_minlen,
         badwords       => $pam::cracklib_badwords,
-        dictpath       => $pam::cracklib_dictpath
+        dictpath       => $pam::cracklib_dictpath,
+        dictcheck      => $pam::dictcheck
       })
     }
 

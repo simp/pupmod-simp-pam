@@ -1,5 +1,9 @@
-* Fri Mar 18 2022 Mike Riddle <mike@sicura.us> - 6.10.1
-- Added the faillock_log_file parameter
+* Mon Mar 28 2022 Mike Riddle <mike@sicura.us> - 6.11.0
+- Add dictcheck parameter to pwquality
+- Add faillock_log_file parameter
+
+* Sun Mar 20 2022 Trevor Vaughan <trevor@sicura.us> - 6.10.1
+- Support Amazon Linux 2
 
 * Thu Aug 26 2021 Kendall Moore <kendall.moore@onyxpoint.com> - 6.10.0
 - Add pre section content for auth files
