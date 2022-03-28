@@ -115,6 +115,12 @@
 # @param cracklib_dictpath
 #   Path to the cracklib dictionaries. Default is to use the cracklib default.
 #
+# @param dictcheck
+#   If nonzero, check whether the password (with possible modifications) 
+#   matches a word in a dictionary. Currently the dictionary check is
+#   performed using the cracklib library. This option will be ignored
+#   unless the OS major version is higher than 7.
+#
 # @param rm_pwquality_conf_d
 #   Remove the /etc/security/pwquality.conf.d directory and all contents.
 #
@@ -286,6 +292,7 @@ class pam (
   Integer[0]                     $cracklib_retry            = 3,
   Optional[Array[String[1],1]]   $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath] $cracklib_dictpath         = undef,
+  Integer[0]                     $dictcheck                 = 1,
   Boolean                        $rm_pwquality_conf_d       = true,
   Boolean                        $oath                      = simplib::lookup('simp_options::oath', { 'default_value' => false }),
   Integer[0]                     $oath_window               = 1,
