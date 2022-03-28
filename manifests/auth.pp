@@ -27,6 +27,7 @@
 # @param oath_window
 # @param deny
 # @param faillock
+# @param faillock_log_dir
 # @param display_account_lock
 # @param fail_interval
 # @param remember
@@ -69,6 +70,7 @@ define pam::auth (
   Integer[0]                     $cracklib_retry            = $pam::cracklib_retry,
   Integer[0]                     $deny                      = $pam::deny,
   Boolean                        $faillock                  = $pam::faillock,
+  Optional[Stdlib::Absolutepath] $faillock_log_dir          = undef,
   Boolean                        $display_account_lock      = $pam::display_account_lock,
   Integer[0]                     $fail_interval             = $pam::fail_interval,
   Integer[0]                     $remember                  = $pam::remember,
@@ -148,6 +150,7 @@ define pam::auth (
         cracklib_retry            => $cracklib_retry,
         deny                      => $deny,
         faillock                  => $faillock,
+        faillock_log_dir          => $faillock_log_dir,
         display_account_lock      => $display_account_lock,
         fail_interval             => $fail_interval,
         remember                  => $remember,

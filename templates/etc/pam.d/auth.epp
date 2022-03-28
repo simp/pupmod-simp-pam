@@ -19,6 +19,7 @@
   Integer[0]                     $cracklib_retry,
   Integer[0]                     $deny,
   Boolean                        $faillock,
+  Optional[Stdlib::Absolutepath] $faillock_log_dir,
   Boolean                        $display_account_lock,
   Integer[0]                     $fail_interval,
   Integer[0]                     $remember,
@@ -63,6 +64,12 @@ else {
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 <% if $faillock {
+  if $faillock_log_dir {
+    $_faillock_log_dir = " dir=${faillock_log_dir}"
+  }
+  else {
+    $_faillock_log_dir = ''
+  }
   if $display_account_lock {
     $_display_account_lock = ''
   }
@@ -70,7 +77,7 @@ auth     required      pam_env.so
     $_display_account_lock = ' silent'
   }
 -%>
-auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny=<%= $deny %> audit unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_even_deny_root %>
+auth     required      pam_faillock.so preauth<%= $_faillock_log_dir %><%= $_display_account_lock %> deny=<%= $deny %> audit unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_even_deny_root %>
 <% } -%>
 <% if $name == 'fingerprint' { -%>
 auth     sufficient    pam_fprintd.so

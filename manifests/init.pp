@@ -133,6 +133,9 @@
 # @param faillock
 #   Enable or disable the use of ``faillock``
 #
+# @param faillock_log_dir
+#   The location in which to log failed login attempts and account lockouts
+#
 # @param display_account_lock
 #   Display to the remote user that their account has been locked
 #
@@ -298,6 +301,7 @@ class pam (
   Integer[0]                     $oath_window               = 1,
   Integer[0]                     $deny                      = 5,
   Boolean                        $faillock                  = true,
+  Optional[Stdlib::Absolutepath] $faillock_log_dir          = undef,
   Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
   Integer[0]                     $remember                  = 24,
