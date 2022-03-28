@@ -85,9 +85,11 @@ The following parameters are available in the `pam` class:
 * [`use_openshift`](#use_openshift)
 * [`sssd`](#sssd)
 * [`tty_audit_users`](#tty_audit_users)
+* [`su_content_extra`](#su_content_extra)
 * [`su_content`](#su_content)
 * [`other_content`](#other_content)
 * [`auth_sections`](#auth_sections)
+* [`auth_content_pre`](#auth_content_pre)
 * [`fingerprint_auth_content`](#fingerprint_auth_content)
 * [`system_auth_content`](#system_auth_content)
 * [`password_auth_content`](#password_auth_content)
@@ -506,6 +508,15 @@ The users for which TTY auditing is enabled
 
 Default value: `[ 'root' ]`
 
+##### <a name="su_content_extra"></a>`su_content_extra`
+
+Data type: `Optional[Array[String]]`
+
+User-specified content to be added to ``/etc/pam.d/su`` in addition to
+the rest of the templated content
+
+Default value: ``undef``
+
 ##### <a name="su_content"></a>`su_content`
 
 Data type: `Optional[String]`
@@ -533,6 +544,16 @@ The PAM ``*-auth`` files to manage
 * Set to an empty Array to not manage any sections
 
 Default value: `[ 'fingerprint', 'system', 'password', 'smartcard' ]`
+
+##### <a name="auth_content_pre"></a>`auth_content_pre`
+
+Data type: `Optional[Array[String]]`
+
+Content to prepend to the auth configs in addition to templated content
+
+* Set to an empty Array to not prepend any default content
+
+Default value: ``undef``
 
 ##### <a name="fingerprint_auth_content"></a>`fingerprint_auth_content`
 
@@ -745,6 +766,7 @@ The following parameters are available in the `pam::wheel` class:
 * [`wheel_group`](#wheel_group)
 * [`root_only`](#root_only)
 * [`use_openshift`](#use_openshift)
+* [`su_content_extra`](#su_content_extra)
 * [`content`](#content)
 
 ##### <a name="wheel_group"></a>`wheel_group`
@@ -771,6 +793,15 @@ Whether or not to configure things in such a way that the ``openshift``
 puppet code is compatible
 
 Default value: `$pam::use_openshift`
+
+##### <a name="su_content_extra"></a>`su_content_extra`
+
+Data type: `Optional[Array[String]]`
+
+User-specified content added after rootok but before further templated
+content
+
+Default value: `$pam::su_content_extra`
 
 ##### <a name="content"></a>`content`
 
@@ -918,6 +949,7 @@ The following parameters are available in the `pam::auth` defined type:
 
 * [`password_check_backend`](#password_check_backend)
 * [`locale_file`](#locale_file)
+* [`auth_content_pre`](#auth_content_pre)
 * [`cracklib_enforce_for_root`](#cracklib_enforce_for_root)
 * [`cracklib_reject_username`](#cracklib_reject_username)
 * [`cracklib_difok`](#cracklib_difok)
@@ -971,6 +1003,14 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 
 Default value: `$pam::locale_file`
+
+##### <a name="auth_content_pre"></a>`auth_content_pre`
+
+Data type: `Optional[Array[String]]`
+
+
+
+Default value: `$pam::auth_content_pre`
 
 ##### <a name="cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
 
