@@ -292,6 +292,11 @@ describe 'pam' do
           }
         end
 
+        context 'with faillock_log_dir set' do
+          let(:params){{ :faillock_log_dir => '/var/log/faillock' }}
+          it { is_expected.to contain_file('/var/log/faillock') }
+        end
+
         context 'no warn_if_unknown = false' do
           let(:params){{ :warn_if_unknown => false }}
           it { is_expected.to contain_file('/etc/pam.d/other').with_content(<<~EOM

@@ -106,7 +106,7 @@ class pam::config {
   }
 
   if ($pam::faillock_log_dir) {
-    file { '$pam::faillock_log_dir':
+    file { $pam::faillock_log_dir:
       ensure   => 'dir',
       owner    => 'root',
       group    => 'root',
