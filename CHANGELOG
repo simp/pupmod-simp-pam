@@ -1,3 +1,6 @@
+* Wed Apr 13 2022 Mike Riddle <mike@sicura.us> - 6.11.1
+- Fix bug that failed when setting faillock_log_dir parameter
+
 * Mon Mar 28 2022 Mike Riddle <mike@sicura.us> - 6.11.0
 - Add dictcheck parameter to pwquality
 - Add faillock_log_file parameter
