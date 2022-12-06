@@ -31,6 +31,7 @@ class pam::config {
         ocredit        => $pam::cracklib_ocredit,
         minclass       => $pam::cracklib_minclass,
         minlen         => $pam::cracklib_minlen,
+        retry          => $pam::cracklib_retry,
         badwords       => $pam::cracklib_badwords,
         dictpath       => $pam::cracklib_dictpath,
         dictcheck      => $pam::dictcheck

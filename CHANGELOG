@@ -1,3 +1,6 @@
+* Tue Dec 06 2022 Kevin Harrington - 6.11.2
+- Add 'retry =' to /etc/security/pwquality.conf per STIG RHEL-08-020104
+
 * Wed Apr 13 2022 Mike Riddle <mike@sicura.us> - 6.11.1
 - Fix bug that failed when setting faillock_log_dir parameter
 
