@@ -28,7 +28,15 @@ minclass = <%= $minclass %>
 maxrepeat = <%= $maxrepeat %>
 maxclassrepeat = <%= $maxclassrepeat %>
 maxsequence = <%= $maxsequence %>
+<%
+# The 'retry' option  was introduced in RHEL 8.4 and Amazon Linux 2022
+unless
+  ($facts['os']['name'] == 'Amazon' and Integer($facts['os']['release']['major']) < 2022) or
+  Integer($facts['os']['release']['major']) < 8 or
+  # CentOS Streams doesn't provide a minor version number:
+  (Integer($facts['os']['release']['major']) == 8 and $facts['os']['release']['minor'] and Integer($facts['os']['release']['minor']) < 4) { -%>
 retry = <%= $retry %>
+<% } -%>
 <% if Integer($facts['os']['release']['major']) > 7 { -%>
 dictcheck = <%= $dictcheck %>
 <% } -%>
