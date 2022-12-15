@@ -1,4 +1,7 @@
-* Tue Dec 06 2022 Kevin Harrington - 6.11.2
+* Tue Dec 15 2022 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.11.2
+- Accomodate 'retry =' patch with EL versions earlier than 8.4
+
+* Tue Dec 06 2022 Kevin Harrington <3482852+ke5C2Fin@users.noreply.github.com> - 6.11.2
 - Add 'retry =' to /etc/security/pwquality.conf per STIG RHEL-08-020104
 
 * Wed Apr 13 2022 Mike Riddle <mike@sicura.us> - 6.11.1
