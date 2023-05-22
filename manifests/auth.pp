@@ -109,7 +109,7 @@ define pam::auth (
     'smartcard',
     'fingerprint',
     'password',
-    'system'
+    'system',
   ]
 
   $_valid_targets_join = join($valid_targets,',')
@@ -117,7 +117,16 @@ define pam::auth (
     fail("\$name must be one of '${_valid_targets_join}'.")
   }
 
-  $basedir = '/etc/pam.d'
+  unless $pam::auth_basedir {
+    $basedir = $pam::use_authselect ? {
+      true => '/etc/pam.d/simp',
+      default => '/etc/pam.d',
+    }
+  }
+  else {
+    $basedir = $pam::auth_basedir
+  }
+
   $target = "${name}-auth"
 
   if $content {
@@ -130,47 +139,47 @@ define pam::auth (
     }
     else {
       $_content = epp("${module_name}/etc/pam.d/auth.epp", {
-        name                      => $name,
-        password_check_backend    => $password_check_backend,
-        locale_file               => $locale_file,
-        auth_content_pre          => $auth_content_pre,
-        cracklib_enforce_for_root => $cracklib_enforce_for_root,
-        cracklib_reject_username  => $cracklib_reject_username,
-        cracklib_difok            => $cracklib_difok,
-        cracklib_maxrepeat        => $cracklib_maxrepeat,
-        cracklib_maxsequence      => $cracklib_maxsequence,
-        cracklib_maxclassrepeat   => $cracklib_maxclassrepeat,
-        cracklib_gecoscheck       => $cracklib_gecoscheck,
-        cracklib_dcredit          => $cracklib_dcredit,
-        cracklib_ucredit          => $cracklib_ucredit,
-        cracklib_lcredit          => $cracklib_lcredit,
-        cracklib_ocredit          => $cracklib_ocredit,
-        cracklib_minclass         => $cracklib_minclass,
-        cracklib_minlen           => $cracklib_minlen,
-        cracklib_retry            => $cracklib_retry,
-        deny                      => $deny,
-        faillock                  => $faillock,
-        faillock_log_dir          => $faillock_log_dir,
-        display_account_lock      => $display_account_lock,
-        fail_interval             => $fail_interval,
-        remember                  => $remember,
-        remember_retry            => $remember_retry,
-        remember_for_root         => $remember_for_root,
-        even_deny_root            => $even_deny_root,
-        root_unlock_time          => $root_unlock_time,
-        hash_algorithm            => $hash_algorithm,
-        rounds                    => $rounds,
-        uid                       => $uid,
-        unlock_time               => $unlock_time,
-        preserve_ac               => $preserve_ac,
-        use_netgroups             => $use_netgroups,
-        use_openshift             => $use_openshift,
-        sssd                      => $sssd,
-        tty_audit_users           => $tty_audit_users,
-        separator                 => $separator,
-        enable_separator          => $enable_separator,
-        oath                      => $oath,
-        oath_window               => $oath_window
+          name                      => $name,
+          password_check_backend    => $password_check_backend,
+          locale_file               => $locale_file,
+          auth_content_pre          => $auth_content_pre,
+          cracklib_enforce_for_root => $cracklib_enforce_for_root,
+          cracklib_reject_username  => $cracklib_reject_username,
+          cracklib_difok            => $cracklib_difok,
+          cracklib_maxrepeat        => $cracklib_maxrepeat,
+          cracklib_maxsequence      => $cracklib_maxsequence,
+          cracklib_maxclassrepeat   => $cracklib_maxclassrepeat,
+          cracklib_gecoscheck       => $cracklib_gecoscheck,
+          cracklib_dcredit          => $cracklib_dcredit,
+          cracklib_ucredit          => $cracklib_ucredit,
+          cracklib_lcredit          => $cracklib_lcredit,
+          cracklib_ocredit          => $cracklib_ocredit,
+          cracklib_minclass         => $cracklib_minclass,
+          cracklib_minlen           => $cracklib_minlen,
+          cracklib_retry            => $cracklib_retry,
+          deny                      => $deny,
+          faillock                  => $faillock,
+          faillock_log_dir          => $faillock_log_dir,
+          display_account_lock      => $display_account_lock,
+          fail_interval             => $fail_interval,
+          remember                  => $remember,
+          remember_retry            => $remember_retry,
+          remember_for_root         => $remember_for_root,
+          even_deny_root            => $even_deny_root,
+          root_unlock_time          => $root_unlock_time,
+          hash_algorithm            => $hash_algorithm,
+          rounds                    => $rounds,
+          uid                       => $uid,
+          unlock_time               => $unlock_time,
+          preserve_ac               => $preserve_ac,
+          use_netgroups             => $use_netgroups,
+          use_openshift             => $use_openshift,
+          sssd                      => $sssd,
+          tty_audit_users           => $tty_audit_users,
+          separator                 => $separator,
+          enable_separator          => $enable_separator,
+          oath                      => $oath,
+          oath_window               => $oath_window
       })
     }
   }
@@ -180,12 +189,12 @@ define pam::auth (
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => $_content
+    content => $_content,
   }
 
   if ! $preserve_ac {
     file { "${basedir}/${target}-ac":
-      ensure => absent
+      ensure => absent,
     }
   }
 }
