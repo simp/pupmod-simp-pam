@@ -270,6 +270,15 @@
 #   Disable authconfig from being used, as it breaks this module's reconfiguration
 #   of PAM.
 #
+# @param use_authselect
+#   If true, the files created in this module will be created in a simp directory
+#   and authselect will simply include the files created under that new directory.
+#   In short, if this value is true, the files will be created the same way, they
+#   will just live under a different directory and be included by the original files
+#
+# @param auth_basedir
+#   The directory in which the auth files will be created
+#
 # @param package_ensure
 #   Ensure setting for all packages installed by this module
 #
@@ -319,11 +328,11 @@ class pam (
   Boolean                        $deny_if_unknown           = true,
   Boolean                        $use_netgroups             = false,
   Boolean                        $use_openshift             = false,
-  Boolean                        $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false}),
+  Boolean                        $sssd                      = simplib::lookup('simp_options::sssd', { 'default_value' => false }),
   Boolean                        $enable_separator          = true,
   String[0]                      $separator                 = ',',
-  Array[String[0]]               $tty_audit_users           = [ 'root' ],
-  Pam::AuthSections              $auth_sections             = [ 'fingerprint', 'system', 'password', 'smartcard' ],
+  Array[String[0]]               $tty_audit_users           = ['root'],
+  Pam::AuthSections              $auth_sections             = ['fingerprint', 'system', 'password', 'smartcard'],
   Optional[Array[String]]        $auth_content_pre          = undef,
   Optional[Array[String]]        $su_content_extra          = undef,
   Optional[String]               $su_content                = undef,
@@ -332,14 +341,14 @@ class pam (
   Optional[String]               $system_auth_content       = undef,
   Optional[String]               $password_auth_content     = undef,
   Optional[String]               $smartcard_auth_content    = undef,
+  Optional[StdLib::Absolutepath] $auth_basedir              = undef,
   Boolean                        $enable                    = true,
   Boolean                        $enable_warning            = true,
   Boolean                        $disable_authconfig        = true,
+  Boolean                        $use_authselect            = simplib::lookup('simp_options::authselect', { 'default_value' => false }),
   Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
 ) {
-
-
-  if simplib::lookup('simp_options::pam', { 'default_value' => true } ) {
+  if simplib::lookup('simp_options::pam', { 'default_value' => true }) {
     if $enable {
       simplib::assert_metadata( $module_name )
 
@@ -348,11 +357,10 @@ class pam (
 
       Class['pam::install']
       -> Class['pam::config']
-
     }
   }
   else {
-  # The global catalyst was set to false but the module was included
+    # The global catalyst was set to false but the module was included
     if $enable_warning {
       if simplib::lookup('simp_options::pam', { 'default_value' => true }) == false {
         warning('Module pupmod-simp-pam was included but global catalyst simp_options::pam is set to false. This could have unexpected effects.')
