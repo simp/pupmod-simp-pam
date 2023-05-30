@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "6.11.2",
+  "version": "6.11.3",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
