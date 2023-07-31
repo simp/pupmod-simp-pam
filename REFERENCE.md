@@ -7,27 +7,27 @@
 ### Classes
 
 * [`pam`](#pam): Ensure that reasonable PAM security options are applied.
-* [`pam::access`](#pamaccess): Set up ``/etc/security/access.conf`` with a default to allow root to login locally.
-* [`pam::access::default_deny`](#pamaccessdefault_deny): Add a "default deny" rule to ``pam_access``
-* [`pam::config`](#pamconfig): Configuration class called from pam.
-* [`pam::install`](#paminstall): Install the required PAM packages
-* [`pam::limits`](#pamlimits): Set up ``/etc/security/limits.conf``
-* [`pam::wheel`](#pamwheel): Enable wheel restrictions for su access
+* [`pam::access`](#pam--access): Set up ``/etc/security/access.conf`` with a default to allow root to login locally.
+* [`pam::access::default_deny`](#pam--access--default_deny): Add a "default deny" rule to ``pam_access``
+* [`pam::config`](#pam--config): Configuration class called from pam.
+* [`pam::install`](#pam--install): Install the required PAM packages
+* [`pam::limits`](#pam--limits): Set up ``/etc/security/limits.conf``
+* [`pam::wheel`](#pam--wheel): Enable wheel restrictions for su access
 
 ### Defined types
 
-* [`pam::access::rule`](#pamaccessrule): Set up entries in ``/etc/security/access.conf``
-* [`pam::auth`](#pamauth): Set up the various -auth files in /etc/pam.d.
-* [`pam::limits::rule`](#pamlimitsrule): ``domain type item value`` resource limiting sets as defined in ``limits.conf(5)``.
+* [`pam::access::rule`](#pam--access--rule): Set up entries in ``/etc/security/access.conf``
+* [`pam::auth`](#pam--auth): Set up the various -auth files in /etc/pam.d.
+* [`pam::limits::rule`](#pam--limits--rule): ``domain type item value`` resource limiting sets as defined in ``limits.conf(5)``.
 
 ### Data types
 
-* [`Pam::AccountUnlockTime`](#pamaccountunlocktime): Valid account unlock values
-* [`Pam::AuthSections`](#pamauthsections): Valid PAM `auth` sections
-* [`Pam::HashAlgorithm`](#pamhashalgorithm): Valid PAM password hash algorithms
-* [`Pam::Limits::Item`](#pamlimitsitem): Valid PAM limits
-* [`Pam::Limits::Value`](#pamlimitsvalue): Valid PAM limit values
-* [`Pam::PasswordBackends`](#pampasswordbackends): Valid PAM password validation backends
+* [`Pam::AccountUnlockTime`](#Pam--AccountUnlockTime): Valid account unlock values
+* [`Pam::AuthSections`](#Pam--AuthSections): Valid PAM `auth` sections
+* [`Pam::HashAlgorithm`](#Pam--HashAlgorithm): Valid PAM password hash algorithms
+* [`Pam::Limits::Item`](#Pam--Limits--Item): Valid PAM limits
+* [`Pam::Limits::Value`](#Pam--Limits--Value): Valid PAM limit values
+* [`Pam::PasswordBackends`](#Pam--PasswordBackends): Valid PAM password validation backends
 
 ## Classes
 
@@ -43,65 +43,69 @@ where possible.
 
 The following parameters are available in the `pam` class:
 
-* [`password_check_backend`](#password_check_backend)
-* [`locale_file`](#locale_file)
-* [`cracklib_difok`](#cracklib_difok)
-* [`cracklib_maxrepeat`](#cracklib_maxrepeat)
-* [`cracklib_maxsequence`](#cracklib_maxsequence)
-* [`cracklib_maxclassrepeat`](#cracklib_maxclassrepeat)
-* [`cracklib_gecoscheck`](#cracklib_gecoscheck)
-* [`cracklib_enforce_for_root`](#cracklib_enforce_for_root)
-* [`cracklib_dcredit`](#cracklib_dcredit)
-* [`cracklib_ucredit`](#cracklib_ucredit)
-* [`cracklib_lcredit`](#cracklib_lcredit)
-* [`cracklib_ocredit`](#cracklib_ocredit)
-* [`cracklib_minclass`](#cracklib_minclass)
-* [`cracklib_minlen`](#cracklib_minlen)
-* [`cracklib_reject_username`](#cracklib_reject_username)
-* [`cracklib_retry`](#cracklib_retry)
-* [`cracklib_badwords`](#cracklib_badwords)
-* [`cracklib_dictpath`](#cracklib_dictpath)
-* [`rm_pwquality_conf_d`](#rm_pwquality_conf_d)
-* [`deny`](#deny)
-* [`faillock`](#faillock)
-* [`display_account_lock`](#display_account_lock)
-* [`fail_interval`](#fail_interval)
-* [`homedir_umask`](#homedir_umask)
-* [`remember`](#remember)
-* [`remember_retry`](#remember_retry)
-* [`remember_for_root`](#remember_for_root)
-* [`even_deny_root`](#even_deny_root)
-* [`root_unlock_time`](#root_unlock_time)
-* [`hash_algorithm`](#hash_algorithm)
-* [`rounds`](#rounds)
-* [`uid`](#uid)
-* [`unlock_time`](#unlock_time)
-* [`preserve_ac`](#preserve_ac)
-* [`warn_if_unknown`](#warn_if_unknown)
-* [`oath`](#oath)
-* [`oath_window`](#oath_window)
-* [`deny_if_unknown`](#deny_if_unknown)
-* [`use_netgroups`](#use_netgroups)
-* [`use_openshift`](#use_openshift)
-* [`sssd`](#sssd)
-* [`tty_audit_users`](#tty_audit_users)
-* [`su_content_extra`](#su_content_extra)
-* [`su_content`](#su_content)
-* [`other_content`](#other_content)
-* [`auth_sections`](#auth_sections)
-* [`auth_content_pre`](#auth_content_pre)
-* [`fingerprint_auth_content`](#fingerprint_auth_content)
-* [`system_auth_content`](#system_auth_content)
-* [`password_auth_content`](#password_auth_content)
-* [`smartcard_auth_content`](#smartcard_auth_content)
-* [`enable`](#enable)
-* [`enable_warning`](#enable_warning)
-* [`enable_separator`](#enable_separator)
-* [`separator`](#separator)
-* [`disable_authconfig`](#disable_authconfig)
-* [`package_ensure`](#package_ensure)
+* [`password_check_backend`](#-pam--password_check_backend)
+* [`locale_file`](#-pam--locale_file)
+* [`cracklib_difok`](#-pam--cracklib_difok)
+* [`cracklib_maxrepeat`](#-pam--cracklib_maxrepeat)
+* [`cracklib_maxsequence`](#-pam--cracklib_maxsequence)
+* [`cracklib_maxclassrepeat`](#-pam--cracklib_maxclassrepeat)
+* [`cracklib_gecoscheck`](#-pam--cracklib_gecoscheck)
+* [`cracklib_enforce_for_root`](#-pam--cracklib_enforce_for_root)
+* [`cracklib_dcredit`](#-pam--cracklib_dcredit)
+* [`cracklib_ucredit`](#-pam--cracklib_ucredit)
+* [`cracklib_lcredit`](#-pam--cracklib_lcredit)
+* [`cracklib_ocredit`](#-pam--cracklib_ocredit)
+* [`cracklib_minclass`](#-pam--cracklib_minclass)
+* [`cracklib_minlen`](#-pam--cracklib_minlen)
+* [`cracklib_reject_username`](#-pam--cracklib_reject_username)
+* [`cracklib_retry`](#-pam--cracklib_retry)
+* [`cracklib_badwords`](#-pam--cracklib_badwords)
+* [`cracklib_dictpath`](#-pam--cracklib_dictpath)
+* [`dictcheck`](#-pam--dictcheck)
+* [`rm_pwquality_conf_d`](#-pam--rm_pwquality_conf_d)
+* [`deny`](#-pam--deny)
+* [`faillock`](#-pam--faillock)
+* [`faillock_log_dir`](#-pam--faillock_log_dir)
+* [`display_account_lock`](#-pam--display_account_lock)
+* [`fail_interval`](#-pam--fail_interval)
+* [`homedir_umask`](#-pam--homedir_umask)
+* [`remember`](#-pam--remember)
+* [`remember_retry`](#-pam--remember_retry)
+* [`remember_for_root`](#-pam--remember_for_root)
+* [`even_deny_root`](#-pam--even_deny_root)
+* [`root_unlock_time`](#-pam--root_unlock_time)
+* [`hash_algorithm`](#-pam--hash_algorithm)
+* [`rounds`](#-pam--rounds)
+* [`uid`](#-pam--uid)
+* [`unlock_time`](#-pam--unlock_time)
+* [`preserve_ac`](#-pam--preserve_ac)
+* [`warn_if_unknown`](#-pam--warn_if_unknown)
+* [`oath`](#-pam--oath)
+* [`oath_window`](#-pam--oath_window)
+* [`deny_if_unknown`](#-pam--deny_if_unknown)
+* [`use_netgroups`](#-pam--use_netgroups)
+* [`use_openshift`](#-pam--use_openshift)
+* [`sssd`](#-pam--sssd)
+* [`tty_audit_users`](#-pam--tty_audit_users)
+* [`su_content_extra`](#-pam--su_content_extra)
+* [`su_content`](#-pam--su_content)
+* [`other_content`](#-pam--other_content)
+* [`auth_sections`](#-pam--auth_sections)
+* [`auth_content_pre`](#-pam--auth_content_pre)
+* [`fingerprint_auth_content`](#-pam--fingerprint_auth_content)
+* [`system_auth_content`](#-pam--system_auth_content)
+* [`password_auth_content`](#-pam--password_auth_content)
+* [`smartcard_auth_content`](#-pam--smartcard_auth_content)
+* [`enable`](#-pam--enable)
+* [`enable_warning`](#-pam--enable_warning)
+* [`enable_separator`](#-pam--enable_separator)
+* [`separator`](#-pam--separator)
+* [`disable_authconfig`](#-pam--disable_authconfig)
+* [`use_authselect`](#-pam--use_authselect)
+* [`auth_basedir`](#-pam--auth_basedir)
+* [`package_ensure`](#-pam--package_ensure)
 
-##### <a name="password_check_backend"></a>`password_check_backend`
+##### <a name="-pam--password_check_backend"></a>`password_check_backend`
 
 Data type: `Pam::PasswordBackends`
 
@@ -110,7 +114,7 @@ The password checking library to use
 * The default is based on the OS being targeted and is pulled from module
   data
 
-##### <a name="locale_file"></a>`locale_file`
+##### <a name="-pam--locale_file"></a>`locale_file`
 
 Data type: `Optional[Stdlib::Absolutepath]`
 
@@ -118,9 +122,9 @@ The path to the `locale` configuration file on the system
 
 * Explicitly set to `undef` to disable
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cracklib_difok"></a>`cracklib_difok`
+##### <a name="-pam--cracklib_difok"></a>`cracklib_difok`
 
 Data type: `Integer[0]`
 
@@ -129,7 +133,7 @@ password that are enough to accept the new password
 
 Default value: `4`
 
-##### <a name="cracklib_maxrepeat"></a>`cracklib_maxrepeat`
+##### <a name="-pam--cracklib_maxrepeat"></a>`cracklib_maxrepeat`
 
 Data type: `Integer[0]`
 
@@ -138,7 +142,7 @@ characters
 
 Default value: `2`
 
-##### <a name="cracklib_maxsequence"></a>`cracklib_maxsequence`
+##### <a name="-pam--cracklib_maxsequence"></a>`cracklib_maxsequence`
 
 Data type: `Integer[0]`
 
@@ -153,7 +157,7 @@ longer than this
 
 Default value: `4`
 
-##### <a name="cracklib_maxclassrepeat"></a>`cracklib_maxclassrepeat`
+##### <a name="-pam--cracklib_maxclassrepeat"></a>`cracklib_maxclassrepeat`
 
 Data type: `Integer[0]`
 
@@ -168,7 +172,7 @@ of the **same class**
 
 Default value: `3`
 
-##### <a name="cracklib_gecoscheck"></a>`cracklib_gecoscheck`
+##### <a name="-pam--cracklib_gecoscheck"></a>`cracklib_gecoscheck`
 
 Data type: `Boolean`
 
@@ -176,17 +180,17 @@ Check whether the words from the GECOS field (usually full name of the user)
 longer than 3 characters in straight or reversed form are contained in the
 new password
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
+##### <a name="-pam--cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
 
 Data type: `Boolean`
 
 Enforce all password check settings for the ``root`` user
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="cracklib_dcredit"></a>`cracklib_dcredit`
+##### <a name="-pam--cracklib_dcredit"></a>`cracklib_dcredit`
 
 Data type: `Integer`
 
@@ -198,9 +202,9 @@ The required credit for having digits in the new password
 * For Negative Integers: The minimum number of digits that must be met for
   a new password
 
-Default value: `-`
+Default value: `-1`
 
-##### <a name="cracklib_ucredit"></a>`cracklib_ucredit`
+##### <a name="-pam--cracklib_ucredit"></a>`cracklib_ucredit`
 
 Data type: `Integer`
 
@@ -212,9 +216,9 @@ The required credit for having upper case letters in the new password
 * For Negative Integers: The minimum number of characters that must be met
   for a new password
 
-Default value: `-`
+Default value: `-1`
 
-##### <a name="cracklib_lcredit"></a>`cracklib_lcredit`
+##### <a name="-pam--cracklib_lcredit"></a>`cracklib_lcredit`
 
 Data type: `Integer`
 
@@ -226,9 +230,9 @@ The required credit for having lower case letters in the new password
 * For Negative Integers: The minimum number of characters that must be met
   for a new password
 
-Default value: `-`
+Default value: `-1`
 
-##### <a name="cracklib_ocredit"></a>`cracklib_ocredit`
+##### <a name="-pam--cracklib_ocredit"></a>`cracklib_ocredit`
 
 Data type: `Integer`
 
@@ -240,9 +244,9 @@ The required credit for having special characters in the new password
 * For Negative Integers: The minimum number of characters that must be met
   for a new password
 
-Default value: `-`
+Default value: `-1`
 
-##### <a name="cracklib_minclass"></a>`cracklib_minclass`
+##### <a name="-pam--cracklib_minclass"></a>`cracklib_minclass`
 
 Data type: `Integer[0]`
 
@@ -256,7 +260,7 @@ The minimum number of required classes for the new password
 
 Default value: `3`
 
-##### <a name="cracklib_minlen"></a>`cracklib_minlen`
+##### <a name="-pam--cracklib_minlen"></a>`cracklib_minlen`
 
 Data type: `Integer[0]`
 
@@ -265,15 +269,15 @@ not disabled)
 
 Default value: `15`
 
-##### <a name="cracklib_reject_username"></a>`cracklib_reject_username`
+##### <a name="-pam--cracklib_reject_username"></a>`cracklib_reject_username`
 
 Data type: `Boolean`
 
 Don't let the username be used in password
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="cracklib_retry"></a>`cracklib_retry`
+##### <a name="-pam--cracklib_retry"></a>`cracklib_retry`
 
 Data type: `Integer[0]`
 
@@ -281,24 +285,35 @@ Prompt user at most N times before returning with error
 
 Default value: `3`
 
-##### <a name="cracklib_badwords"></a>`cracklib_badwords`
+##### <a name="-pam--cracklib_badwords"></a>`cracklib_badwords`
 
 Data type: `Optional[Array[String[1],1]]`
 
 Array of words that must not be contained in the password.
 These are additional words to the cracklib dictionary check.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cracklib_dictpath"></a>`cracklib_dictpath`
+##### <a name="-pam--cracklib_dictpath"></a>`cracklib_dictpath`
 
 Data type: `Optional[StdLib::Absolutepath]`
 
 Path to the cracklib dictionaries. Default is to use the cracklib default.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="rm_pwquality_conf_d"></a>`rm_pwquality_conf_d`
+##### <a name="-pam--dictcheck"></a>`dictcheck`
+
+Data type: `Integer[0]`
+
+If nonzero, check whether the password (with possible modifications)
+matches a word in a dictionary. Currently the dictionary check is
+performed using the cracklib library. This option will be ignored
+unless the OS major version is higher than 7.
+
+Default value: `1`
+
+##### <a name="-pam--rm_pwquality_conf_d"></a>`rm_pwquality_conf_d`
 
 Data type: `Boolean`
 
@@ -307,9 +322,9 @@ Remove the /etc/security/pwquality.conf.d directory and all contents.
 * This ensures authoritative management of ``pwquality`` without the
   ability of users to override our settings directly on the system.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="deny"></a>`deny`
+##### <a name="-pam--deny"></a>`deny`
 
 Data type: `Integer[0]`
 
@@ -317,23 +332,31 @@ The number of failed attempts before PAM denies a user from logging in
 
 Default value: `5`
 
-##### <a name="faillock"></a>`faillock`
+##### <a name="-pam--faillock"></a>`faillock`
 
 Data type: `Boolean`
 
 Enable or disable the use of ``faillock``
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="display_account_lock"></a>`display_account_lock`
+##### <a name="-pam--faillock_log_dir"></a>`faillock_log_dir`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+The location in which to log failed login attempts and account lockouts
+
+Default value: `undef`
+
+##### <a name="-pam--display_account_lock"></a>`display_account_lock`
 
 Data type: `Boolean`
 
 Display to the remote user that their account has been locked
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="fail_interval"></a>`fail_interval`
+##### <a name="-pam--fail_interval"></a>`fail_interval`
 
 Data type: `Integer[0]`
 
@@ -341,7 +364,7 @@ Sets the time until the check fails
 
 Default value: `900`
 
-##### <a name="homedir_umask"></a>`homedir_umask`
+##### <a name="-pam--homedir_umask"></a>`homedir_umask`
 
 Data type: `Simplib::Umask`
 
@@ -349,7 +372,7 @@ Sets the file mode creation mask of the user home directories
 
 Default value: `'0077'`
 
-##### <a name="remember"></a>`remember`
+##### <a name="-pam--remember"></a>`remember`
 
 Data type: `Integer[0]`
 
@@ -359,7 +382,7 @@ alternating between the same password too frequently
 
 Default value: `24`
 
-##### <a name="remember_retry"></a>`remember_retry`
+##### <a name="-pam--remember_retry"></a>`remember_retry`
 
 Data type: `Integer[0]`
 
@@ -367,23 +390,23 @@ Allow this many retries
 
 Default value: `1`
 
-##### <a name="remember_for_root"></a>`remember_for_root`
+##### <a name="-pam--remember_for_root"></a>`remember_for_root`
 
 Data type: `Boolean`
 
 Remember the last ``$remember`` passwords for the root user
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="even_deny_root"></a>`even_deny_root`
+##### <a name="-pam--even_deny_root"></a>`even_deny_root`
 
 Data type: `Boolean`
 
 Enforce an account lockout for the ``root`` account
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="root_unlock_time"></a>`root_unlock_time`
+##### <a name="-pam--root_unlock_time"></a>`root_unlock_time`
 
 Data type: `Integer[0]`
 
@@ -393,7 +416,7 @@ Allow access after N seconds to root account after failed attempt
 
 Default value: `60`
 
-##### <a name="hash_algorithm"></a>`hash_algorithm`
+##### <a name="-pam--hash_algorithm"></a>`hash_algorithm`
 
 Data type: `Pam::HashAlgorithm`
 
@@ -401,7 +424,7 @@ The password hashing algorithm to use
 
 Default value: `'sha512'`
 
-##### <a name="rounds"></a>`rounds`
+##### <a name="-pam--rounds"></a>`rounds`
 
 Data type: `Integer[0]`
 
@@ -410,7 +433,7 @@ Set the optional number of rounds of the ``SHA256``, ``SHA512`` and
 
 Default value: `10000`
 
-##### <a name="uid"></a>`uid`
+##### <a name="-pam--uid"></a>`uid`
 
 Data type: `Integer[0]`
 
@@ -418,7 +441,7 @@ Allow user logins for users with UID higher than N
 
 Default value: `simplib::lookup('simp_options::uid::min', { 'default_value' => pick(fact('login_defs.uid_min'), 1000) })`
 
-##### <a name="unlock_time"></a>`unlock_time`
+##### <a name="-pam--unlock_time"></a>`unlock_time`
 
 Data type: `Pam::AccountUnlockTime`
 
@@ -426,24 +449,24 @@ Allow acesss after N seconds to user account after failed attempt
 
 Default value: `900`
 
-##### <a name="preserve_ac"></a>`preserve_ac`
+##### <a name="-pam--preserve_ac"></a>`preserve_ac`
 
 Data type: `Boolean`
 
 Keep the original ``-ac`` files around for reference
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="warn_if_unknown"></a>`warn_if_unknown`
+##### <a name="-pam--warn_if_unknown"></a>`warn_if_unknown`
 
 Data type: `Boolean`
 
 If you make it to the ``other`` PAM configuration file, then provide a
 warning that the login method was uncaught by other PAM stacks
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="oath"></a>`oath`
+##### <a name="-pam--oath"></a>`oath`
 
 Data type: `Boolean`
 
@@ -456,7 +479,7 @@ not found.
 
 Default value: `simplib::lookup('simp_options::oath', { 'default_value' => false })`
 
-##### <a name="oath_window"></a>`oath_window`
+##### <a name="-pam--oath_window"></a>`oath_window`
 
 Data type: `Integer[0]`
 
@@ -464,41 +487,41 @@ Sets the TOTP window (Defined in RFC 6238 section 5.2)
 
 Default value: `1`
 
-##### <a name="deny_if_unknown"></a>`deny_if_unknown`
+##### <a name="-pam--deny_if_unknown"></a>`deny_if_unknown`
 
 Data type: `Boolean`
 
 If true, deny any access to an application that falls all the way through
 the PAM stack to ``other``
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="use_netgroups"></a>`use_netgroups`
+##### <a name="-pam--use_netgroups"></a>`use_netgroups`
 
 Data type: `Boolean`
 
 Default: false
 Set PAM up to use NIS netgroups.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="use_openshift"></a>`use_openshift`
+##### <a name="-pam--use_openshift"></a>`use_openshift`
 
 Data type: `Boolean`
 
 Set PAM to work with OpenShift
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="sssd"></a>`sssd`
+##### <a name="-pam--sssd"></a>`sssd`
 
 Data type: `Boolean`
 
 Set PAM to work with SSSD
 
-Default value: `simplib::lookup('simp_options::sssd', { 'default_value' => false})`
+Default value: `simplib::lookup('simp_options::sssd', { 'default_value' => false })`
 
-##### <a name="tty_audit_users"></a>`tty_audit_users`
+##### <a name="-pam--tty_audit_users"></a>`tty_audit_users`
 
 Data type: `Array[String[0]]`
 
@@ -506,36 +529,36 @@ The users for which TTY auditing is enabled
 
 * Set to an empty Array to not audit TTY actions for any user
 
-Default value: `[ 'root' ]`
+Default value: `['root']`
 
-##### <a name="su_content_extra"></a>`su_content_extra`
+##### <a name="-pam--su_content_extra"></a>`su_content_extra`
 
 Data type: `Optional[Array[String]]`
 
 User-specified content to be added to ``/etc/pam.d/su`` in addition to
 the rest of the templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="su_content"></a>`su_content`
+##### <a name="-pam--su_content"></a>`su_content`
 
 Data type: `Optional[String]`
 
 The content that should be used to fill ``/etc/pam.d/su`` instead of the
 templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="other_content"></a>`other_content`
+##### <a name="-pam--other_content"></a>`other_content`
 
 Data type: `Optional[String]`
 
 The content that should be used to fill ``/etc/pam.d/other`` instead of the
 templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="auth_sections"></a>`auth_sections`
+##### <a name="-pam--auth_sections"></a>`auth_sections`
 
 Data type: `Pam::AuthSections`
 
@@ -543,9 +566,9 @@ The PAM ``*-auth`` files to manage
 
 * Set to an empty Array to not manage any sections
 
-Default value: `[ 'fingerprint', 'system', 'password', 'smartcard' ]`
+Default value: `['fingerprint', 'system', 'password', 'smartcard']`
 
-##### <a name="auth_content_pre"></a>`auth_content_pre`
+##### <a name="-pam--auth_content_pre"></a>`auth_content_pre`
 
 Data type: `Optional[Array[String]]`
 
@@ -553,63 +576,63 @@ Content to prepend to the auth configs in addition to templated content
 
 * Set to an empty Array to not prepend any default content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="fingerprint_auth_content"></a>`fingerprint_auth_content`
+##### <a name="-pam--fingerprint_auth_content"></a>`fingerprint_auth_content`
 
 Data type: `Optional[String]`
 
 The content that should be used to fill ``/etc/pam.d/fingerprint_auth``
 instead of the templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="system_auth_content"></a>`system_auth_content`
+##### <a name="-pam--system_auth_content"></a>`system_auth_content`
 
 Data type: `Optional[String]`
 
 The content that should be used to fill ``/etc/pam.d/system_auth`` instead
 of the templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="password_auth_content"></a>`password_auth_content`
+##### <a name="-pam--password_auth_content"></a>`password_auth_content`
 
 Data type: `Optional[String]`
 
 The content that should be used to fill ``/etc/pam.d/password_auth``
 instead of the templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="smartcard_auth_content"></a>`smartcard_auth_content`
+##### <a name="-pam--smartcard_auth_content"></a>`smartcard_auth_content`
 
 Data type: `Optional[String]`
 
 The content that should be used to fill ``/etc/pam.d/smartcard_auth``
 instead of the templated content
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="enable"></a>`enable`
+##### <a name="-pam--enable"></a>`enable`
 
 Data type: `Boolean`
 
 If you have included this module but want it to stop managing your
 configuration files set this to ``false``
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="enable_warning"></a>`enable_warning`
+##### <a name="-pam--enable_warning"></a>`enable_warning`
 
 Data type: `Boolean`
 
 Will issue a warning if this module is included but global catalyst
 ``simp_options::pam`` is set to ``false``
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="enable_separator"></a>`enable_separator`
+##### <a name="-pam--enable_separator"></a>`enable_separator`
 
 Data type: `Boolean`
 
@@ -617,9 +640,9 @@ Enable a custom list separator.
 **WARNING** this setting may break pam_access on some platforms.
   Use with caution
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="separator"></a>`separator`
+##### <a name="-pam--separator"></a>`separator`
 
 Data type: `String[0]`
 
@@ -627,16 +650,35 @@ Separator to use for user and origin lists
 
 Default value: `','`
 
-##### <a name="disable_authconfig"></a>`disable_authconfig`
+##### <a name="-pam--disable_authconfig"></a>`disable_authconfig`
 
 Data type: `Boolean`
 
 Disable authconfig from being used, as it breaks this module's reconfiguration
 of PAM.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="package_ensure"></a>`package_ensure`
+##### <a name="-pam--use_authselect"></a>`use_authselect`
+
+Data type: `Boolean`
+
+If true, the files created in this module will be created in a simp directory
+and authselect will simply include the files created under that new directory.
+In short, if this value is true, the files will be created the same way, they
+will just live under a different directory and be included by the original files
+
+Default value: `simplib::lookup('simp_options::authselect', { 'default_value' => false })`
+
+##### <a name="-pam--auth_basedir"></a>`auth_basedir`
+
+Data type: `Optional[StdLib::Absolutepath]`
+
+The directory in which the auth files will be created
+
+Default value: `undef`
+
+##### <a name="-pam--package_ensure"></a>`package_ensure`
 
 Data type: `Simplib::PackageEnsure`
 
@@ -644,7 +686,7 @@ Ensure setting for all packages installed by this module
 
 Default value: `simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })`
 
-### <a name="pamaccess"></a>`pam::access`
+### <a name="pam--access"></a>`pam::access`
 
 Use ``pam::access::rule`` to manage ``access.conf`` entries and remember
 that **order matters** (first match wins)!
@@ -656,19 +698,19 @@ that **order matters** (first match wins)!
 
 The following parameters are available in the `pam::access` class:
 
-* [`default_deny`](#default_deny)
-* [`users`](#users)
-* [`access_file_mode`](#access_file_mode)
+* [`default_deny`](#-pam--access--default_deny)
+* [`users`](#-pam--access--users)
+* [`access_file_mode`](#-pam--access--access_file_mode)
 
-##### <a name="default_deny"></a>`default_deny`
+##### <a name="-pam--access--default_deny"></a>`default_deny`
 
 Data type: `Boolean`
 
 Add a "default deny" rule as the last match of the rule set
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="users"></a>`users`
+##### <a name="-pam--access--users"></a>`users`
 
 Data type: `Optional[Hash]`
 
@@ -688,9 +730,9 @@ Each member of the hash will be a resource (this example is from hiera):
     baddude:
       permission: '-'
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="access_file_mode"></a>`access_file_mode`
+##### <a name="-pam--access--access_file_mode"></a>`access_file_mode`
 
 Data type: `Stdlib::Filemode`
 
@@ -698,19 +740,19 @@ File mode for /etc/security/access.conf
 
 Default value: `'0644'`
 
-### <a name="pamaccessdefault_deny"></a>`pam::access::default_deny`
+### <a name="pam--access--default_deny"></a>`pam::access::default_deny`
 
 Always allow ``root`` locally for safety
 
-### <a name="pamconfig"></a>`pam::config`
+### <a name="pam--config"></a>`pam::config`
 
 Configuration class called from pam.
 
-### <a name="paminstall"></a>`pam::install`
+### <a name="pam--install"></a>`pam::install`
 
 Install the required PAM packages
 
-### <a name="pamlimits"></a>`pam::limits`
+### <a name="pam--limits"></a>`pam::limits`
 
 Add entries with ``pam::limits::rule``
 
@@ -721,9 +763,9 @@ Add entries with ``pam::limits::rule``
 
 The following parameters are available in the `pam::limits` class:
 
-* [`rules`](#rules)
+* [`rules`](#-pam--limits--rules)
 
-##### <a name="rules"></a>`rules`
+##### <a name="-pam--limits--rules"></a>`rules`
 
 Data type: `Optional[Hash]`
 
@@ -750,9 +792,9 @@ A Hash that can be used to create pam::limits::rule resources via Hiera.
       value: 0
       order: 100
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="pamwheel"></a>`pam::wheel`
+### <a name="pam--wheel"></a>`pam::wheel`
 
 Enable wheel restrictions for su access
 
@@ -763,13 +805,13 @@ Enable wheel restrictions for su access
 
 The following parameters are available in the `pam::wheel` class:
 
-* [`wheel_group`](#wheel_group)
-* [`root_only`](#root_only)
-* [`use_openshift`](#use_openshift)
-* [`su_content_extra`](#su_content_extra)
-* [`content`](#content)
+* [`wheel_group`](#-pam--wheel--wheel_group)
+* [`root_only`](#-pam--wheel--root_only)
+* [`use_openshift`](#-pam--wheel--use_openshift)
+* [`su_content_extra`](#-pam--wheel--su_content_extra)
+* [`content`](#-pam--wheel--content)
 
-##### <a name="wheel_group"></a>`wheel_group`
+##### <a name="-pam--wheel--wheel_group"></a>`wheel_group`
 
 Data type: `String[1]`
 
@@ -777,15 +819,15 @@ What group should be the ``wheel`` equivalent
 
 Default value: `'wheel'`
 
-##### <a name="root_only"></a>`root_only`
+##### <a name="-pam--wheel--root_only"></a>`root_only`
 
 Data type: `Boolean`
 
 Only enforce ``wheel`` restrictions when changing to the ``root`` user
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="use_openshift"></a>`use_openshift`
+##### <a name="-pam--wheel--use_openshift"></a>`use_openshift`
 
 Data type: `Boolean`
 
@@ -794,7 +836,7 @@ puppet code is compatible
 
 Default value: `$pam::use_openshift`
 
-##### <a name="su_content_extra"></a>`su_content_extra`
+##### <a name="-pam--wheel--su_content_extra"></a>`su_content_extra`
 
 Data type: `Optional[Array[String]]`
 
@@ -803,7 +845,7 @@ content
 
 Default value: `$pam::su_content_extra`
 
-##### <a name="content"></a>`content`
+##### <a name="-pam--wheel--content"></a>`content`
 
 Data type: `Optional[String[1]]`
 
@@ -813,7 +855,7 @@ Default value: `$pam::su_content`
 
 ## Defined types
 
-### <a name="pamaccessrule"></a>`pam::access::rule`
+### <a name="pam--access--rule"></a>`pam::access::rule`
 
 These entries are the ``permission:users:origins`` sets as defined in
 ``access.conf(5)``.
@@ -871,28 +913,28 @@ pam::access::rule { 'auditors_from_trusted_nodes':
 
 The following parameters are available in the `pam::access::rule` defined type:
 
-* [`name`](#name)
-* [`comment`](#comment)
-* [`permission`](#permission)
-* [`users`](#users)
-* [`origins`](#origins)
-* [`order`](#order)
+* [`name`](#-pam--access--rule--name)
+* [`comment`](#-pam--access--rule--comment)
+* [`permission`](#-pam--access--rule--permission)
+* [`users`](#-pam--access--rule--users)
+* [`origins`](#-pam--access--rule--origins)
+* [`order`](#-pam--access--rule--order)
 
-##### <a name="name"></a>`name`
+##### <a name="-pam--access--rule--name"></a>`name`
 
 Data type: `String`
 
 A unique name for the resource
 
-##### <a name="comment"></a>`comment`
+##### <a name="-pam--access--rule--comment"></a>`comment`
 
 Data type: `Optional[String]`
 
 A comment to include with this entry
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="permission"></a>`permission`
+##### <a name="-pam--access--rule--permission"></a>`permission`
 
 Data type: `Enum['+','-']`
 
@@ -900,7 +942,7 @@ If +, grant access. If -, revoke access
 
 Default value: `'+'`
 
-##### <a name="users"></a>`users`
+##### <a name="-pam--access--rule--users"></a>`users`
 
 Data type: `Array[String]`
 
@@ -916,7 +958,7 @@ Syntax:
 * Entries are **not** validated so complex expressions are allowed such as
 ``ALL EXCEPT (bad_guys)``
 
-##### <a name="origins"></a>`origins`
+##### <a name="-pam--access--rule--origins"></a>`origins`
 
 Data type: `Array[String]`
 
@@ -924,7 +966,7 @@ The locations from which users are allowed to login to the system
 
 * See ``access.conf(5)`` for the full list
 
-##### <a name="order"></a>`order`
+##### <a name="-pam--access--rule--order"></a>`order`
 
 Data type: `Integer[1,9999999999]`
 
@@ -935,7 +977,7 @@ order by name
 
 Default value: `1000`
 
-### <a name="pamauth"></a>`pam::auth`
+### <a name="pam--auth"></a>`pam::auth`
 
 This is only meant to be called via the main pam class. Documentation is
 identical to that in the pam class.
@@ -947,48 +989,49 @@ directories, you'll need to set oddjob::mkhomedir::umask.
 
 The following parameters are available in the `pam::auth` defined type:
 
-* [`password_check_backend`](#password_check_backend)
-* [`locale_file`](#locale_file)
-* [`auth_content_pre`](#auth_content_pre)
-* [`cracklib_enforce_for_root`](#cracklib_enforce_for_root)
-* [`cracklib_reject_username`](#cracklib_reject_username)
-* [`cracklib_difok`](#cracklib_difok)
-* [`cracklib_maxrepeat`](#cracklib_maxrepeat)
-* [`cracklib_maxsequence`](#cracklib_maxsequence)
-* [`cracklib_maxclassrepeat`](#cracklib_maxclassrepeat)
-* [`cracklib_gecoscheck`](#cracklib_gecoscheck)
-* [`cracklib_dcredit`](#cracklib_dcredit)
-* [`cracklib_ucredit`](#cracklib_ucredit)
-* [`cracklib_lcredit`](#cracklib_lcredit)
-* [`cracklib_ocredit`](#cracklib_ocredit)
-* [`cracklib_minclass`](#cracklib_minclass)
-* [`cracklib_minlen`](#cracklib_minlen)
-* [`cracklib_retry`](#cracklib_retry)
-* [`oath`](#oath)
-* [`oath_window`](#oath_window)
-* [`deny`](#deny)
-* [`faillock`](#faillock)
-* [`display_account_lock`](#display_account_lock)
-* [`fail_interval`](#fail_interval)
-* [`remember`](#remember)
-* [`remember_retry`](#remember_retry)
-* [`remember_for_root`](#remember_for_root)
-* [`even_deny_root`](#even_deny_root)
-* [`root_unlock_time`](#root_unlock_time)
-* [`hash_algorithm`](#hash_algorithm)
-* [`rounds`](#rounds)
-* [`uid`](#uid)
-* [`unlock_time`](#unlock_time)
-* [`preserve_ac`](#preserve_ac)
-* [`use_netgroups`](#use_netgroups)
-* [`use_openshift`](#use_openshift)
-* [`sssd`](#sssd)
-* [`tty_audit_users`](#tty_audit_users)
-* [`separator`](#separator)
-* [`enable_separator`](#enable_separator)
-* [`content`](#content)
+* [`password_check_backend`](#-pam--auth--password_check_backend)
+* [`locale_file`](#-pam--auth--locale_file)
+* [`auth_content_pre`](#-pam--auth--auth_content_pre)
+* [`cracklib_enforce_for_root`](#-pam--auth--cracklib_enforce_for_root)
+* [`cracklib_reject_username`](#-pam--auth--cracklib_reject_username)
+* [`cracklib_difok`](#-pam--auth--cracklib_difok)
+* [`cracklib_maxrepeat`](#-pam--auth--cracklib_maxrepeat)
+* [`cracklib_maxsequence`](#-pam--auth--cracklib_maxsequence)
+* [`cracklib_maxclassrepeat`](#-pam--auth--cracklib_maxclassrepeat)
+* [`cracklib_gecoscheck`](#-pam--auth--cracklib_gecoscheck)
+* [`cracklib_dcredit`](#-pam--auth--cracklib_dcredit)
+* [`cracklib_ucredit`](#-pam--auth--cracklib_ucredit)
+* [`cracklib_lcredit`](#-pam--auth--cracklib_lcredit)
+* [`cracklib_ocredit`](#-pam--auth--cracklib_ocredit)
+* [`cracklib_minclass`](#-pam--auth--cracklib_minclass)
+* [`cracklib_minlen`](#-pam--auth--cracklib_minlen)
+* [`cracklib_retry`](#-pam--auth--cracklib_retry)
+* [`oath`](#-pam--auth--oath)
+* [`oath_window`](#-pam--auth--oath_window)
+* [`deny`](#-pam--auth--deny)
+* [`faillock`](#-pam--auth--faillock)
+* [`faillock_log_dir`](#-pam--auth--faillock_log_dir)
+* [`display_account_lock`](#-pam--auth--display_account_lock)
+* [`fail_interval`](#-pam--auth--fail_interval)
+* [`remember`](#-pam--auth--remember)
+* [`remember_retry`](#-pam--auth--remember_retry)
+* [`remember_for_root`](#-pam--auth--remember_for_root)
+* [`even_deny_root`](#-pam--auth--even_deny_root)
+* [`root_unlock_time`](#-pam--auth--root_unlock_time)
+* [`hash_algorithm`](#-pam--auth--hash_algorithm)
+* [`rounds`](#-pam--auth--rounds)
+* [`uid`](#-pam--auth--uid)
+* [`unlock_time`](#-pam--auth--unlock_time)
+* [`preserve_ac`](#-pam--auth--preserve_ac)
+* [`use_netgroups`](#-pam--auth--use_netgroups)
+* [`use_openshift`](#-pam--auth--use_openshift)
+* [`sssd`](#-pam--auth--sssd)
+* [`tty_audit_users`](#-pam--auth--tty_audit_users)
+* [`separator`](#-pam--auth--separator)
+* [`enable_separator`](#-pam--auth--enable_separator)
+* [`content`](#-pam--auth--content)
 
-##### <a name="password_check_backend"></a>`password_check_backend`
+##### <a name="-pam--auth--password_check_backend"></a>`password_check_backend`
 
 Data type: `Pam::PasswordBackends`
 
@@ -996,7 +1039,7 @@ Data type: `Pam::PasswordBackends`
 
 Default value: `$pam::password_check_backend`
 
-##### <a name="locale_file"></a>`locale_file`
+##### <a name="-pam--auth--locale_file"></a>`locale_file`
 
 Data type: `Optional[Stdlib::Absolutepath]`
 
@@ -1004,7 +1047,7 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 Default value: `$pam::locale_file`
 
-##### <a name="auth_content_pre"></a>`auth_content_pre`
+##### <a name="-pam--auth--auth_content_pre"></a>`auth_content_pre`
 
 Data type: `Optional[Array[String]]`
 
@@ -1012,7 +1055,7 @@ Data type: `Optional[Array[String]]`
 
 Default value: `$pam::auth_content_pre`
 
-##### <a name="cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
+##### <a name="-pam--auth--cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
 
 Data type: `Boolean`
 
@@ -1020,7 +1063,7 @@ Data type: `Boolean`
 
 Default value: `$pam::cracklib_enforce_for_root`
 
-##### <a name="cracklib_reject_username"></a>`cracklib_reject_username`
+##### <a name="-pam--auth--cracklib_reject_username"></a>`cracklib_reject_username`
 
 Data type: `Boolean`
 
@@ -1028,7 +1071,7 @@ Data type: `Boolean`
 
 Default value: `$pam::cracklib_reject_username`
 
-##### <a name="cracklib_difok"></a>`cracklib_difok`
+##### <a name="-pam--auth--cracklib_difok"></a>`cracklib_difok`
 
 Data type: `Optional[Integer[0]]`
 
@@ -1036,7 +1079,7 @@ Data type: `Optional[Integer[0]]`
 
 Default value: `$pam::cracklib_difok`
 
-##### <a name="cracklib_maxrepeat"></a>`cracklib_maxrepeat`
+##### <a name="-pam--auth--cracklib_maxrepeat"></a>`cracklib_maxrepeat`
 
 Data type: `Optional[Integer[0]]`
 
@@ -1044,7 +1087,7 @@ Data type: `Optional[Integer[0]]`
 
 Default value: `$pam::cracklib_maxrepeat`
 
-##### <a name="cracklib_maxsequence"></a>`cracklib_maxsequence`
+##### <a name="-pam--auth--cracklib_maxsequence"></a>`cracklib_maxsequence`
 
 Data type: `Optional[Integer[0]]`
 
@@ -1052,7 +1095,7 @@ Data type: `Optional[Integer[0]]`
 
 Default value: `$pam::cracklib_maxsequence`
 
-##### <a name="cracklib_maxclassrepeat"></a>`cracklib_maxclassrepeat`
+##### <a name="-pam--auth--cracklib_maxclassrepeat"></a>`cracklib_maxclassrepeat`
 
 Data type: `Optional[Integer[0]]`
 
@@ -1060,7 +1103,7 @@ Data type: `Optional[Integer[0]]`
 
 Default value: `$pam::cracklib_maxclassrepeat`
 
-##### <a name="cracklib_gecoscheck"></a>`cracklib_gecoscheck`
+##### <a name="-pam--auth--cracklib_gecoscheck"></a>`cracklib_gecoscheck`
 
 Data type: `Optional[Boolean]`
 
@@ -1068,7 +1111,7 @@ Data type: `Optional[Boolean]`
 
 Default value: `$pam::cracklib_gecoscheck`
 
-##### <a name="cracklib_dcredit"></a>`cracklib_dcredit`
+##### <a name="-pam--auth--cracklib_dcredit"></a>`cracklib_dcredit`
 
 Data type: `Optional[Integer]`
 
@@ -1076,7 +1119,7 @@ Data type: `Optional[Integer]`
 
 Default value: `$pam::cracklib_dcredit`
 
-##### <a name="cracklib_ucredit"></a>`cracklib_ucredit`
+##### <a name="-pam--auth--cracklib_ucredit"></a>`cracklib_ucredit`
 
 Data type: `Optional[Integer]`
 
@@ -1084,7 +1127,7 @@ Data type: `Optional[Integer]`
 
 Default value: `$pam::cracklib_ucredit`
 
-##### <a name="cracklib_lcredit"></a>`cracklib_lcredit`
+##### <a name="-pam--auth--cracklib_lcredit"></a>`cracklib_lcredit`
 
 Data type: `Optional[Integer]`
 
@@ -1092,7 +1135,7 @@ Data type: `Optional[Integer]`
 
 Default value: `$pam::cracklib_lcredit`
 
-##### <a name="cracklib_ocredit"></a>`cracklib_ocredit`
+##### <a name="-pam--auth--cracklib_ocredit"></a>`cracklib_ocredit`
 
 Data type: `Optional[Integer]`
 
@@ -1100,7 +1143,7 @@ Data type: `Optional[Integer]`
 
 Default value: `$pam::cracklib_ocredit`
 
-##### <a name="cracklib_minclass"></a>`cracklib_minclass`
+##### <a name="-pam--auth--cracklib_minclass"></a>`cracklib_minclass`
 
 Data type: `Optional[Integer[0]]`
 
@@ -1108,7 +1151,7 @@ Data type: `Optional[Integer[0]]`
 
 Default value: `$pam::cracklib_minclass`
 
-##### <a name="cracklib_minlen"></a>`cracklib_minlen`
+##### <a name="-pam--auth--cracklib_minlen"></a>`cracklib_minlen`
 
 Data type: `Optional[Integer[0]]`
 
@@ -1116,7 +1159,7 @@ Data type: `Optional[Integer[0]]`
 
 Default value: `$pam::cracklib_minlen`
 
-##### <a name="cracklib_retry"></a>`cracklib_retry`
+##### <a name="-pam--auth--cracklib_retry"></a>`cracklib_retry`
 
 Data type: `Integer[0]`
 
@@ -1124,7 +1167,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::cracklib_retry`
 
-##### <a name="oath"></a>`oath`
+##### <a name="-pam--auth--oath"></a>`oath`
 
 Data type: `Boolean`
 
@@ -1132,7 +1175,7 @@ Data type: `Boolean`
 
 Default value: `$pam::oath`
 
-##### <a name="oath_window"></a>`oath_window`
+##### <a name="-pam--auth--oath_window"></a>`oath_window`
 
 Data type: `Integer[0]`
 
@@ -1140,7 +1183,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::oath_window`
 
-##### <a name="deny"></a>`deny`
+##### <a name="-pam--auth--deny"></a>`deny`
 
 Data type: `Integer[0]`
 
@@ -1148,7 +1191,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::deny`
 
-##### <a name="faillock"></a>`faillock`
+##### <a name="-pam--auth--faillock"></a>`faillock`
 
 Data type: `Boolean`
 
@@ -1156,7 +1199,15 @@ Data type: `Boolean`
 
 Default value: `$pam::faillock`
 
-##### <a name="display_account_lock"></a>`display_account_lock`
+##### <a name="-pam--auth--faillock_log_dir"></a>`faillock_log_dir`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-pam--auth--display_account_lock"></a>`display_account_lock`
 
 Data type: `Boolean`
 
@@ -1164,7 +1215,7 @@ Data type: `Boolean`
 
 Default value: `$pam::display_account_lock`
 
-##### <a name="fail_interval"></a>`fail_interval`
+##### <a name="-pam--auth--fail_interval"></a>`fail_interval`
 
 Data type: `Integer[0]`
 
@@ -1172,7 +1223,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::fail_interval`
 
-##### <a name="remember"></a>`remember`
+##### <a name="-pam--auth--remember"></a>`remember`
 
 Data type: `Integer[0]`
 
@@ -1180,7 +1231,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::remember`
 
-##### <a name="remember_retry"></a>`remember_retry`
+##### <a name="-pam--auth--remember_retry"></a>`remember_retry`
 
 Data type: `Integer[0]`
 
@@ -1188,7 +1239,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::remember_retry`
 
-##### <a name="remember_for_root"></a>`remember_for_root`
+##### <a name="-pam--auth--remember_for_root"></a>`remember_for_root`
 
 Data type: `Boolean`
 
@@ -1196,7 +1247,7 @@ Data type: `Boolean`
 
 Default value: `$pam::remember_for_root`
 
-##### <a name="even_deny_root"></a>`even_deny_root`
+##### <a name="-pam--auth--even_deny_root"></a>`even_deny_root`
 
 Data type: `Boolean`
 
@@ -1204,7 +1255,7 @@ Data type: `Boolean`
 
 Default value: `$pam::even_deny_root`
 
-##### <a name="root_unlock_time"></a>`root_unlock_time`
+##### <a name="-pam--auth--root_unlock_time"></a>`root_unlock_time`
 
 Data type: `Integer[0]`
 
@@ -1212,7 +1263,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::root_unlock_time`
 
-##### <a name="hash_algorithm"></a>`hash_algorithm`
+##### <a name="-pam--auth--hash_algorithm"></a>`hash_algorithm`
 
 Data type: `Pam::HashAlgorithm`
 
@@ -1220,7 +1271,7 @@ Data type: `Pam::HashAlgorithm`
 
 Default value: `$pam::hash_algorithm`
 
-##### <a name="rounds"></a>`rounds`
+##### <a name="-pam--auth--rounds"></a>`rounds`
 
 Data type: `Integer[0]`
 
@@ -1228,7 +1279,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::rounds`
 
-##### <a name="uid"></a>`uid`
+##### <a name="-pam--auth--uid"></a>`uid`
 
 Data type: `Integer[0]`
 
@@ -1236,7 +1287,7 @@ Data type: `Integer[0]`
 
 Default value: `$pam::uid`
 
-##### <a name="unlock_time"></a>`unlock_time`
+##### <a name="-pam--auth--unlock_time"></a>`unlock_time`
 
 Data type: `Pam::AccountUnlockTime`
 
@@ -1244,7 +1295,7 @@ Data type: `Pam::AccountUnlockTime`
 
 Default value: `$pam::unlock_time`
 
-##### <a name="preserve_ac"></a>`preserve_ac`
+##### <a name="-pam--auth--preserve_ac"></a>`preserve_ac`
 
 Data type: `Boolean`
 
@@ -1252,7 +1303,7 @@ Data type: `Boolean`
 
 Default value: `$pam::preserve_ac`
 
-##### <a name="use_netgroups"></a>`use_netgroups`
+##### <a name="-pam--auth--use_netgroups"></a>`use_netgroups`
 
 Data type: `Boolean`
 
@@ -1260,7 +1311,7 @@ Data type: `Boolean`
 
 Default value: `$pam::use_netgroups`
 
-##### <a name="use_openshift"></a>`use_openshift`
+##### <a name="-pam--auth--use_openshift"></a>`use_openshift`
 
 Data type: `Boolean`
 
@@ -1268,7 +1319,7 @@ Data type: `Boolean`
 
 Default value: `$pam::use_openshift`
 
-##### <a name="sssd"></a>`sssd`
+##### <a name="-pam--auth--sssd"></a>`sssd`
 
 Data type: `Boolean`
 
@@ -1276,7 +1327,7 @@ Data type: `Boolean`
 
 Default value: `$pam::sssd`
 
-##### <a name="tty_audit_users"></a>`tty_audit_users`
+##### <a name="-pam--auth--tty_audit_users"></a>`tty_audit_users`
 
 Data type: `Array[String[0]]`
 
@@ -1284,7 +1335,7 @@ Data type: `Array[String[0]]`
 
 Default value: `$pam::tty_audit_users`
 
-##### <a name="separator"></a>`separator`
+##### <a name="-pam--auth--separator"></a>`separator`
 
 Data type: `String[0]`
 
@@ -1292,7 +1343,7 @@ Data type: `String[0]`
 
 Default value: `$pam::separator`
 
-##### <a name="enable_separator"></a>`enable_separator`
+##### <a name="-pam--auth--enable_separator"></a>`enable_separator`
 
 Data type: `Boolean`
 
@@ -1300,15 +1351,15 @@ Data type: `Boolean`
 
 Default value: `$pam::enable_separator`
 
-##### <a name="content"></a>`content`
+##### <a name="-pam--auth--content"></a>`content`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="pamlimitsrule"></a>`pam::limits::rule`
+### <a name="pam--limits--rule"></a>`pam::limits::rule`
 
 Be aware that order matters and the **LAST** item that matches in the
 ``limits.conf`` file will take effect.
@@ -1346,20 +1397,20 @@ pam::limits::rule { 'limit_admins':
 
 The following parameters are available in the `pam::limits::rule` defined type:
 
-* [`name`](#name)
-* [`domains`](#domains)
-* [`item`](#item)
-* [`value`](#value)
-* [`type`](#type)
-* [`order`](#order)
+* [`name`](#-pam--limits--rule--name)
+* [`domains`](#-pam--limits--rule--domains)
+* [`item`](#-pam--limits--rule--item)
+* [`value`](#-pam--limits--rule--value)
+* [`type`](#-pam--limits--rule--type)
+* [`order`](#-pam--limits--rule--order)
 
-##### <a name="name"></a>`name`
+##### <a name="-pam--limits--rule--name"></a>`name`
 
 Data type: `String`
 
 A descriptive name for your resource
 
-##### <a name="domains"></a>`domains`
+##### <a name="-pam--limits--rule--domains"></a>`domains`
 
 Data type: `Array[String]`
 
@@ -1368,7 +1419,7 @@ The domains to which these limits should apply
 * One entry will be created per domain, in listed order
 * See the ``<domain>`` section of ``limits.conf(5)`` for details
 
-##### <a name="item"></a>`item`
+##### <a name="-pam--limits--rule--item"></a>`item`
 
 Data type: `Pam::Limits::Item`
 
@@ -1376,7 +1427,7 @@ The ``item`` to which these limits should apply
 
 * See the ``<item>`` section of ``limits.conf(5)`` for details
 
-##### <a name="value"></a>`value`
+##### <a name="-pam--limits--rule--value"></a>`value`
 
 Data type: `Pam::Limits::Value`
 
@@ -1384,7 +1435,7 @@ The ``value`` to apply to the ``item`` and ``domains``
 
 * See the ``<item>`` section of ``limits.conf(5)`` for details
 
-##### <a name="type"></a>`type`
+##### <a name="-pam--limits--rule--type"></a>`type`
 
 Data type: `Enum['hard','soft','-']`
 
@@ -1394,7 +1445,7 @@ The ``type`` to apply to the ``item`` and ``domains``
 
 Default value: `'-'`
 
-##### <a name="order"></a>`order`
+##### <a name="-pam--limits--rule--order"></a>`order`
 
 Data type: `Integer[0]`
 
@@ -1407,17 +1458,13 @@ Default value: `1000`
 
 ## Data types
 
-### <a name="pamaccountunlocktime"></a>`Pam::AccountUnlockTime`
+### <a name="Pam--AccountUnlockTime"></a>`Pam::AccountUnlockTime`
 
 Valid account unlock values
 
-Alias of
+Alias of `Variant[Integer[0], Enum['never']]`
 
-```puppet
-Variant[Integer[0], Enum['never']]
-```
-
-### <a name="pamauthsections"></a>`Pam::AuthSections`
+### <a name="Pam--AuthSections"></a>`Pam::AuthSections`
 
 Valid PAM `auth` sections
 
@@ -1432,43 +1479,27 @@ Array[Enum[
 ]]
 ```
 
-### <a name="pamhashalgorithm"></a>`Pam::HashAlgorithm`
+### <a name="Pam--HashAlgorithm"></a>`Pam::HashAlgorithm`
 
 Valid PAM password hash algorithms
 
-Alias of
+Alias of `Enum['md5', 'bigcrypt', 'sha256', 'sha512', 'blowfish']`
 
-```puppet
-Enum['md5', 'bigcrypt', 'sha256', 'sha512', 'blowfish']
-```
-
-### <a name="pamlimitsitem"></a>`Pam::Limits::Item`
+### <a name="Pam--Limits--Item"></a>`Pam::Limits::Item`
 
 Valid PAM limits
 
-Alias of
+Alias of `Enum['core', 'data', 'fsize', 'memlock', 'nofile', 'rss', 'stack', 'cpu', 'nproc', 'as', 'maxlogins', 'maxsyslogins', 'priority', 'locks', 'sigpending', 'msgqueue', 'nice', 'rtprio']`
 
-```puppet
-Enum['core', 'data', 'fsize', 'memlock', 'nofile', 'rss', 'stack', 'cpu', 'nproc', 'as', 'maxlogins', 'maxsyslogins', 'priority', 'locks', 'sigpending', 'msgqueue', 'nice', 'rtprio']
-```
-
-### <a name="pamlimitsvalue"></a>`Pam::Limits::Value`
+### <a name="Pam--Limits--Value"></a>`Pam::Limits::Value`
 
 Valid PAM limit values
 
-Alias of
+Alias of `Variant[Enum['unlimited','infinity'], Integer]`
 
-```puppet
-Variant[Enum['unlimited','infinity'], Integer]
-```
-
-### <a name="pampasswordbackends"></a>`Pam::PasswordBackends`
+### <a name="Pam--PasswordBackends"></a>`Pam::PasswordBackends`
 
 Valid PAM password validation backends
 
-Alias of
-
-```puppet
-Enum['cracklib', 'pwquality']
-```
+Alias of `Enum['cracklib', 'pwquality']`
 
