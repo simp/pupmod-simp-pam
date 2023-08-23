@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "6.12.0",
+  "version": "6.13.0",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -67,6 +67,12 @@
     },
     {
       "operatingsystem": "Rocky",
+      "operatingsystemrelease": [
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "8"
       ]
