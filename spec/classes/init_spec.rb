@@ -39,6 +39,13 @@ describe 'pam' do
         it { is_expected.to contain_package('pam').with_ensure('latest') }
         it { is_expected.to contain_package('libpwquality').with_ensure('latest') }
       end
+
+      context 'with manage_faillock_conf=true' do
+        let(:params) {{ :manage_faillock_conf => true }}
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_file('/etc/security/faillock.conf') }
+      end
     end
   end
 end

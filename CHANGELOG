@@ -1,3 +1,6 @@
+* Mon Dec 18 2023 Mike Riddle <mike@sicura.us> - 6.16.0
+- Added functionality to control /etc/security/faillock.conf
+
 * Mon Oct 23 2023 Steven Pritchard <steve@sicura.us> - 6.15.0
 - [puppetsync] Add EL9 support
 

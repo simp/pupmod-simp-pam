@@ -116,16 +116,39 @@ class pam::config {
     }
   }
 
-  if ($pam::faillock_log_dir) {
-    file { $pam::faillock_log_dir:
-      ensure   => 'dir',
-      owner    => 'root',
-      group    => 'root',
-      mode     => '0750',
-      seluser  => 'system_u',
-      selrole  => 'object_r',
-      seltype  => 'faillog_t',
-      selrange => 's0',
+  if ($pam::manage_faillock_conf) {
+    if ($pam::faillock_dir) {
+      file { $pam::faillock_dir:
+        ensure   => 'directory',
+        owner    => 'root',
+        group    => 'root',
+        mode     => '0750',
+        seluser  => 'system_u',
+        selrole  => 'object_r',
+        seltype  => 'faillog_t',
+        selrange => 's0',
+      }
+    }
+
+    file { '/etc/security/faillock.conf':
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => epp("${module_name}/etc/security/faillock.conf.epp", {
+          dir              => $pam::faillock_dir,
+          audit            => $pam::faillock_audit,
+          silent           => $pam::faillock_silent,
+          no_log_info      => $pam::faillock_no_log_info,
+          local_users_only => $pam::faillock_local_users_only,
+          nodelay          => $pam::faillock_nodelay,
+          deny             => $pam::faillock_deny,
+          fail_interval    => $pam::faillock_fail_interval,
+          unlock_time      => $pam::faillock_unlock_time,
+          even_deny_root   => $pam::faillock_even_deny_root,
+          root_unlock_time => $pam::faillock_root_unlock_time,
+          admin_group      => $pam::faillock_admin_group
+      }),
     }
   }
 

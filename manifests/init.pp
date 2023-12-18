@@ -133,9 +133,6 @@
 # @param faillock
 #   Enable or disable the use of ``faillock``
 #
-# @param faillock_log_dir
-#   The location in which to log failed login attempts and account lockouts
-#
 # @param display_account_lock
 #   Display to the remote user that their account has been locked
 #
@@ -282,6 +279,49 @@
 # @param package_ensure
 #   Ensure setting for all packages installed by this module
 #
+# @param manage_faillock_conf
+#   If true, this module will manage all of the contents of faillock.conf
+#
+# @param faillock_dir
+#   The directory where the user files with the failure records are kept
+#
+# @param faillock_audit
+#   If true, log the user name into the system log if the user is not found
+#
+# @param faillock_silent
+#   If true, don't print informative messages to the user upon login attempt
+#
+# @param faillock_no_log_info
+#   If true, don't log informative messages via syslog
+#
+# @param faillock_local_users_only
+#   If true, only track failed user authentications attempts for local users in
+#   /etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users
+#
+# @param faillock_nodelay
+#   If true, don't enforce a delay after authentication failures
+#
+# @param faillock_deny
+#   Deny access if the number of consecutive authentication failures for this user
+#   during the recent interval exceeds what this parameter is set to
+#
+# @param faillock_fail_interval
+#   The length of the interval during which the consecutive authentication failures
+#   must happen for the user account lock out in seconds
+#
+# @param faillock_unlock_time
+#   The access will be re-enabled after specified number of seconds after the lock out
+#
+# @param faillock_even_deny_root
+#   If true, root account can become locked as well as regular accounts
+#
+# @param faillock_root_unlock_time
+#   Allow access after specified number of seconds to root account after the account is locked
+#
+# @param faillock_admin_group
+#   If a group name is specified with this option, members of the group will be handled by
+#   this module the same as the root account
+#
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
 class pam (
@@ -310,7 +350,6 @@ class pam (
   Integer[0]                     $oath_window               = 1,
   Integer[0]                     $deny                      = 5,
   Boolean                        $faillock                  = true,
-  Optional[Stdlib::Absolutepath] $faillock_log_dir          = undef,
   Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
   Integer[0]                     $remember                  = 24,
@@ -346,7 +385,20 @@ class pam (
   Boolean                        $enable_warning            = true,
   Boolean                        $disable_authconfig        = true,
   Boolean                        $use_authselect            = simplib::lookup('simp_options::authselect', { 'default_value' => false }),
-  Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
+  Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' }),
+  Boolean                        $manage_faillock_conf      = false,
+  Optional[Stdlib::Absolutepath] $faillock_dir              = undef,
+  Boolean                        $faillock_audit            = false,
+  Boolean                        $faillock_silent           = false,
+  Boolean                        $faillock_no_log_info      = false,
+  Boolean                        $faillock_local_users_only = false,
+  Boolean                        $faillock_nodelay          = false,
+  Optional[Integer[0]]           $faillock_deny             = undef,
+  Optional[Integer[0]]           $faillock_fail_interval    = undef,
+  Optional[Integer[0]]           $faillock_unlock_time      = undef,
+  Boolean                        $faillock_even_deny_root   = false,
+  Optional[Integer[0]]           $faillock_root_unlock_time = undef,
+  Optional[String]               $faillock_admin_group      = undef
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true }) {
     if $enable {
