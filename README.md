@@ -20,6 +20,8 @@
     * [Managing System Access](#managing-system-access)
   * [Restricting Resource Usage (pam_limits)](#restricting-resource-usage-pam_limits)
   * [Restricting ``su`` to the ``wheel`` Group](#restricting-su-to-the-wheel-group)
+  * [Managing /etc/security/faillock.conf](#managing-etcsecurityfaillockconf)
+    * [/etc/security_faillock.conf Example With All Parameters](#etcsecurityfaillockconf-hieradata-example-with-all-parameters)
 * [Development](#development)
   * [Acceptance tests](#acceptance-tests)
 
@@ -200,6 +202,51 @@ include 'pam::wheel'
 
 You can change the target group by updating the value of
 ``pam::wheel::wheel_group`` via Hiera.
+
+### Managing /etc/security/faillock.conf
+
+To manage faillock with ``/etc/security/faillock.conf`` instead of inline parameters in the auth files set the following in hieradata:
+
+```yaml
+pam::manage_faillock_conf: true
+```
+
+A couple of things to note here are:
+
+- ``pam::faillock`` must still be true for faillock to work appropriately
+- By default, /etc/security/faillock.conf will be empty except for a comment saying the file is managed by puppet. To set content in the file, the following parameters are available:
+
+  - ``pam::faillock_dir``
+  - ``pam::faillock_audit``
+  - ``pam::faillock_silent``
+  - ``pam::faillock_no_log_info``
+  - ``pam::faillock_local_users_only``
+  - ``pam::faillock_nodelay``
+  - ``pam::faillock_deny``
+  - ``pam::faillock_fail_interval``
+  - ``pam::faillock_unlock_time``
+  - ``pam::faillock_even_deny_root``
+  - ``pam::faillock_root_unlock_time``
+  - ``pam::faillock_admin_group``
+
+#### /etc/security/faillock.conf Hieradata Example With All Parameters
+
+```yaml
+pam::faillock: true
+pam::manage_faillock_conf: true
+pam::faillock_dir: '/var/log/faillock'
+pam::faillock_audit: true
+pam::faillock_silent: true
+pam::faillock_no_log_info: false
+pam::faillock_local_users_only: false
+pam::faillock_nodelay: false
+pam::faillock_deny: 5
+pam::faillock_fail_interval: 900
+pam::faillock_unlock_time: 900
+pam::faillock_even_deny_root: true
+pam::faillock_root_unlock_time: 60
+pam::faillock_admin_group: 'wheel'
+```
 
 ## Development
 

@@ -128,16 +128,19 @@
 #     ability of users to override our settings directly on the system.
 #
 # @param deny
-#   The number of failed attempts before PAM denies a user from logging in
+#   The number of failed attempts before PAM denies a user from logging in.
+#   This parameter is ignored if manage_faillock_conf is set to true.
 #
 # @param faillock
 #   Enable or disable the use of ``faillock``
 #
 # @param display_account_lock
-#   Display to the remote user that their account has been locked
+#   Display to the remote user that their account has been locked.
+#   This parameter is ignored if manage_faillock_conf is set to true.
 #
 # @param fail_interval
-#   Sets the time until the check fails
+#   Sets the time until the check fails.
+#   This parameter is ignored if manage_faillock_conf is set to true.
 #
 # @param homedir_umask
 #   Sets the file mode creation mask of the user home directories
@@ -154,10 +157,12 @@
 #   Remember the last ``$remember`` passwords for the root user
 #
 # @param even_deny_root
-#   Enforce an account lockout for the ``root`` account
+#   Enforce an account lockout for the ``root`` account.
+#   This parameter is ignored if manage_faillock_conf is set to true.
 #
 # @param root_unlock_time
-#   Allow access after N seconds to root account after failed attempt
+#   Allow access after N seconds to root account after failed attempt.
+#   This parameter is ignored if manage_faillock_conf is set to true.
 #
 #   * Has no effect if ``even_deny_root`` is not set
 #
@@ -172,7 +177,8 @@
 #   Allow user logins for users with UID higher than N
 #
 # @param unlock_time
-#   Allow acesss after N seconds to user account after failed attempt
+#   Allow acesss after N seconds to user account after failed attempt.
+#   This parameter is ignored if manage_faillock_conf is set to true.
 #
 # @param preserve_ac
 #   Keep the original ``-ac`` files around for reference

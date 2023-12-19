@@ -340,7 +340,8 @@ Default value: `true`
 
 Data type: `Integer[0]`
 
-The number of failed attempts before PAM denies a user from logging in
+The number of failed attempts before PAM denies a user from logging in.
+This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `5`
 
@@ -356,7 +357,8 @@ Default value: `true`
 
 Data type: `Boolean`
 
-Display to the remote user that their account has been locked
+Display to the remote user that their account has been locked.
+This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `false`
 
@@ -364,7 +366,8 @@ Default value: `false`
 
 Data type: `Integer[0]`
 
-Sets the time until the check fails
+Sets the time until the check fails.
+This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `900`
 
@@ -406,7 +409,8 @@ Default value: `true`
 
 Data type: `Boolean`
 
-Enforce an account lockout for the ``root`` account
+Enforce an account lockout for the ``root`` account.
+This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `true`
 
@@ -414,7 +418,8 @@ Default value: `true`
 
 Data type: `Integer[0]`
 
-Allow access after N seconds to root account after failed attempt
+Allow access after N seconds to root account after failed attempt.
+This parameter is ignored if manage_faillock_conf is set to true.
 
 * Has no effect if ``even_deny_root`` is not set
 
@@ -449,7 +454,8 @@ Default value: `simplib::lookup('simp_options::uid::min', { 'default_value' => p
 
 Data type: `Pam::AccountUnlockTime`
 
-Allow acesss after N seconds to user account after failed attempt
+Allow acesss after N seconds to user account after failed attempt.
+This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `900`
 
