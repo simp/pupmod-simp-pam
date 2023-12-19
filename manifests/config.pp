@@ -116,7 +116,8 @@ class pam::config {
     }
   }
 
-  if ($pam::manage_faillock_conf) {
+  # EL 7 doesn't utilize faillock.conf
+  if ($facts['os']['release']['major'] > '7') and ($pam::manage_faillock_conf) {
     if ($pam::faillock_dir) {
       file { $pam::faillock_dir:
         ensure   => 'directory',

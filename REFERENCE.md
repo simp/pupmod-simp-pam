@@ -702,7 +702,9 @@ Default value: `false`
 
 Data type: `Optional[Stdlib::Absolutepath]`
 
-The directory where the user files with the failure records are kept
+The directory where the user files with the failure records are kept.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -710,7 +712,9 @@ Default value: `undef`
 
 Data type: `Boolean`
 
-If true, log the user name into the system log if the user is not found
+If true, log the user name into the system log if the user is not found.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -718,7 +722,9 @@ Default value: `false`
 
 Data type: `Boolean`
 
-If true, don't print informative messages to the user upon login attempt
+If true, don't print informative messages to the user upon login attempt.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -726,7 +732,9 @@ Default value: `false`
 
 Data type: `Boolean`
 
-If true, don't log informative messages via syslog
+If true, don't log informative messages via syslog.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -735,7 +743,9 @@ Default value: `false`
 Data type: `Boolean`
 
 If true, only track failed user authentications attempts for local users in
-/etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users
+/etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -743,7 +753,9 @@ Default value: `false`
 
 Data type: `Boolean`
 
-If true, don't enforce a delay after authentication failures
+If true, don't enforce a delay after authentication failures.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -752,7 +764,9 @@ Default value: `false`
 Data type: `Optional[Integer[0]]`
 
 Deny access if the number of consecutive authentication failures for this user
-during the recent interval exceeds what this parameter is set to
+during the recent interval exceeds what this parameter is set to.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -761,7 +775,9 @@ Default value: `undef`
 Data type: `Optional[Integer[0]]`
 
 The length of the interval during which the consecutive authentication failures
-must happen for the user account lock out in seconds
+must happen for the user account lock out in seconds.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -769,7 +785,9 @@ Default value: `undef`
 
 Data type: `Optional[Integer[0]]`
 
-The access will be re-enabled after specified number of seconds after the lock out
+The access will be re-enabled after specified number of seconds after the lock out.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -777,7 +795,9 @@ Default value: `undef`
 
 Data type: `Boolean`
 
-If true, root account can become locked as well as regular accounts
+If true, root account can become locked as well as regular accounts.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -785,7 +805,9 @@ Default value: `false`
 
 Data type: `Optional[Integer[0]]`
 
-Allow access after specified number of seconds to root account after the account is locked
+Allow access after specified number of seconds to root account after the account is locked.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -794,7 +816,9 @@ Default value: `undef`
 Data type: `Optional[String]`
 
 If a group name is specified with this option, members of the group will be handled by
-this module the same as the root account
+this module the same as the root account.
+Note that this parameter will be ignored on el7 and earlier systems
+and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
