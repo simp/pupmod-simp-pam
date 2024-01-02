@@ -391,7 +391,7 @@ describe 'pam' do
         let(:params){{ :manage_faillock_conf => true}}
 
         it {is_expected.to compile.with_all_deps}
-        if os_facts[:os][:release][:major] <= '7' {
+        if os_facts[:os][:release][:major] <= '7'
           it {is_expected.to_not contain_file('/etc/security/faillock.conf')}
         else
           it {is_expected.to contain_file('/etc/security/faillock.conf').with_content( default_faillock_conf )}
@@ -416,7 +416,7 @@ describe 'pam' do
         }}
 
         it {is_expected.to compile.with_all_deps}
-        if os_facts[:os][:release][:major] <= '7' {
+        if os_facts[:os][:release][:major] <= '7'
           it {is_expected.to_not contain_file('/etc/security/faillock.conf')}
         else
           it {is_expected.to contain_file('/etc/security/faillock.conf').with_content( all_params_faillock_conf )}

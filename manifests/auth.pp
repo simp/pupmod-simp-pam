@@ -9,6 +9,7 @@
 # @param password_check_backend
 # @param locale_file
 # @param auth_content_pre
+# @param manage_faillock_conf
 # @param cracklib_enforce_for_root
 # @param cracklib_reject_username
 # @param cracklib_difok
@@ -54,6 +55,7 @@ define pam::auth (
   Pam::PasswordBackends          $password_check_backend    = $pam::password_check_backend,
   Optional[Stdlib::Absolutepath] $locale_file               = $pam::locale_file,
   Optional[Array[String]]        $auth_content_pre          = $pam::auth_content_pre,
+  Boolean                        $manage_faillock_conf      = $pam::manage_faillock_conf,
   Boolean                        $cracklib_enforce_for_root = $pam::cracklib_enforce_for_root,
   Boolean                        $cracklib_reject_username  = $pam::cracklib_reject_username,
   Optional[Integer[0]]           $cracklib_difok            = $pam::cracklib_difok,
@@ -143,6 +145,7 @@ define pam::auth (
           password_check_backend    => $password_check_backend,
           locale_file               => $locale_file,
           auth_content_pre          => $auth_content_pre,
+          manage_faillock_conf      => $manage_faillock_conf,
           cracklib_enforce_for_root => $cracklib_enforce_for_root,
           cracklib_reject_username  => $cracklib_reject_username,
           cracklib_difok            => $cracklib_difok,

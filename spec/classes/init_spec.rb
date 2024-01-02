@@ -44,7 +44,11 @@ describe 'pam' do
         let(:params) {{ :manage_faillock_conf => true }}
 
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_file('/etc/security/faillock.conf') }
+        if os_facts[:os][:release][:major] > '7'
+          it { is_expected.to contain_file('/etc/security/faillock.conf') }
+        else
+          it { is_expected.to_not contain_file('/etc/security/faillock.conf') }
+        end
       end
     end
   end

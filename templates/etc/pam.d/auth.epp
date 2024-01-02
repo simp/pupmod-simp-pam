@@ -3,6 +3,7 @@
   Pam::PasswordBackends          $password_check_backend,
   Optional[Stdlib::Absolutepath] $locale_file,
   Optional[Array[String]]        $auth_content_pre,
+  Boolean                        $manage_faillock_conf,
   Boolean                        $cracklib_enforce_for_root,
   Boolean                        $cracklib_reject_username,
   Optional[Integer[0]]           $cracklib_difok,
