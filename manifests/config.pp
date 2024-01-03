@@ -118,8 +118,8 @@ class pam::config {
 
   # EL 7 doesn't utilize faillock.conf
   if ($facts['os']['release']['major'] > '7') and ($pam::manage_faillock_conf) {
-    if ($pam::faillock_dir) {
-      file { $pam::faillock_dir:
+    if ($pam::faillock_log_dir) {
+      file { $pam::faillock_log_dir:
         ensure   => 'directory',
         owner    => 'root',
         group    => 'root',
@@ -137,17 +137,17 @@ class pam::config {
       group   => 'root',
       mode    => '0644',
       content => epp("${module_name}/etc/security/faillock.conf.epp", {
-          dir              => $pam::faillock_dir,
+          dir              => $pam::faillock_log_dir,
           audit            => $pam::faillock_audit,
-          silent           => $pam::faillock_silent,
+          silent           => !$pam::display_account_lock,
           no_log_info      => $pam::faillock_no_log_info,
           local_users_only => $pam::faillock_local_users_only,
           nodelay          => $pam::faillock_nodelay,
-          deny             => $pam::faillock_deny,
-          fail_interval    => $pam::faillock_fail_interval,
-          unlock_time      => $pam::faillock_unlock_time,
-          even_deny_root   => $pam::faillock_even_deny_root,
-          root_unlock_time => $pam::faillock_root_unlock_time,
+          deny             => $pam::deny,
+          fail_interval    => $pam::fail_interval,
+          unlock_time      => $pam::unlock_time,
+          even_deny_root   => $pam::even_deny_root,
+          root_unlock_time => $pam::root_unlock_time,
           admin_group      => $pam::faillock_admin_group
       }),
     }

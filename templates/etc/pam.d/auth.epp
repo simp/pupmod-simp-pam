@@ -3,7 +3,6 @@
   Pam::PasswordBackends          $password_check_backend,
   Optional[Stdlib::Absolutepath] $locale_file,
   Optional[Array[String]]        $auth_content_pre,
-  Boolean                        $manage_faillock_conf,
   Boolean                        $cracklib_enforce_for_root,
   Boolean                        $cracklib_reject_username,
   Optional[Integer[0]]           $cracklib_difok,
@@ -20,6 +19,12 @@
   Integer[0]                     $cracklib_retry,
   Integer[0]                     $deny,
   Boolean                        $faillock,
+  Boolean                        $manage_faillock_conf,
+  Boolean                        $faillock_audit,
+  Boolean                        $faillock_no_log_info,
+  Boolean                        $faillock_local_users_only,
+  Boolean                        $faillock_nodelay,
+  Optional[String]               $faillock_admin_group,
   Optional[Stdlib::Absolutepath] $faillock_log_dir,
   Boolean                        $display_account_lock,
   Integer[0]                     $fail_interval,
@@ -65,6 +70,52 @@ else {
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 <% if $faillock {
+  if $manage_faillock_conf { 
+-%>
+auth     required      pam_faillock.so preauth
+<%   } else {
+  if $faillock_log_dir {
+    $_faillock_log_dir = " dir=${faillock_log_dir}"
+  }
+  else {
+    $_faillock_log_dir = ''
+  }
+
+  if $faillock_audit {
+    $_faillock_audit = ' audit'
+  }
+  else {
+    $_faillock_audit = ''
+  }
+
+  if $faillock_no_log_info {
+    $_faillock_no_log_info = ' no_log_info'
+  }
+  else {
+    $_faillock_no_log_info = ''
+  }
+
+  if $faillock_local_users_only {
+    $_faillock_local_users_only = ' local_users_only'
+  }
+  else {
+    $_faillock_local_users_only = ''
+  }
+
+  if $faillock_nodelay {
+    $_faillock_nodelay = ' nodelay'
+  }
+  else {
+    $_faillock_nodelay = ''
+  }
+
+  if $faillock_admin_group {
+    $_faillock_admin_group = " admin_group=${faillock_admin_group}"
+  }
+  else {
+    $_faillock_admin_group = ''
+  }
+
   if $display_account_lock {
     $_display_account_lock = ''
   }
@@ -72,10 +123,7 @@ auth     required      pam_env.so
     $_display_account_lock = ' silent'
   }
 -%>
-<%   if $manage_faillock_conf { -%>
-auth     required      pam_faillock.so preauth
-<%   } else { -%>
-auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny=<%= $deny %> audit unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_even_deny_root %>
+auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny=<%= $deny %><%= $_faillock_audit %> unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_faillock_log_dir %><%= $_faillock_no_log_info %><%= $_faillock_local_users_only %><%= $_faillock_nodelay %><%= $_faillock_admin_group %><%= $_even_deny_root %>
 <%   } -%>
 <% } -%>
 <% if $name == 'fingerprint' { -%>

@@ -10,6 +10,11 @@
 # @param locale_file
 # @param auth_content_pre
 # @param manage_faillock_conf
+# @param faillock_audit
+# @param faillock_no_log_info
+# @param faillock_local_users_only
+# @param faillock_nodelay
+# @param faillock_admin_group
 # @param cracklib_enforce_for_root
 # @param cracklib_reject_username
 # @param cracklib_difok
@@ -55,7 +60,6 @@ define pam::auth (
   Pam::PasswordBackends          $password_check_backend    = $pam::password_check_backend,
   Optional[Stdlib::Absolutepath] $locale_file               = $pam::locale_file,
   Optional[Array[String]]        $auth_content_pre          = $pam::auth_content_pre,
-  Boolean                        $manage_faillock_conf      = $pam::manage_faillock_conf,
   Boolean                        $cracklib_enforce_for_root = $pam::cracklib_enforce_for_root,
   Boolean                        $cracklib_reject_username  = $pam::cracklib_reject_username,
   Optional[Integer[0]]           $cracklib_difok            = $pam::cracklib_difok,
@@ -72,7 +76,13 @@ define pam::auth (
   Integer[0]                     $cracklib_retry            = $pam::cracklib_retry,
   Integer[0]                     $deny                      = $pam::deny,
   Boolean                        $faillock                  = $pam::faillock,
-  Optional[Stdlib::Absolutepath] $faillock_log_dir          = undef,
+  Boolean                        $manage_faillock_conf      = $pam::manage_faillock_conf,
+  Optional[Stdlib::Absolutepath] $faillock_log_dir          = $pam::faillock_log_dir,
+  Boolean                        $faillock_audit            = $pam::faillock_audit,
+  Boolean                        $faillock_no_log_info      = $pam::faillock_no_log_info,
+  Boolean                        $faillock_local_users_only = $pam::faillock_local_users_only,
+  Boolean                        $faillock_nodelay          = $pam::faillock_nodelay,
+  Optional[String]               $faillock_admin_group      = $pam::faillock_admin_group,
   Boolean                        $display_account_lock      = $pam::display_account_lock,
   Integer[0]                     $fail_interval             = $pam::fail_interval,
   Integer[0]                     $remember                  = $pam::remember,
@@ -163,6 +173,11 @@ define pam::auth (
           deny                      => $deny,
           faillock                  => $faillock,
           faillock_log_dir          => $faillock_log_dir,
+          faillock_audit            => $faillock_audit,
+          faillock_no_log_info      => $faillock_no_log_info,
+          faillock_local_users_only => $faillock_local_users_only,
+          faillock_nodelay          => $faillock_nodelay,
+          faillock_admin_group      => $faillock_admin_group,
           display_account_lock      => $display_account_lock,
           fail_interval             => $fail_interval,
           remember                  => $remember,

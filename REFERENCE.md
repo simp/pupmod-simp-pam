@@ -104,17 +104,11 @@ The following parameters are available in the `pam` class:
 * [`auth_basedir`](#-pam--auth_basedir)
 * [`package_ensure`](#-pam--package_ensure)
 * [`manage_faillock_conf`](#-pam--manage_faillock_conf)
-* [`faillock_dir`](#-pam--faillock_dir)
+* [`faillock_log_dir`](#-pam--faillock_log_dir)
 * [`faillock_audit`](#-pam--faillock_audit)
-* [`faillock_silent`](#-pam--faillock_silent)
 * [`faillock_no_log_info`](#-pam--faillock_no_log_info)
 * [`faillock_local_users_only`](#-pam--faillock_local_users_only)
 * [`faillock_nodelay`](#-pam--faillock_nodelay)
-* [`faillock_deny`](#-pam--faillock_deny)
-* [`faillock_fail_interval`](#-pam--faillock_fail_interval)
-* [`faillock_unlock_time`](#-pam--faillock_unlock_time)
-* [`faillock_even_deny_root`](#-pam--faillock_even_deny_root)
-* [`faillock_root_unlock_time`](#-pam--faillock_root_unlock_time)
 * [`faillock_admin_group`](#-pam--faillock_admin_group)
 
 ##### <a name="-pam--password_check_backend"></a>`password_check_backend`
@@ -341,7 +335,6 @@ Default value: `true`
 Data type: `Integer[0]`
 
 The number of failed attempts before PAM denies a user from logging in.
-This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `5`
 
@@ -358,7 +351,6 @@ Default value: `true`
 Data type: `Boolean`
 
 Display to the remote user that their account has been locked.
-This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `false`
 
@@ -367,7 +359,6 @@ Default value: `false`
 Data type: `Integer[0]`
 
 Sets the time until the check fails.
-This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `900`
 
@@ -410,7 +401,6 @@ Default value: `true`
 Data type: `Boolean`
 
 Enforce an account lockout for the ``root`` account.
-This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `true`
 
@@ -419,7 +409,6 @@ Default value: `true`
 Data type: `Integer[0]`
 
 Allow access after N seconds to root account after failed attempt.
-This parameter is ignored if manage_faillock_conf is set to true.
 
 * Has no effect if ``even_deny_root`` is not set
 
@@ -455,7 +444,6 @@ Default value: `simplib::lookup('simp_options::uid::min', { 'default_value' => p
 Data type: `Pam::AccountUnlockTime`
 
 Allow acesss after N seconds to user account after failed attempt.
-This parameter is ignored if manage_faillock_conf is set to true.
 
 Default value: `900`
 
@@ -700,17 +688,16 @@ Default value: `simplib::lookup('simp_options::package_ensure', { 'default_value
 
 Data type: `Boolean`
 
-If true, this module will manage all of the contents of faillock.conf
+If true, the faillock parameters will be managed within /etc/security/faillock.conf
+instead of inline in the auth files. This parameter will be ignored on el7 and earlier systems.
 
 Default value: `false`
 
-##### <a name="-pam--faillock_dir"></a>`faillock_dir`
+##### <a name="-pam--faillock_log_dir"></a>`faillock_log_dir`
 
 Data type: `Optional[Stdlib::Absolutepath]`
 
 The directory where the user files with the failure records are kept.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -719,28 +706,14 @@ Default value: `undef`
 Data type: `Boolean`
 
 If true, log the user name into the system log if the user is not found.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
 
-Default value: `false`
-
-##### <a name="-pam--faillock_silent"></a>`faillock_silent`
-
-Data type: `Boolean`
-
-If true, don't print informative messages to the user upon login attempt.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
-
-Default value: `false`
+Default value: `true`
 
 ##### <a name="-pam--faillock_no_log_info"></a>`faillock_no_log_info`
 
 Data type: `Boolean`
 
 If true, don't log informative messages via syslog.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -750,8 +723,6 @@ Data type: `Boolean`
 
 If true, only track failed user authentications attempts for local users in
 /etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
 
 Default value: `false`
 
@@ -760,62 +731,8 @@ Default value: `false`
 Data type: `Boolean`
 
 If true, don't enforce a delay after authentication failures.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
 
 Default value: `false`
-
-##### <a name="-pam--faillock_deny"></a>`faillock_deny`
-
-Data type: `Optional[Integer[0]]`
-
-Deny access if the number of consecutive authentication failures for this user
-during the recent interval exceeds what this parameter is set to.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
-
-Default value: `undef`
-
-##### <a name="-pam--faillock_fail_interval"></a>`faillock_fail_interval`
-
-Data type: `Optional[Integer[0]]`
-
-The length of the interval during which the consecutive authentication failures
-must happen for the user account lock out in seconds.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
-
-Default value: `undef`
-
-##### <a name="-pam--faillock_unlock_time"></a>`faillock_unlock_time`
-
-Data type: `Optional[Integer[0]]`
-
-The access will be re-enabled after specified number of seconds after the lock out.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
-
-Default value: `undef`
-
-##### <a name="-pam--faillock_even_deny_root"></a>`faillock_even_deny_root`
-
-Data type: `Boolean`
-
-If true, root account can become locked as well as regular accounts.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
-
-Default value: `false`
-
-##### <a name="-pam--faillock_root_unlock_time"></a>`faillock_root_unlock_time`
-
-Data type: `Optional[Integer[0]]`
-
-Allow access after specified number of seconds to root account after the account is locked.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
-
-Default value: `undef`
 
 ##### <a name="-pam--faillock_admin_group"></a>`faillock_admin_group`
 
@@ -823,8 +740,6 @@ Data type: `Optional[String]`
 
 If a group name is specified with this option, members of the group will be handled by
 this module the same as the root account.
-Note that this parameter will be ignored on el7 and earlier systems
-and if manage_faillock_conf is set to false.
 
 Default value: `undef`
 
@@ -1135,6 +1050,11 @@ The following parameters are available in the `pam::auth` defined type:
 * [`locale_file`](#-pam--auth--locale_file)
 * [`auth_content_pre`](#-pam--auth--auth_content_pre)
 * [`manage_faillock_conf`](#-pam--auth--manage_faillock_conf)
+* [`faillock_audit`](#-pam--auth--faillock_audit)
+* [`faillock_no_log_info`](#-pam--auth--faillock_no_log_info)
+* [`faillock_local_users_only`](#-pam--auth--faillock_local_users_only)
+* [`faillock_nodelay`](#-pam--auth--faillock_nodelay)
+* [`faillock_admin_group`](#-pam--auth--faillock_admin_group)
 * [`cracklib_enforce_for_root`](#-pam--auth--cracklib_enforce_for_root)
 * [`cracklib_reject_username`](#-pam--auth--cracklib_reject_username)
 * [`cracklib_difok`](#-pam--auth--cracklib_difok)
@@ -1205,6 +1125,46 @@ Data type: `Boolean`
 
 
 Default value: `$pam::manage_faillock_conf`
+
+##### <a name="-pam--auth--faillock_audit"></a>`faillock_audit`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::faillock_audit`
+
+##### <a name="-pam--auth--faillock_no_log_info"></a>`faillock_no_log_info`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::faillock_no_log_info`
+
+##### <a name="-pam--auth--faillock_local_users_only"></a>`faillock_local_users_only`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::faillock_local_users_only`
+
+##### <a name="-pam--auth--faillock_nodelay"></a>`faillock_nodelay`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::faillock_nodelay`
+
+##### <a name="-pam--auth--faillock_admin_group"></a>`faillock_admin_group`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `$pam::faillock_admin_group`
 
 ##### <a name="-pam--auth--cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
 
@@ -1356,7 +1316,7 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 
 
-Default value: `undef`
+Default value: `$pam::faillock_log_dir`
 
 ##### <a name="-pam--auth--display_account_lock"></a>`display_account_lock`
 
