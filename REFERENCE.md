@@ -1134,6 +1134,7 @@ The following parameters are available in the `pam::auth` defined type:
 * [`password_check_backend`](#-pam--auth--password_check_backend)
 * [`locale_file`](#-pam--auth--locale_file)
 * [`auth_content_pre`](#-pam--auth--auth_content_pre)
+* [`manage_faillock_conf`](#-pam--auth--manage_faillock_conf)
 * [`cracklib_enforce_for_root`](#-pam--auth--cracklib_enforce_for_root)
 * [`cracklib_reject_username`](#-pam--auth--cracklib_reject_username)
 * [`cracklib_difok`](#-pam--auth--cracklib_difok)
@@ -1196,6 +1197,14 @@ Data type: `Optional[Array[String]]`
 
 
 Default value: `$pam::auth_content_pre`
+
+##### <a name="-pam--auth--manage_faillock_conf"></a>`manage_faillock_conf`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::manage_faillock_conf`
 
 ##### <a name="-pam--auth--cracklib_enforce_for_root"></a>`cracklib_enforce_for_root`
 
