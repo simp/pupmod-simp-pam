@@ -116,16 +116,40 @@ class pam::config {
     }
   }
 
-  if ($pam::faillock_log_dir) {
-    file { $pam::faillock_log_dir:
-      ensure   => 'dir',
-      owner    => 'root',
-      group    => 'root',
-      mode     => '0750',
-      seluser  => 'system_u',
-      selrole  => 'object_r',
-      seltype  => 'faillog_t',
-      selrange => 's0',
+  # EL 7 doesn't utilize faillock.conf and will break if used
+  if ($facts['os']['family'] == 'RedHat') and ($facts['os']['release']['major'] > '7') and ($pam::manage_faillock_conf) {
+    if ($pam::faillock_log_dir) {
+      file { $pam::faillock_log_dir:
+        ensure   => 'directory',
+        owner    => 'root',
+        group    => 'root',
+        mode     => '0750',
+        seluser  => 'system_u',
+        selrole  => 'object_r',
+        seltype  => 'faillog_t',
+        selrange => 's0',
+      }
+    }
+
+    file { '/etc/security/faillock.conf':
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => epp("${module_name}/etc/security/faillock.conf.epp", {
+          dir              => $pam::faillock_log_dir,
+          audit            => $pam::faillock_audit,
+          silent           => !$pam::display_account_lock,
+          no_log_info      => $pam::faillock_no_log_info,
+          local_users_only => $pam::faillock_local_users_only,
+          nodelay          => $pam::faillock_nodelay,
+          deny             => $pam::deny,
+          fail_interval    => $pam::fail_interval,
+          unlock_time      => $pam::unlock_time,
+          even_deny_root   => $pam::even_deny_root,
+          root_unlock_time => $pam::root_unlock_time,
+          admin_group      => $pam::faillock_admin_group
+      }),
     }
   }
 

@@ -39,6 +39,38 @@ describe 'pam' do
         it { is_expected.to contain_package('pam').with_ensure('latest') }
         it { is_expected.to contain_package('libpwquality').with_ensure('latest') }
       end
+
+      context 'with all possible faillock params set' do
+        let(:params) {{ 
+          :manage_faillock_conf      => false,
+          :display_account_lock      => false,
+          :deny                      => 6,
+          :faillock_audit            => true,
+          :unlock_time               => 600,
+          :fail_interval             => 600,
+          :faillock_log_dir          => '/var/log/faillock',
+          :faillock_no_log_info      => true,
+          :faillock_local_users_only => true,
+          :faillock_nodelay         => true,
+          :faillock_admin_group      => 'admin',
+          :even_deny_root            => true
+          }}
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(/auth     required      pam_faillock.so preauth silent deny=6 audit unlock_time=600 fail_interval=600 dir=\/var\/log\/faillock no_log_info local_users_only nodelay admin_group=admin even_deny_root/) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(/auth     required      pam_faillock.so preauth silent deny=6 audit unlock_time=600 fail_interval=600 dir=\/var\/log\/faillock no_log_info local_users_only nodelay admin_group=admin even_deny_root/) }
+      end
+
+      context 'with manage_faillock_conf=true' do
+        let(:params) {{ :manage_faillock_conf => true }}
+
+        it { is_expected.to compile.with_all_deps }
+        if os_facts[:os][:release][:major] > '7'
+          it { is_expected.to contain_file('/etc/security/faillock.conf') }
+        else
+          it { is_expected.to_not contain_file('/etc/security/faillock.conf') }
+        end
+      end
     end
   end
 end

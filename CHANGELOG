@@ -1,3 +1,7 @@
+
+* Mon Jan 29 2024 Mike Riddle <mike@sicura.us> - 6.16.0
+- Added functionality to control /etc/security/faillock.conf
+
 * Wed Jan 17 2024 Richard Gardner <rick@sicura.us> - 6.15.1
 - Updated hiera.yaml facts to support puppet 8
 

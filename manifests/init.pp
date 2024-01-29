@@ -128,19 +128,16 @@
 #     ability of users to override our settings directly on the system.
 #
 # @param deny
-#   The number of failed attempts before PAM denies a user from logging in
+#   The number of failed attempts before PAM denies a user from logging in.
 #
 # @param faillock
 #   Enable or disable the use of ``faillock``
 #
-# @param faillock_log_dir
-#   The location in which to log failed login attempts and account lockouts
-#
 # @param display_account_lock
-#   Display to the remote user that their account has been locked
+#   Display to the remote user that their account has been locked.
 #
 # @param fail_interval
-#   Sets the time until the check fails
+#   Sets the time until the check fails.
 #
 # @param homedir_umask
 #   Sets the file mode creation mask of the user home directories
@@ -157,10 +154,10 @@
 #   Remember the last ``$remember`` passwords for the root user
 #
 # @param even_deny_root
-#   Enforce an account lockout for the ``root`` account
+#   Enforce an account lockout for the ``root`` account.
 #
 # @param root_unlock_time
-#   Allow access after N seconds to root account after failed attempt
+#   Allow access after N seconds to root account after failed attempt.
 #
 #   * Has no effect if ``even_deny_root`` is not set
 #
@@ -175,7 +172,7 @@
 #   Allow user logins for users with UID higher than N
 #
 # @param unlock_time
-#   Allow acesss after N seconds to user account after failed attempt
+#   Allow acesss after N seconds to user account after failed attempt.
 #
 # @param preserve_ac
 #   Keep the original ``-ac`` files around for reference
@@ -282,6 +279,30 @@
 # @param package_ensure
 #   Ensure setting for all packages installed by this module
 #
+# @param manage_faillock_conf
+#   If true, the faillock parameters will be managed within /etc/security/faillock.conf
+#   instead of inline in the auth files. This parameter will be ignored on el7 and earlier systems.
+#
+# @param faillock_log_dir
+#   The directory where the user files with the failure records are kept.
+#
+# @param faillock_audit
+#   If true, log the user name into the system log if the user is not found.
+#
+# @param faillock_no_log_info
+#   If true, don't log informative messages via syslog.
+#
+# @param faillock_local_users_only
+#   If true, only track failed user authentications attempts for local users in
+#   /etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users.
+#
+# @param faillock_nodelay
+#   If true, don't enforce a delay after authentication failures.
+#
+# @param faillock_admin_group
+#   If a group name is specified with this option, members of the group will be handled by
+#   this module the same as the root account.
+#
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
 class pam (
@@ -308,21 +329,13 @@ class pam (
   Boolean                        $rm_pwquality_conf_d       = true,
   Boolean                        $oath                      = simplib::lookup('simp_options::oath', { 'default_value' => false }),
   Integer[0]                     $oath_window               = 1,
-  Integer[0]                     $deny                      = 5,
-  Boolean                        $faillock                  = true,
-  Optional[Stdlib::Absolutepath] $faillock_log_dir          = undef,
-  Boolean                        $display_account_lock      = false,
   Simplib::Umask                 $homedir_umask             = '0077',
   Integer[0]                     $remember                  = 24,
   Integer[0]                     $remember_retry            = 1,
   Boolean                        $remember_for_root         = true,
-  Boolean                        $even_deny_root            = true,
-  Integer[0]                     $root_unlock_time          = 60,
   Pam::HashAlgorithm             $hash_algorithm            = 'sha512',
   Integer[0]                     $rounds                    = 10000,
   Integer[0]                     $uid                       = simplib::lookup('simp_options::uid::min', { 'default_value' => pick(fact('login_defs.uid_min'), 1000) }),
-  Pam::AccountUnlockTime         $unlock_time               = 900,
-  Integer[0]                     $fail_interval             = 900,
   Boolean                        $preserve_ac               = false,
   Boolean                        $warn_if_unknown           = true,
   Boolean                        $deny_if_unknown           = true,
@@ -346,7 +359,21 @@ class pam (
   Boolean                        $enable_warning            = true,
   Boolean                        $disable_authconfig        = true,
   Boolean                        $use_authselect            = simplib::lookup('simp_options::authselect', { 'default_value' => false }),
-  Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' })
+  Simplib::PackageEnsure         $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' }),
+  Boolean                        $faillock                  = true,
+  Boolean                        $manage_faillock_conf      = false,
+  Integer[0]                     $deny                      = 5,
+  Boolean                        $display_account_lock      = false,
+  Pam::AccountUnlockTime         $unlock_time               = 900,
+  Integer[0]                     $fail_interval             = 900,
+  Boolean                        $even_deny_root            = true,
+  Integer[0]                     $root_unlock_time          = 60,
+  Optional[Stdlib::Absolutepath] $faillock_log_dir          = undef,
+  Boolean                        $faillock_audit            = true,
+  Boolean                        $faillock_no_log_info      = false,
+  Boolean                        $faillock_local_users_only = false,
+  Boolean                        $faillock_nodelay          = false,
+  Optional[String]               $faillock_admin_group      = undef
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true }) {
     if $enable {
