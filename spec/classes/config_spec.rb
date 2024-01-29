@@ -190,7 +190,7 @@ describe 'pam' do
           )
         }
 
-        if os_facts[:os][:release][:major] <= '7'
+        if os_facts[:os][:family] == 'RedHat' and os_facts[:os][:release][:major] <= '7'
           it {
             project_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
             expected = IO.read(File.join(project_dir, 'files', 'simp_authconfig.sh'))

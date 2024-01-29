@@ -116,8 +116,8 @@ class pam::config {
     }
   }
 
-  # EL 7 doesn't utilize faillock.conf
-  if ($facts['os']['release']['major'] > '7') and ($pam::manage_faillock_conf) {
+  # EL 7 doesn't utilize faillock.conf and will break if used
+  if ($facts['os']['family'] == 'RedHat') and ($facts['os']['release']['major'] > '7') and ($pam::manage_faillock_conf) {
     if ($pam::faillock_log_dir) {
       file { $pam::faillock_log_dir:
         ensure   => 'directory',
