@@ -5,10 +5,8 @@
 # SIMP defined auth content
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
-auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=never fail_interval=900 even_deny_root root_unlock_time=60
-auth     [success=1 default=ignore] pam_unix.so try_first_pass
-auth     [default=die] pam_faillock.so authfail deny=5 audit unlock_time=never even_deny_root root_unlock_time=60
-auth     sufficient    pam_faillock.so authsucc deny=5 audit unlock_time=never even_deny_root root_unlock_time=60
+auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=900 fail_interval=900 even_deny_root root_unlock_time=60
+auth     sufficient    pam_fprintd.so
 auth     requisite     pam_succeed_if.so uid >= 1000 quiet
 auth     required      pam_deny.so
 
@@ -19,9 +17,6 @@ account     sufficient    pam_succeed_if.so uid < 1000 quiet
 account     requisite     pam_access.so listsep=, nodefgroup
 account     required      pam_permit.so
 
-password     requisite     pam_pwquality.so retry=3 enforce_for_root reject_username
-password     required      pam_pwhistory.so use_authtok remember=24 retry=1 enforce_for_root
-password     sufficient    pam_unix.so sha512 rounds=10000 shadow try_first_pass use_authtok
 password     required      pam_deny.so
 
 session      optional      pam_keyinit.so revoke

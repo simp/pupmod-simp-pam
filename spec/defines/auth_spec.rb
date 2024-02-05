@@ -45,8 +45,15 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
+              let(:el_version){
+                if Integer(os_facts[:os][:release][:major]) <= 7
+                  'el7'
+                else
+                  'el8'
+                end
+              }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_default_params") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_default_params") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -94,8 +101,15 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
+              let(:el_version){
+                if Integer(os_facts[:os][:release][:major]) <= 7
+                  'el7'
+                else
+                  'el8'
+                end
+              }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_unlock_time_never") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_unlock_time_never") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -187,8 +201,15 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
+              let(:el_version){
+                if Integer(os_facts[:os][:release][:major]) <= 7
+                  'el7'
+                else
+                  'el8'
+                end
+              }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_no_tty_audit") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_no_tty_audit") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -207,8 +228,15 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
+              let(:el_version){
+                if Integer(os_facts[:os][:release][:major]) <= 7
+                  'el7'
+                else
+                  'el8'
+                end
+              }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_openshift_multi_tty_audit") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_openshift_multi_tty_audit") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -233,8 +261,15 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title){ auth_type }
+              let(:el_version){
+                if Integer(os_facts[:os][:release][:major]) <= 7
+                  'el7'
+                else
+                  'el8'
+                end
+              }
               let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-auth_sssd_user_specified_centrify") }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_user_specified_centrify") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -254,7 +289,14 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title){ 'password' }
               let(:filename){ "/etc/pam.d/password-auth" }
-              let(:file_content) { get_expected("#{pw_backend}-password-separator-#{index}") }
+              let(:el_version){
+                if Integer(os_facts[:os][:release][:major]) <= 7
+                  'el7'
+                else
+                  'el8'
+                end
+              }
+              let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-#{index}") }
 
               it_should_behave_like "a pam.d config file generator"
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -269,7 +311,14 @@ describe 'pam::auth' do
             let(:pw_backend) { 'pwquality' }
             let(:title){ 'password' }
             let(:filename){ "/etc/pam.d/password-auth" }
-            let(:file_content) { get_expected("#{pw_backend}-password-separator-false") }
+            let(:el_version){
+              if Integer(os_facts[:os][:release][:major]) <= 7
+                'el7'
+              else
+                'el8'
+              end
+            }
+            let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-false") }
 
             it_should_behave_like "a pam.d config file generator"
             it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -282,7 +331,14 @@ describe 'pam::auth' do
             let(:pw_backend) { 'pwquality' }
             let(:title){ 'system' }
             let(:filename){ "/etc/pam.d/system-auth" }
-            let(:file_content) { get_expected("#{pw_backend}-system-auth_oath_enabled") }
+            let(:el_version){
+              if Integer(os_facts[:os][:release][:major]) <= 7
+                'el7'
+              else
+                'el8'
+              end
+            }
+            let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_oath_enabled") }
 
             it_should_behave_like "a pam.d config file generator"
             it { is_expected.to contain_file(filename).with_content(file_content) }

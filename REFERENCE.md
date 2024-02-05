@@ -68,9 +68,12 @@ The following parameters are available in the `pam` class:
 * [`display_account_lock`](#-pam--display_account_lock)
 * [`fail_interval`](#-pam--fail_interval)
 * [`homedir_umask`](#-pam--homedir_umask)
+* [`manage_pwhistory_conf`](#-pam--manage_pwhistory_conf)
 * [`remember`](#-pam--remember)
 * [`remember_retry`](#-pam--remember_retry)
 * [`remember_for_root`](#-pam--remember_for_root)
+* [`remember_file`](#-pam--remember_file)
+* [`remember_debug`](#-pam--remember_debug)
 * [`even_deny_root`](#-pam--even_deny_root)
 * [`root_unlock_time`](#-pam--root_unlock_time)
 * [`hash_algorithm`](#-pam--hash_algorithm)
@@ -370,11 +373,21 @@ Sets the file mode creation mask of the user home directories
 
 Default value: `'0077'`
 
+##### <a name="-pam--manage_pwhistory_conf"></a>`manage_pwhistory_conf`
+
+Data type: `Boolean`
+
+If true, password history settings will be managed inside of
+/etc/security/pwhistory.conf instead of inline in the pam auth files.
+This parameter will be ignored if the host is EL 7.
+
+Default value: `false`
+
 ##### <a name="-pam--remember"></a>`remember`
 
 Data type: `Integer[0]`
 
-The last N passwords for each user are saved in ``/etc/security/opasswd``
+The last N passwords for each user are saved in ``$remember_file``
 in order to force password change history and keep the user from
 alternating between the same password too frequently
 
@@ -392,9 +405,25 @@ Default value: `1`
 
 Data type: `Boolean`
 
-Remember the last ``$remember`` passwords for the root user
+Remember the last ``$remember`` passwords for the root user.
 
 Default value: `true`
+
+##### <a name="-pam--remember_file"></a>`remember_file`
+
+Data type: `StdLib::Absolutepath`
+
+The location for user's remembered passwords to be saved.
+
+Default value: `'/etc/security/opasswd'`
+
+##### <a name="-pam--remember_debug"></a>`remember_debug`
+
+Data type: `Boolean`
+
+If true, turn on debugging for pwhistory to syslog.
+
+Default value: `false`
 
 ##### <a name="-pam--even_deny_root"></a>`even_deny_root`
 
@@ -1076,9 +1105,12 @@ The following parameters are available in the `pam::auth` defined type:
 * [`faillock_log_dir`](#-pam--auth--faillock_log_dir)
 * [`display_account_lock`](#-pam--auth--display_account_lock)
 * [`fail_interval`](#-pam--auth--fail_interval)
+* [`manage_pwhistory_conf`](#-pam--auth--manage_pwhistory_conf)
+* [`remember_debug`](#-pam--auth--remember_debug)
 * [`remember`](#-pam--auth--remember)
 * [`remember_retry`](#-pam--auth--remember_retry)
 * [`remember_for_root`](#-pam--auth--remember_for_root)
+* [`remember_file`](#-pam--auth--remember_file)
 * [`even_deny_root`](#-pam--auth--even_deny_root)
 * [`root_unlock_time`](#-pam--auth--root_unlock_time)
 * [`hash_algorithm`](#-pam--auth--hash_algorithm)
@@ -1334,6 +1366,22 @@ Data type: `Integer[0]`
 
 Default value: `$pam::fail_interval`
 
+##### <a name="-pam--auth--manage_pwhistory_conf"></a>`manage_pwhistory_conf`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::manage_pwhistory_conf`
+
+##### <a name="-pam--auth--remember_debug"></a>`remember_debug`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::remember_debug`
+
 ##### <a name="-pam--auth--remember"></a>`remember`
 
 Data type: `Integer[0]`
@@ -1357,6 +1405,14 @@ Data type: `Boolean`
 
 
 Default value: `$pam::remember_for_root`
+
+##### <a name="-pam--auth--remember_file"></a>`remember_file`
+
+Data type: `Stdlib::Absolutepath`
+
+
+
+Default value: `$pam::remember_file`
 
 ##### <a name="-pam--auth--even_deny_root"></a>`even_deny_root`
 

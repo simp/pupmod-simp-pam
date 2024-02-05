@@ -1,0 +1,38 @@
+#%PAM-1.0
+# This file managed by Puppet
+# User changes will be lost!
+
+# SIMP defined auth content
+auth     optional      pam_faildelay.so
+auth     required      pam_env.so
+auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=900 fail_interval=900 even_deny_root root_unlock_time=60
+auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only
+auth     requisite     pam_succeed_if.so uid >= 1000 quiet
+auth     required      pam_deny.so
+
+account     required      pam_faillock.so
+account     required      pam_unix.so broken_shadow
+account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+account     [success=3 default=ignore] pam_succeed_if.so service = crond quiet
+account     sufficient    pam_succeed_if.so uid < 1000 quiet
+account     requisite     pam_access.so listsep=, nodefgroup
+account     [success=1 default=ignore] pam_localuser.so
+account     [default=bad success=ok system_err=ignore user_unknown=ignore] pam_sss.so
+account     required      pam_permit.so
+
+password     required      pam_pkcs11.so
+
+session      optional      pam_keyinit.so revoke
+session      required      pam_limits.so
+-session     optional      pam_systemd.so
+session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet
+session      sufficient    pam_succeed_if.so service in crond quiet use_uid
+session      optional      pam_env.so readenv=1 envfile=/etc/locale.conf
+session      sufficient    pam_succeed_if.so user = root quiet
+session      [default=1 success=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+session      required      pam_namespace.so no_unmount_on_close
+session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+session      requisite     pam_access.so listsep=, nodefgroup
+session      optional      pam_sss.so
+session      optional      pam_oddjob_mkhomedir.so silent
+session      required      pam_lastlog.so showfailed

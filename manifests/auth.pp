@@ -36,9 +36,12 @@
 # @param faillock_log_dir
 # @param display_account_lock
 # @param fail_interval
+# @param manage_pwhistory_conf
+# @param remember_debug
 # @param remember
 # @param remember_retry
 # @param remember_for_root
+# @param remember_file
 # @param even_deny_root
 # @param root_unlock_time
 # @param hash_algorithm
@@ -85,9 +88,12 @@ define pam::auth (
   Optional[String]               $faillock_admin_group      = $pam::faillock_admin_group,
   Boolean                        $display_account_lock      = $pam::display_account_lock,
   Integer[0]                     $fail_interval             = $pam::fail_interval,
+  Boolean                        $manage_pwhistory_conf     = $pam::manage_pwhistory_conf,
+  Boolean                        $remember_debug            = $pam::remember_debug,
   Integer[0]                     $remember                  = $pam::remember,
   Integer[0]                     $remember_retry            = $pam::remember_retry,
   Boolean                        $remember_for_root         = $pam::remember_for_root,
+  Stdlib::Absolutepath           $remember_file             = $pam::remember_file,
   Boolean                        $even_deny_root            = $pam::even_deny_root,
   Integer[0]                     $root_unlock_time          = $pam::root_unlock_time,
   Pam::HashAlgorithm             $hash_algorithm            = $pam::hash_algorithm,
@@ -150,14 +156,30 @@ define pam::auth (
       $_content = $_top_var
     }
     else {
+      if ($facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) < 8) or
+      ($facts['os']['name'] == 'Amazon') and Integer(($facts['os']['release']['major']) < 2022) {
+        $_cracklib_retry = $cracklib_retry
+        $_cracklib_enforce_for_root = $cracklib_enforce_for_root
+        $_cracklib_reject_username = $cracklib_reject_username
+        # faillock.conf and pwhistory.conf don't exist in el 7 and Amazon Linux 2
+        $_manage_faillock_conf = false
+        $_manage_pwhistory_conf = false
+      } else {
+        $_manage_faillock_conf = $manage_faillock_conf
+        $_manage_pwhistory_conf = $manage_pwhistory_conf
+        # retry, enforce_for_root, and reject_username will be enforced via pwquality.conf in el8 and Amazon Linux 2022 and higher
+        $_cracklib_retry = false
+        $_cracklib_enforce_for_root = false
+        $_cracklib_reject_username = false
+      }
       $_content = epp("${module_name}/etc/pam.d/auth.epp", {
           name                      => $name,
           password_check_backend    => $password_check_backend,
           locale_file               => $locale_file,
           auth_content_pre          => $auth_content_pre,
-          manage_faillock_conf      => $manage_faillock_conf,
-          cracklib_enforce_for_root => $cracklib_enforce_for_root,
-          cracklib_reject_username  => $cracklib_reject_username,
+          manage_faillock_conf      => $_manage_faillock_conf,
+          cracklib_enforce_for_root => $_cracklib_enforce_for_root,
+          cracklib_reject_username  => $_cracklib_reject_username,
           cracklib_difok            => $cracklib_difok,
           cracklib_maxrepeat        => $cracklib_maxrepeat,
           cracklib_maxsequence      => $cracklib_maxsequence,
@@ -169,7 +191,7 @@ define pam::auth (
           cracklib_ocredit          => $cracklib_ocredit,
           cracklib_minclass         => $cracklib_minclass,
           cracklib_minlen           => $cracklib_minlen,
-          cracklib_retry            => $cracklib_retry,
+          cracklib_retry            => $_cracklib_retry,
           deny                      => $deny,
           faillock                  => $faillock,
           faillock_log_dir          => $faillock_log_dir,
@@ -180,9 +202,12 @@ define pam::auth (
           faillock_admin_group      => $faillock_admin_group,
           display_account_lock      => $display_account_lock,
           fail_interval             => $fail_interval,
+          manage_pwhistory_conf     => $_manage_pwhistory_conf,
+          remember_debug            => $remember_debug,
           remember                  => $remember,
           remember_retry            => $remember_retry,
           remember_for_root         => $remember_for_root,
+          remember_file             => $remember_file,
           even_deny_root            => $even_deny_root,
           root_unlock_time          => $root_unlock_time,
           hash_algorithm            => $hash_algorithm,
