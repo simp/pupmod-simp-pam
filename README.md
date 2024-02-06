@@ -207,7 +207,7 @@ You can change the target group by updating the value of
 
 ### Managing /etc/security/faillock.conf
 
-To manage faillock with ``/etc/security/faillock.conf`` instead of inline parameters in the auth files set the following in hieradata:
+To manage faillock with ``/etc/security/faillock.conf`` set the following in hieradata:
 
 ```yaml
 pam::manage_faillock_conf: true
@@ -253,7 +253,7 @@ pam::faillock_admin_group: 'wheel'
 
 ### Managing /etc/security/pwhistory.conf
 
-To manage pwhistory with ``/etc/security/pwhistory.conf`` instead of inline parameters in the auth files set the following in hieradata:
+To manage pwhistory with ``/etc/security/pwhistory.conf`` set the following in hieradata:
 
 ```yaml
 pam::manage_pwhistory_conf: true
@@ -263,7 +263,7 @@ A couple of things to note here are:
 
 - This feature will only work on systems running EL 8 (or equivalent) and above.
 - This feature replaced management of /etc/security/opasswd in the SIMP Useradd module as of version 7.0.0 and will conflict with any version of useradd older than 1.0.0.
-  - The parameter to control where password history is set is `pam::remember_file`
+  - The parameter to control where password history is set is ``pam::remember_file``
 
 #### /etc/security/pwhistory.conf Hieradata Example With All Parameters
 
