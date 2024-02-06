@@ -1,0 +1,45 @@
+#%PAM-1.0
+# This file managed by Puppet
+# User changes will be lost!
+
+# SIMP defined auth content
+auth     optional      pam_faildelay.so
+auth     required      pam_env.so
+auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=900 fail_interval=900 even_deny_root root_unlock_time=60
+auth     [success=3 default=ignore] pam_listfile.so item=group sense=allow file=/etc/liboath/exclude_groups.oath quiet
+auth     [success=2 default=ignore] pam_listfile.so item=user sense=allow file=/etc/liboath/exclude_users.oath quiet
+auth     [success=1 default=bad]    pam_oath.so usersfile=/etc/liboath/users.oath window=1
+auth     requisite     pam_deny.so
+auth     [success=1 default=ignore] pam_unix.so try_first_pass
+auth     [default=die] pam_faillock.so authfail deny=5 audit unlock_time=900 even_deny_root root_unlock_time=60
+auth     sufficient    pam_faillock.so authsucc deny=5 audit unlock_time=900 even_deny_root root_unlock_time=60
+auth     requisite     pam_succeed_if.so uid >= 1000 quiet
+auth     required      pam_deny.so
+
+account     required      pam_faillock.so
+account     required      pam_unix.so broken_shadow
+account     [success=2 default=ignore] pam_succeed_if.so service = crond quiet
+account     sufficient    pam_succeed_if.so uid < 1000 quiet
+account     requisite     pam_access.so listsep=, nodefgroup
+account     required      pam_permit.so
+
+password     requisite     pam_pwquality.so retry=3 enforce_for_root reject_username
+password     required      pam_pwhistory.so use_authtok remember=24 retry=1 file=/etc/security/opasswd enforce_for_root
+password     sufficient    pam_unix.so sha512 rounds=10000 shadow try_first_pass use_authtok
+password     required      pam_deny.so
+
+session      optional      pam_keyinit.so revoke
+session      required      pam_limits.so
+-session     optional      pam_systemd.so
+session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet
+session      sufficient    pam_succeed_if.so service in crond quiet use_uid
+# Check if session has a tty before running pam_tty_audit
+session      [default=ignore success=1] pam_succeed_if.so tty !~ ?* quiet
+# auditd disabled: pam_tty_audit set to optional so that all logins do not fail
+session      optional      pam_tty_audit.so disable=* enable=root
+session      optional      pam_env.so readenv=1 envfile=/etc/locale.conf
+session      sufficient    pam_succeed_if.so user = root quiet
+session      requisite     pam_access.so listsep=, nodefgroup
+session      required      pam_unix.so
+session      optional      pam_oddjob_mkhomedir.so silent
+session      required      pam_lastlog.so showfailed

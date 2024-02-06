@@ -65,10 +65,38 @@ describe 'pam' do
         let(:params) {{ :manage_faillock_conf => true }}
 
         it { is_expected.to compile.with_all_deps }
-        if os_facts[:os][:release][:major] > '7'
+        if (os_facts[:os][:family] == 'RedHat' and os_facts[:os][:release][:major] > '7') or
+           (os_facts[:os][:name] == "Amazon" and os_facts[:os][:release][:major] >= '2022')
           it { is_expected.to contain_file('/etc/security/faillock.conf') }
         else
           it { is_expected.to_not contain_file('/etc/security/faillock.conf') }
+        end
+      end
+
+      context 'with all possible pwhistory params set' do
+        let(:params) {{ 
+          :manage_pwhistory_conf => false,
+          :remember_debug        => true,
+          :remember              => 18,
+          :remember_for_root     => true,
+          :remember_retry        => 3,
+          :remember_file         => '/etc/test/opasswd'
+          }}
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(/password     required      pam_pwhistory.so use_authtok remember=18 retry=3 file=\/etc\/test\/opasswd debug enforce_for_root/) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(/password     required      pam_pwhistory.so use_authtok remember=18 retry=3 file=\/etc\/test\/opasswd debug enforce_for_root/) }
+      end
+
+      context 'with manage_pwhistory_conf=true' do
+        let(:params) {{ :manage_pwhistory_conf => true }}
+
+        it { is_expected.to compile.with_all_deps }
+        if (os_facts[:os][:family] == 'RedHat' and os_facts[:os][:release][:major] > '7') or
+           (os_facts[:os][:name] == "Amazon" and os_facts[:os][:release][:major] >= '2022')
+          it { is_expected.to contain_file('/etc/security/pwhistory.conf') }
+        else
+          it { is_expected.to_not contain_file('/etc/security/pwhistory.conf') }
         end
       end
     end

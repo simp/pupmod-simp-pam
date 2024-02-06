@@ -142,8 +142,13 @@
 # @param homedir_umask
 #   Sets the file mode creation mask of the user home directories
 #
+# @param manage_pwhistory_conf
+#   If true, password history settings will be managed inside of
+#   /etc/security/pwhistory.conf instead of inline in the pam auth files.
+#   This parameter will be ignored if the host is EL 7.
+#
 # @param remember
-#   The last N passwords for each user are saved in ``/etc/security/opasswd``
+#   The last N passwords for each user are saved in ``$remember_file``
 #   in order to force password change history and keep the user from
 #   alternating between the same password too frequently
 #
@@ -151,7 +156,13 @@
 #   Allow this many retries
 #
 # @param remember_for_root
-#   Remember the last ``$remember`` passwords for the root user
+#   Remember the last ``$remember`` passwords for the root user.
+#
+# @param remember_file
+#   The location for user's remembered passwords to be saved.
+#
+# @param remember_debug
+#   If true, turn on debugging for pwhistory to syslog.
 #
 # @param even_deny_root
 #   Enforce an account lockout for the ``root`` account.
@@ -330,8 +341,11 @@ class pam (
   Boolean                        $oath                      = simplib::lookup('simp_options::oath', { 'default_value' => false }),
   Integer[0]                     $oath_window               = 1,
   Simplib::Umask                 $homedir_umask             = '0077',
+  Boolean                        $manage_pwhistory_conf     = false,
   Integer[0]                     $remember                  = 24,
   Integer[0]                     $remember_retry            = 1,
+  StdLib::Absolutepath           $remember_file             = '/etc/security/opasswd',
+  Boolean                        $remember_debug            = false,
   Boolean                        $remember_for_root         = true,
   Pam::HashAlgorithm             $hash_algorithm            = 'sha512',
   Integer[0]                     $rounds                    = 10000,

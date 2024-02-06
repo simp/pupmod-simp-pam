@@ -1,0 +1,44 @@
+#%PAM-1.0
+# This file managed by Puppet
+# User changes will be lost!
+
+# SIMP defined auth content
+auth     optional      pam_faildelay.so
+auth     required      pam_env.so
+auth     sufficient    pam_sss.so forward_pass
+auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= 17 quiet
+auth     [default=1 success=ok] pam_localuser.so
+auth     sufficient    pam_unix.so try_first_pass
+auth     requisite     pam_succeed_if.so uid >= 17 quiet
+auth     required      pam_deny.so
+
+account     required      pam_access.so listsep=, accessfile=/etc/security/access.conf
+account     required      pam_unix.so broken_shadow
+account     [success=4 default=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+account     [success=3 default=ignore] pam_succeed_if.so service = crond quiet
+account     sufficient    pam_succeed_if.so uid < 17 quiet
+account     requisite     pam_access.so listsep=, nodefgroup
+account     [success=1 default=ignore] pam_localuser.so
+account     [default=bad success=ok system_err=ignore user_unknown=ignore] pam_sss.so
+account     required      pam_permit.so
+
+password     requisite     pam_pwquality.so
+password     required      pam_pwhistory.so use_authtok remember=14 retry=1 file=/etc/security/opasswd enforce_for_root
+password     sufficient    pam_unix.so sha512 rounds=16 shadow try_first_pass use_authtok
+password     sufficient    pam_sss.so use_authtok
+password     required      pam_deny.so
+
+session      optional      pam_keyinit.so revoke
+session      required      pam_limits.so
+-session     optional      pam_systemd.so
+session      sufficient    pam_succeed_if.so service = gdm-launch-environment quiet
+session      sufficient    pam_succeed_if.so service in crond quiet use_uid
+session      optional      pam_env.so readenv=1 envfile=/etc/locale.conf
+session      sufficient    pam_succeed_if.so user = root quiet
+session      [default=1 success=ignore] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+session      required      pam_namespace.so no_unmount_on_close
+session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
+session      requisite     pam_access.so listsep=, nodefgroup
+session      optional      pam_sss.so
+session      optional      pam_oddjob_mkhomedir.so silent
+session      required      pam_lastlog.so showfailed

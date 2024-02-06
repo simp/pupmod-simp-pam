@@ -16,7 +16,7 @@
   Optional[Integer]              $cracklib_ocredit,
   Optional[Integer[0]]           $cracklib_minclass,
   Optional[Integer[0]]           $cracklib_minlen,
-  Integer[0]                     $cracklib_retry,
+  Variant[Boolean, Integer[0]]   $cracklib_retry,
   Integer[0]                     $deny,
   Boolean                        $faillock,
   Boolean                        $manage_faillock_conf,
@@ -28,9 +28,12 @@
   Optional[Stdlib::Absolutepath] $faillock_log_dir,
   Boolean                        $display_account_lock,
   Integer[0]                     $fail_interval,
+  Boolean                        $manage_pwhistory_conf,
+  Boolean                        $remember_debug,
   Integer[0]                     $remember,
   Integer[0]                     $remember_retry,
   Boolean                        $remember_for_root,
+  StdLib::Absolutepath           $remember_file,
   Boolean                        $even_deny_root,
   Integer[0]                     $root_unlock_time,
   Pam::HashAlgorithm             $hash_algorithm,
@@ -70,7 +73,7 @@ else {
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 <% if $faillock {
-  if $manage_faillock_conf { 
+     if $manage_faillock_conf { 
 -%>
 auth     required      pam_faillock.so preauth
 <%   } else {
@@ -202,28 +205,59 @@ account     requisite     pam_access.so nodefgroup
 account     required      pam_permit.so
 
 <% if $name in ['system', 'password'] { -%>
-password     requisite     pam_<%= $password_check_backend %>.so retry=<%= $cracklib_retry -%>
-<%   if $cracklib_enforce_for_root { %> enforce_for_root<% } -%>
-<%   if $cracklib_reject_username { %> reject_username<% } -%>
-<%   if ($password_check_backend == 'cracklib') { -%>
-<%     if $cracklib_minlen { %> minlen=<%= $cracklib_minlen %><% } -%>
-<%     if $cracklib_minclass { %> minclass=<%= $cracklib_minclass %><% } -%>
-<%     if $cracklib_maxrepeat { %> maxrepeat=<%= $cracklib_maxrepeat %><% } -%>
-<%     if $cracklib_difok { %> difok=<%= $cracklib_difok %><% } -%>
-<%     if $cracklib_maxsequence { %> maxsequence=<%= $cracklib_maxsequence %><% } -%>
-<%     if $cracklib_maxclassrepeat { %> maxclassrepeat=<%= $cracklib_maxclassrepeat %><% } -%>
-<%     if $cracklib_dcredit { %> dcredit=<%= $cracklib_dcredit %><% } -%>
-<%     if $cracklib_ucredit { %> ucredit=<%= $cracklib_ucredit %><% } -%>
-<%     if $cracklib_lcredit { %> lcredit=<%= $cracklib_lcredit %><% } -%>
-<%     if $cracklib_ocredit { %> ocredit=<%= $cracklib_ocredit %><% } -%>
-<%     if $cracklib_gecoscheck { %> gecoscheck<% } -%>
-<%   } -%>
+<%   if $cracklib_retry {
+       $_cracklib_retry = " retry=${cracklib_retry}"
+     } else {
+       $_cracklib_retry = ''
+     }
 
-<%   if $remember_for_root { -%>
-<%     $_pam_pwhistory = "password     required      pam_pwhistory.so use_authtok remember=${remember} retry=${remember_retry} enforce_for_root" -%>
-<%   } else { -%>
-<%     $_pam_pwhistory = "password     required      pam_pwhistory.so use_authtok remember=${remember} retry=${remember_retry}" -%>
-<%   } -%>
+     if $cracklib_enforce_for_root {
+       $_cracklib_enforce_for_root = ' enforce_for_root'
+     } else {
+       $_cracklib_enforce_for_root = ''
+     }
+
+     if $cracklib_reject_username {
+       $_cracklib_reject_username = ' reject_username'
+     } else {
+       $_cracklib_reject_username = ''
+     }
+
+     $_pam_password_check = "password     requisite     pam_${password_check_backend}.so${_cracklib_retry}${_cracklib_enforce_for_root}${_cracklib_reject_username}"
+-%>
+<%= $_pam_password_check %>
+<%   if ($password_check_backend == 'cracklib') { -%>
+<%       if $cracklib_minlen { %> minlen=<%= $cracklib_minlen %><% } -%>
+<%       if $cracklib_minclass { %> minclass=<%= $cracklib_minclass %><% } -%>
+<%       if $cracklib_maxrepeat { %> maxrepeat=<%= $cracklib_maxrepeat %><% } -%>
+<%       if $cracklib_difok { %> difok=<%= $cracklib_difok %><% } -%>
+<%       if $cracklib_maxsequence { %> maxsequence=<%= $cracklib_maxsequence %><% } -%>
+<%       if $cracklib_maxclassrepeat { %> maxclassrepeat=<%= $cracklib_maxclassrepeat %><% } -%>
+<%       if $cracklib_dcredit { %> dcredit=<%= $cracklib_dcredit %><% } -%>
+<%       if $cracklib_ucredit { %> ucredit=<%= $cracklib_ucredit %><% } -%>
+<%       if $cracklib_lcredit { %> lcredit=<%= $cracklib_lcredit %><% } -%>
+<%       if $cracklib_ocredit { %> ocredit=<%= $cracklib_ocredit %><% } -%>
+<%       if $cracklib_gecoscheck { %> gecoscheck<% } -%>
+<%     } -%>
+<%
+    if $manage_pwhistory_conf { 
+      $_pam_pwhistory = 'password     required      pam_pwhistory.so use_authtok'
+    } else {
+      if $remember_debug {
+        $_remember_debug = ' debug'
+      } else {
+        $_remember_debug = ''
+      }
+
+      if $remember_for_root {
+        $_remember_for_root = ' enforce_for_root'
+      } else {
+        $_remember_for_root = ''
+      }
+
+      $_pam_pwhistory = "password     required      pam_pwhistory.so use_authtok remember=${remember} retry=${remember_retry} file=${remember_file}${_remember_debug}${_remember_for_root}"
+-%>
+<%  } -%>
 <%   $_pam_unix = "password     sufficient    pam_unix.so ${hash_algorithm} rounds=${rounds} shadow try_first_pass use_authtok" -%>
 <%   if $sssd { -%>
 <%= $_pam_pwhistory %>
