@@ -21,7 +21,9 @@
   * [Restricting Resource Usage (pam_limits)](#restricting-resource-usage-pam_limits)
   * [Restricting ``su`` to the ``wheel`` Group](#restricting-su-to-the-wheel-group)
   * [Managing /etc/security/faillock.conf](#managing-etcsecurityfaillockconf)
-    * [/etc/security_faillock.conf Example With All Parameters](#etcsecurityfaillockconf-hieradata-example-with-all-parameters)
+    * [/etc/security/faillock.conf Example With All Parameters](#etcsecurityfaillockconf-hieradata-example-with-all-parameters)
+  * [Managing /etc/security/pwhistory.conf](#managing-etcsecuritypwhistoryconf)
+    * [/etc/security/pwhistory.conf Example With All Parameters](#etcsecuritypwhistoryconf-hieradata-example-with-all-parameters)
 * [Development](#development)
   * [Acceptance tests](#acceptance-tests)
 
@@ -213,20 +215,21 @@ pam::manage_faillock_conf: true
 
 A couple of things to note here are:
 
+- This feature will only work on systems running EL 8 (or equivalent) and above.
 - ``pam::faillock`` must still be true for faillock to work appropriately
 - By default, /etc/security/faillock.conf will be empty except for a comment saying the file is managed by puppet. To set content in the file, the following parameters are available:
 
-  - ``pam::faillock_dir``
+  - ``pam::faillock_log_dir``
   - ``pam::faillock_audit``
-  - ``pam::faillock_silent``
+  - ``pam::display_account_lock``
   - ``pam::faillock_no_log_info``
   - ``pam::faillock_local_users_only``
   - ``pam::faillock_nodelay``
-  - ``pam::faillock_deny``
-  - ``pam::faillock_fail_interval``
-  - ``pam::faillock_unlock_time``
-  - ``pam::faillock_even_deny_root``
-  - ``pam::faillock_root_unlock_time``
+  - ``pam::deny``
+  - ``pam::fail_interval``
+  - ``pam::unlock_time``
+  - ``pam::even_deny_root``
+  - ``pam::root_unlock_time``
   - ``pam::faillock_admin_group``
 
 #### /etc/security/faillock.conf Hieradata Example With All Parameters
@@ -234,18 +237,43 @@ A couple of things to note here are:
 ```yaml
 pam::faillock: true
 pam::manage_faillock_conf: true
-pam::faillock_dir: '/var/log/faillock'
+pam::faillock_log_dir: '/var/log/faillock'
 pam::faillock_audit: true
-pam::faillock_silent: true
+pam::display_account_lock: true
 pam::faillock_no_log_info: false
 pam::faillock_local_users_only: false
 pam::faillock_nodelay: false
-pam::faillock_deny: 5
-pam::faillock_fail_interval: 900
-pam::faillock_unlock_time: 900
-pam::faillock_even_deny_root: true
-pam::faillock_root_unlock_time: 60
+pam::deny: 5
+pam::fail_interval: 900
+pam::unlock_time: 900
+pam::even_deny_root: true
+pam::root_unlock_time: 60
 pam::faillock_admin_group: 'wheel'
+```
+
+### Managing /etc/security/pwhistory.conf
+
+To manage pwhistory with ``/etc/security/pwhistory.conf`` instead of inline parameters in the auth files set the following in hieradata:
+
+```yaml
+pam::manage_pwhistory_conf: true
+```
+
+A couple of things to note here are:
+
+- This feature will only work on systems running EL 8 (or equivalent) and above.
+- This feature replaced management of /etc/security/opasswd in the SIMP Useradd module as of version 7.0.0 and will conflict with any version of useradd older than 1.0.0.
+  - The parameter to control where password history is set is `pam::remember_file`
+
+#### /etc/security/pwhistory.conf Hieradata Example With All Parameters
+
+```yaml
+pam::manage_pwhistory_conf: true
+pam::remember: 32
+pam::remember_retry: 3
+pam::remember_file: '/etc/security/opasswd'
+pam::remember_debug: true
+pam::remember_for_root: true
 ```
 
 ## Development

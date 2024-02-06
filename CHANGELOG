@@ -1,5 +1,5 @@
 
-* Wed Jan 31 2024 Mike Riddle <mike@sicura.us> - 6.17.0
+* Wed Jan 31 2024 Mike Riddle <mike@sicura.us> - 7.0.0
 - Added functionality to control /etc/security/pwhistory.conf
 - Fixed logic that would cause certain functionality to break on Amazon Linux 2022 and above
 
