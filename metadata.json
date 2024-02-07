@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -30,7 +30,7 @@
     },
     {
       "name": "simp/useradd",
-      "version_requirement": ">= 1.0.0 < 2.0.0"
+      "version_requirement": ">= 0.2.2 < 2.0.0"
     }
   ],
   "simp": {
