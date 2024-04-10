@@ -1,4 +1,8 @@
 
+* Tue Apr 09 2024 Mike Riddle <mike@sicura.us> - 7.1.0
+- Added the cert_auth parameter
+- Added the inactive parameter
+
 * Wed Jan 31 2024 Mike Riddle <mike@sicura.us> - 7.0.0
 - Added functionality to control /etc/security/pwhistory.conf
 - Fixed logic that would cause certain functionality to break on Amazon Linux 2022 and above

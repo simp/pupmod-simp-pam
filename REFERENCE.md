@@ -93,6 +93,8 @@ The following parameters are available in the `pam` class:
 * [`su_content`](#-pam--su_content)
 * [`other_content`](#-pam--other_content)
 * [`auth_sections`](#-pam--auth_sections)
+* [`cert_auth`](#-pam--cert_auth)
+* [`inactive`](#-pam--inactive)
 * [`auth_content_pre`](#-pam--auth_content_pre)
 * [`fingerprint_auth_content`](#-pam--fingerprint_auth_content)
 * [`system_auth_content`](#-pam--system_auth_content)
@@ -594,6 +596,24 @@ The PAM ``*-auth`` files to manage
 * Set to an empty Array to not manage any sections
 
 Default value: `['fingerprint', 'system', 'password', 'smartcard']`
+
+##### <a name="-pam--cert_auth"></a>`cert_auth`
+
+Data type: `Optional[Enum['try','require']]`
+
+If set, should choose either 'require' or 'try' to set 'require_cert_auth' or
+'try_cert_auth' in the auth files
+
+Default value: `undef`
+
+##### <a name="-pam--inactive"></a>`inactive`
+
+Data type: `Optional[Integer]`
+
+If set, the number of days before a user can be inactive on a system
+before their account becomes locked
+
+Default value: `undef`
 
 ##### <a name="-pam--auth_content_pre"></a>`auth_content_pre`
 
@@ -1124,6 +1144,8 @@ The following parameters are available in the `pam::auth` defined type:
 * [`tty_audit_users`](#-pam--auth--tty_audit_users)
 * [`separator`](#-pam--auth--separator)
 * [`enable_separator`](#-pam--auth--enable_separator)
+* [`inactive`](#-pam--auth--inactive)
+* [`cert_auth`](#-pam--auth--cert_auth)
 * [`content`](#-pam--auth--content)
 
 ##### <a name="-pam--auth--password_check_backend"></a>`password_check_backend`
@@ -1517,6 +1539,22 @@ Data type: `Boolean`
 
 
 Default value: `$pam::enable_separator`
+
+##### <a name="-pam--auth--inactive"></a>`inactive`
+
+Data type: `Optional[Integer]`
+
+
+
+Default value: `$pam::inactive`
+
+##### <a name="-pam--auth--cert_auth"></a>`cert_auth`
+
+Data type: `Optional[Enum['try','require']]`
+
+
+
+Default value: `$pam::cert_auth`
 
 ##### <a name="-pam--auth--content"></a>`content`
 

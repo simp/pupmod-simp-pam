@@ -99,6 +99,23 @@ describe 'pam' do
           it { is_expected.to_not contain_file('/etc/security/pwhistory.conf') }
         end
       end
+
+      context 'with inactive set' do
+        let(:params) {{ :inactive => 35 }}
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(/^auth required pam_lastlog.so inactive=35$/) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(/^auth required pam_lastlog.so inactive=35$/) }
+      end
+
+      context 'with cert_auth set' do
+        let(:params) {{ 
+          :cert_auth => 'try',
+          :sssd      => true 
+        }}
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(/^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$/) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(/^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$/) }
+      end
     end
   end
 end

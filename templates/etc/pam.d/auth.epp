@@ -48,7 +48,9 @@
   String[0]                      $separator,
   Boolean                        $enable_separator,
   Boolean                        $oath,
-  Integer[0]                     $oath_window
+  Integer[0]                     $oath_window,
+  Optional[Integer[0]]           $inactive,
+  Optional[String[0]]            $pam_cert_auth
 |-%>
 #%PAM-1.0
 # This file managed by Puppet
@@ -129,6 +131,14 @@ auth     required      pam_faillock.so preauth
 auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny=<%= $deny %><%= $_faillock_audit %> unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_faillock_log_dir %><%= $_faillock_no_log_info %><%= $_faillock_local_users_only %><%= $_faillock_nodelay %><%= $_faillock_admin_group %><%= $_even_deny_root %>
 <%   } -%>
 <% } -%>
+<%
+if $pam_cert_auth {
+  $_pam_cert_auth = " ${pam_cert_auth}"
+}
+else {
+  $_pam_cert_auth = ''
+}
+-%>
 <% if $name == 'fingerprint' { -%>
 auth     sufficient    pam_fprintd.so
 <% } -%>
@@ -144,7 +154,10 @@ auth     requisite     pam_deny.so
 <% if $name in ['system', 'password'] { -%>
 <%   if $faillock { -%>
 <%     if $sssd { -%>
-auth     [success=2 default=ignore] pam_sss.so forward_pass
+auth     [success=2 default=ignore] pam_sss.so forward_pass<%= $_pam_cert_auth %>
+<%     } -%>
+<%     if $inactive { -%>
+auth required pam_lastlog.so inactive=<%= $inactive %>
 <%     } -%>
 auth     [success=1 default=ignore] pam_unix.so try_first_pass
 <%       if $manage_faillock_conf { -%>
@@ -156,10 +169,13 @@ auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_t
 <%       } -%>
 <%   } else { -%>
 <%     if $sssd { -%>
-auth     sufficient    pam_sss.so forward_pass
+auth     sufficient    pam_sss.so forward_pass<%= $_pam_cert_auth %>
 <%     } -%>
 auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= <%= $uid %> quiet
 auth     [default=1 success=ok] pam_localuser.so
+<%     if $inactive { -%>
+auth required pam_lastlog.so inactive=<%= $inactive %>
+<%     } -%>
 auth     sufficient    pam_unix.so try_first_pass
 <%   } -%>
 <% } -%>
