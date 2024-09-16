@@ -1,3 +1,6 @@
+* Fri Sep 13 2024 Steven Pritchard <steve@sicura.us> - 7.2.0
+- [puppetsync] Update module dependencies to support simp-iptables 7.x
+
 
 * Tue Apr 09 2024 Mike Riddle <mike@sicura.us> - 7.1.0
 - Added the cert_auth parameter
