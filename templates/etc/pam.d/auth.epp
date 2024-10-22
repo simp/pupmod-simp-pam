@@ -65,7 +65,7 @@ else {
 -%>
 <% unless empty($auth_content_pre) { -%>
 
-# User defined prepended auth content 
+# User defined prepended auth content
 <%   $auth_content_pre.each |String $auth_pre_line| { -%>
 <%= $auth_pre_line %>
 <%   } -%>
@@ -75,7 +75,7 @@ else {
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 <% if $faillock {
-     if $manage_faillock_conf { 
+     if $manage_faillock_conf {
 -%>
 auth     required      pam_faillock.so preauth
 <%   } else {
@@ -256,7 +256,7 @@ account     required      pam_permit.so
 <%       if $cracklib_gecoscheck { %> gecoscheck<% } -%>
 <%     } -%>
 <%
-    if $manage_pwhistory_conf { 
+    if $manage_pwhistory_conf {
       $_pam_pwhistory = 'password     required      pam_pwhistory.so use_authtok'
     } else {
       if $remember_debug {

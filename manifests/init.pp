@@ -116,7 +116,7 @@
 #   Path to the cracklib dictionaries. Default is to use the cracklib default.
 #
 # @param dictcheck
-#   If nonzero, check whether the password (with possible modifications) 
+#   If nonzero, check whether the password (with possible modifications)
 #   matches a word in a dictionary. Currently the dictionary check is
 #   performed using the cracklib library. This option will be ignored
 #   unless the OS major version is higher than 7.

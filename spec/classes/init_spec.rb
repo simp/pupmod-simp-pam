@@ -41,7 +41,7 @@ describe 'pam' do
       end
 
       context 'with all possible faillock params set' do
-        let(:params) {{ 
+        let(:params) {{
           :manage_faillock_conf      => false,
           :display_account_lock      => false,
           :deny                      => 6,
@@ -74,7 +74,7 @@ describe 'pam' do
       end
 
       context 'with all possible pwhistory params set' do
-        let(:params) {{ 
+        let(:params) {{
           :manage_pwhistory_conf => false,
           :remember_debug        => true,
           :remember              => 18,
@@ -108,9 +108,9 @@ describe 'pam' do
       end
 
       context 'with cert_auth set' do
-        let(:params) {{ 
+        let(:params) {{
           :cert_auth => 'try',
-          :sssd      => true 
+          :sssd      => true
         }}
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(/^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$/) }
