@@ -2,7 +2,7 @@
 # This file managed by Puppet
 # User changes will be lost!
 
-# User defined prepended auth content 
+# User defined prepended auth content
 auth     sufficient pam_centrifydc.so
 auth     requisite  pam_centrifydc.so deny
 account  sufficient pam_centrifydc.so

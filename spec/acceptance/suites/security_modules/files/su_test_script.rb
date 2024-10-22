@@ -5,19 +5,19 @@ require 'expect'
 require 'optparse'
 
 
-# parses out provided command line arguments. 
+# parses out provided command line arguments.
 # No command line args are required as sane defaults are set
 # Returns:
 # +array+:: Array with default then any command line args that override those
 # defaults
 def parse_opts
-  options = {:user => 'root', :output => nil, :pass => '', 
+  options = {:user => 'root', :output => nil, :pass => '',
              :prompt => '.assword:\s*'}
-  
+
   optparse = OptionParser.new do |opts|
     opts.banner = 'Usage: su_test_script.rb [-p password] [-u user]'\
                   '[-e expected prompt] [-o expected output]'
-  
+
     opts.on('-p', '--password pass', 'Password to authenticate with,'\
             ' defaults to empty string') do |pass|
       options[:pass] = pass
@@ -37,7 +37,7 @@ def parse_opts
       options[:output] = output
     end
   end
-  
+
   optparse.parse!
   if options[:output].nil?
     options[:output] = "#{options[:user]}@.+[$#]"
@@ -53,11 +53,11 @@ end
 # +password+:: password to fill when prompted by pty
 # +prompt+:: regex for target prompt to fill password when seen
 # Return:
-# +outputs+:: Concatenated output of su command for regex determination of 
+# +outputs+:: Concatenated output of su command for regex determination of
 # success or failure
 def run_interactive command, password, prompt
   outputs = ''
-  begin 
+  begin
     r, w, pid = PTY.spawn(command)
     r.expect(prompt)
     sleep(1)
