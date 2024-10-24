@@ -241,8 +241,8 @@ account     required      pam_permit.so
 
      $_pam_password_check = "password     requisite     pam_${password_check_backend}.so${_cracklib_retry}${_cracklib_enforce_for_root}${_cracklib_reject_username}"
 -%>
-<%= $_pam_password_check %>
 <%   if ($password_check_backend == 'cracklib') { -%>
+<%=     $_pam_password_check -%>
 <%       if $cracklib_minlen { %> minlen=<%= $cracklib_minlen %><% } -%>
 <%       if $cracklib_minclass { %> minclass=<%= $cracklib_minclass %><% } -%>
 <%       if $cracklib_maxrepeat { %> maxrepeat=<%= $cracklib_maxrepeat %><% } -%>
@@ -254,7 +254,10 @@ account     required      pam_permit.so
 <%       if $cracklib_lcredit { %> lcredit=<%= $cracklib_lcredit %><% } -%>
 <%       if $cracklib_ocredit { %> ocredit=<%= $cracklib_ocredit %><% } -%>
 <%       if $cracklib_gecoscheck { %> gecoscheck<% } -%>
-<%     } -%>
+<%       %>
+<%     } else {-%>
+<%= $_pam_password_check %>
+<%     }-%>
 <%
     if $manage_pwhistory_conf {
       $_pam_pwhistory = 'password     required      pam_pwhistory.so use_authtok'
