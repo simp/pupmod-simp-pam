@@ -1,5 +1,13 @@
 ---
 HOSTS:
+  oel9:
+    roles:
+    - client
+    platform: el-9-x86_64
+    box: generic/oracle9
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    family: sicura-image-build/oracle-linux-9
+    gce_machine_type: n1-standard-2
   oel8:
     roles:
     - client

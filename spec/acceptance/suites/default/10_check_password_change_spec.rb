@@ -80,6 +80,7 @@ describe 'pam check password change' do
           stdin = "Tst0$uPerFo0B@rB@z%\n"*repeat_when_failure
           result = on(host, "passwd #{test_user}", {:stdin => stdin, :acceptable_exit_codes => [1]})
           expect(result.stderr).to match(/password contains words from the real name of the user in some form/)
+          pending('gecoscheck does not work') if Integer(facts[:os]['release']['major']) > 7
         end
       end
     end

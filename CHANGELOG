@@ -1,3 +1,6 @@
+* Tue Oct 29 2024 Mike Riddle <mike@sicura.us> - 7.2.2
+- Fixed pam auth files getting mangled when using cracklib as the pwbackend
+
 * Tue Oct 22 2024 Steven Pritchard <steve@sicura.us> - 7.2.1
 - Fix trailing whitespace in filenames and content
 
