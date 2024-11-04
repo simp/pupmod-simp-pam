@@ -29,6 +29,7 @@
 # @param cracklib_minclass
 # @param cracklib_minlen
 # @param cracklib_retry
+# @param nullok
 # @param oath
 # @param oath_window
 # @param deny
@@ -79,6 +80,7 @@ define pam::auth (
   Optional[Integer[0]]            $cracklib_minclass         = $pam::cracklib_minclass,
   Optional[Integer[0]]            $cracklib_minlen           = $pam::cracklib_minlen,
   Integer[0]                      $cracklib_retry            = $pam::cracklib_retry,
+  Boolean                         $nullok                    = $pam::nullok,
   Integer[0]                      $deny                      = $pam::deny,
   Boolean                         $faillock                  = $pam::faillock,
   Boolean                         $manage_faillock_conf      = $pam::manage_faillock_conf,
@@ -201,6 +203,7 @@ define pam::auth (
           cracklib_minclass         => $cracklib_minclass,
           cracklib_minlen           => $cracklib_minlen,
           cracklib_retry            => $_cracklib_retry,
+          nullok                    => $nullok,
           deny                      => $deny,
           faillock                  => $faillock,
           faillock_log_dir          => $faillock_log_dir,

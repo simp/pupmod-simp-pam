@@ -343,6 +343,26 @@ describe 'pam::auth' do
             it_should_behave_like "a pam.d config file generator"
             it { is_expected.to contain_file(filename).with_content(file_content) }
         end
+
+        context 'Generate file with when nullok == true' do
+          let(:params){{
+            :nullok => true,
+          }}
+            let(:pw_backend) { 'pwquality' }
+            let(:title){ 'system' }
+            let(:filename){ "/etc/pam.d/system-auth" }
+            let(:el_version){
+              if Integer(os_facts[:os][:release][:major]) <= 7
+                'el7'
+              else
+                'el8'
+              end
+            }
+            let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_nullok") }
+
+            it_should_behave_like "a pam.d config file generator"
+            it { is_expected.to contain_file(filename).with_content(file_content) }
+        end
       end
     end
   end

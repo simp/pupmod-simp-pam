@@ -17,6 +17,7 @@
   Optional[Integer[0]]           $cracklib_minclass,
   Optional[Integer[0]]           $cracklib_minlen,
   Variant[Boolean, Integer[0]]   $cracklib_retry,
+  Boolean                        $nullok,
   Integer[0]                     $deny,
   Boolean                        $faillock,
   Boolean                        $manage_faillock_conf,
@@ -277,7 +278,14 @@ account     required      pam_permit.so
       $_pam_pwhistory = "password     required      pam_pwhistory.so use_authtok remember=${remember} retry=${remember_retry} file=${remember_file}${_remember_debug}${_remember_for_root}"
 -%>
 <%  } -%>
-<%   $_pam_unix = "password     sufficient    pam_unix.so ${hash_algorithm} rounds=${rounds} shadow try_first_pass use_authtok" -%>
+<%
+     if $nullok {
+      $_nullok = 'nullok '
+     } else {
+      $_nullok = ''
+     }
+-%>
+<%   $_pam_unix = "password     sufficient    pam_unix.so ${_nullok}${hash_algorithm} rounds=${rounds} shadow try_first_pass use_authtok" -%>
 <%   if $sssd { -%>
 <%= $_pam_pwhistory %>
 <%= $_pam_unix %>
