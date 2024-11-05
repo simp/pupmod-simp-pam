@@ -45,7 +45,7 @@ unlock_time=<%= $unlock_time %>
 <% if $even_deny_root  { -%>
 even_deny_root
 <% } -%>
-<% if $root_unlock_time  { -%>
+<% if $root_unlock_time and $even_deny_root { -%>
 root_unlock_time=<%= $root_unlock_time %>
 <% } -%>
 <% if $admin_group  { -%>

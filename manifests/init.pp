@@ -121,6 +121,11 @@
 #   performed using the cracklib library. This option will be ignored
 #   unless the OS major version is higher than 7.
 #
+# @param nullok
+#   If true, blank passwords will be allowed for users. DO NOT set this to true
+#   unless you and your organization are willing to accept the risks of having
+#   accounts with blank passwords.
+#
 # @param rm_pwquality_conf_d
 #   Remove the /etc/security/pwquality.conf.d directory and all contents.
 #
@@ -345,6 +350,7 @@ class pam (
   Optional[Array[String[1],1]]    $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath]  $cracklib_dictpath         = undef,
   Integer[0]                      $dictcheck                 = 1,
+  Boolean                         $nullok                    = false,
   Boolean                         $rm_pwquality_conf_d       = true,
   Boolean                         $oath                      = simplib::lookup('simp_options::oath', { 'default_value' => false }),
   Integer[0]                      $oath_window               = 1,
