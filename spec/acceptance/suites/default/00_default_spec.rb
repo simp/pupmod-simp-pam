@@ -20,7 +20,7 @@ describe 'pam class' do
           apply_manifest_on(host, manifest, {:catch_changes => true})
         end
 
-        os_major = fact_on(host, 'operatingsystemmajrelease')
+        os_major = fact_on(host, 'os.release.major')
 
         # Total hack to support Amazon without a bunch of logic
         if ['7','2'].include?(os_major)

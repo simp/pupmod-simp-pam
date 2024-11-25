@@ -422,7 +422,7 @@ checks:
       nist_800_53:rev4:
       - AC-7:b
     confine:
-      osfamily: RedHat
+      os.family: RedHat
   oval:com.puppet.forge.simp.pam.cracklib_maxrepeat:
     settings:
       parameter: pam::cracklib_maxrepeat
@@ -439,7 +439,7 @@ checks:
       - SRG-OS-000072-GPOS-00040
       - CCI-000195
     confine:
-      osfamily: RedHat
+      os.family: RedHat
   oval:com.puppet.forge.simp.pam.even_deny_root:
     settings:
       parameter: pam::even_deny_root
@@ -458,8 +458,8 @@ checks:
       - SRG-OS-000021-GPOS-00005
       - CCI-002238
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
   oval:com.puppet.forge.simp.pam.hash_algorithm:
     settings:
       parameter: pam::hash_algorithm
@@ -476,8 +476,8 @@ checks:
       - SRG-OS-000073-GPOS-00041
       - CCI-000196
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
   oval:com.puppet.forge.simp.pam.unlock_time:
     settings:
       parameter: pam::unlock_time
@@ -494,8 +494,8 @@ checks:
       - SRG-OS-000329-GPOS-00128
       - CCI-002238
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
     oval-ids:
     - xccdf_org:ssgproject:content_rule_accounts_passwords_pam_faillock_unlock_time
     - accounts_passwords_pam_faillock_unlock_time
