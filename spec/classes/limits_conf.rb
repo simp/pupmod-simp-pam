@@ -3,30 +3,31 @@ require 'spec_helper'
 describe 'pam::limits' do
   context 'supported operating systems' do
     on_supported_os.each do |os, facts|
-
       context "on #{os}" do
-        let(:facts){ facts }
+        let(:facts) { facts }
 
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to create_concat('/etc/security/limits.conf') }
 
         context 'when specifying hash rules' do
-          let(:params){{
-            'disable_core_for_user1' => {
-              'domains' => ['user1'],
-              'type'    => 'hard',
-              'item'    => 'core',
-              'value'   => 0,
-              'order'   => 50
-            },
-            'disable_core_for_all' => {
-              'domains' => ['*'],
-              'type'    => 'hard',
-              'item'    => 'core',
-              'value'   => 0,
-              'order'   => 100
+          let(:params) do
+            {
+              'disable_core_for_user1' => {
+                'domains' => ['user1'],
+                'type'    => 'hard',
+                'item'    => 'core',
+                'value'   => 0,
+                'order'   => 50
+              },
+           'disable_core_for_all' => {
+             'domains' => ['*'],
+             'type'    => 'hard',
+             'item'    => 'core',
+             'value'   => 0,
+             'order'   => 100
+           }
             }
-          }}
+          end
 
           it { is_expected.to create_pam__limits__rule('disable_core_for_user1') }
           it { is_expected.to create_pam__limits__rule('disable_core_for_all') }

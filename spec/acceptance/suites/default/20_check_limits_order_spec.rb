@@ -3,19 +3,21 @@ require 'spec_helper_acceptance'
 test_name 'pam class'
 
 describe 'pam class' do
-  let(:hieradata) {{
-    'pam::limits::rules' => {
-      'disable_core_for_all' => {
-        'domains' => ['*'],
-        'type'    => 'hard',
-        'item'    => 'core',
-        'value'   => 0,
-        'order'   => 100
+  let(:hieradata) do
+    {
+      'pam::limits::rules' => {
+        'disable_core_for_all' => {
+          'domains' => ['*'],
+          'type'    => 'hard',
+          'item'    => 'core',
+          'value'   => 0,
+          'order'   => 100
+        }
       }
     }
-  }}
+  end
 
-  let(:manifest) {
+  let(:manifest) do
     <<-EOS
       include 'pam'
       include 'pam::limits'
@@ -44,23 +46,23 @@ describe 'pam class' do
         order   => 10
       }
     EOS
-  }
+  end
 
   let(:limits_content) { File.read('spec/expected/limits_acceptance/limits_conf_numeric').strip }
 
   context 'default parameters' do
     hosts.each do |host|
       context "on #{host}" do
-        it 'should work with no errors' do
+        it 'works with no errors' do
           set_hieradata_on(host, hieradata)
-          apply_manifest_on(host, manifest, :catch_failures => true)
+          apply_manifest_on(host, manifest, catch_failures: true)
         end
 
-        it 'should be idempotent' do
-          apply_manifest_on(host, manifest, {:catch_changes => true})
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, { catch_changes: true })
         end
 
-        it 'should create /etc/security/limits.conf with correct content' do
+        it 'creates /etc/security/limits.conf with correct content' do
           expect(file_exists_on(host, '/etc/security/limits.conf')).to be true
           expect(file_contents_on(host, '/etc/security/limits.conf')).to eq(limits_content)
         end
