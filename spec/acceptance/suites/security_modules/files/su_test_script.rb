@@ -64,6 +64,7 @@ def run_interactive(command, password, prompt)
     begin
       r.each { |l| outputs += l }
     rescue Errno::EIO
+      # Ignoring EIO errors
     end
     Process.wait(pid)
   rescue PTY::ChildExited => e

@@ -28,10 +28,10 @@ describe 'pam check faillock' do
 
   let(:files_dir) { File.join(File.dirname(__FILE__), 'files') }
 
-  hosts_as('server').each do |_server|
-    os = _server.hostname.split('-').first
+  hosts_as('server').each do |sut_server|
+    os = sut_server.hostname.split('-').first
     context "on #{os}:" do
-      let(:server) { _server }
+      let(:server) { sut_server }
 
       let(:client) do
         os = server.hostname.split('-').first
