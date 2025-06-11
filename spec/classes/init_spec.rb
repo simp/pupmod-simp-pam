@@ -59,12 +59,14 @@ describe 'pam' do
         end
 
         it { is_expected.to compile.with_all_deps }
+        # rubocop:disable Layout/LineLength
         it {
           is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{auth     required      pam_faillock.so preauth silent deny=6 audit unlock_time=600 fail_interval=600 dir=/var/log/faillock no_log_info local_users_only nodelay admin_group=admin even_deny_root})
         }
         it {
           is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{auth     required      pam_faillock.so preauth silent deny=6 audit unlock_time=600 fail_interval=600 dir=/var/log/faillock no_log_info local_users_only nodelay admin_group=admin even_deny_root})
         }
+        # rubocop:enable Layout/LineLength
       end
 
       context 'with manage_faillock_conf=true' do
@@ -92,12 +94,14 @@ describe 'pam' do
         end
 
         it { is_expected.to compile.with_all_deps }
+        # rubocop:disable Layout/LineLength
         it {
           is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{password     required      pam_pwhistory.so use_authtok remember=18 retry=3 file=/etc/test/opasswd debug enforce_for_root})
         }
         it {
           is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{password     required      pam_pwhistory.so use_authtok remember=18 retry=3 file=/etc/test/opasswd debug enforce_for_root})
         }
+        # rubocop:enable Layout/LineLength
       end
 
       context 'with manage_pwhistory_conf=true' do

@@ -163,6 +163,7 @@ describe 'pam' do
                                                          })
         }
 
+        # rubocop:disable RSpec/RepeatedExample
         if os_facts[:os][:name] == 'Amazon'
           if os_facts[:os][:release][:major].to_i < 2022
             it { is_expected.to contain_file('/etc/security/pwquality.conf').with_content(el7_pwquality_conf) }
@@ -176,6 +177,7 @@ describe 'pam' do
         else
           it { is_expected.to contain_file('/etc/security/pwquality.conf').with_content(el_gt8_4_pwquality_conf) }
         end
+        # rubocop:enable RSpec/RepeatedExample
 
         it { is_expected.to contain_file('/etc/security/pwquality.conf.d').with_ensure('absent') }
         it { is_expected.to contain_file('/etc/security/pwquality.conf.d').with_force(true) }
