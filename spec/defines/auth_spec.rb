@@ -34,7 +34,7 @@ describe 'pam::auth' do
         end
 
         let(:pre_condition) do
-          'class { "::pam": auth_sections => [] }'
+          'class { "pam": auth_sections => [] }'
         end
 
         # The three test contexts (scenarios) allow all auth.erb code paths to be
@@ -65,7 +65,7 @@ describe 'pam::auth' do
           let(:params) do
             {
               sssd: false,
-           content: 'this is valid pam fingerprint_auth configuration, I promise',
+              content: 'this is valid pam fingerprint_auth configuration, I promise',
             }
           end
 
@@ -161,9 +161,7 @@ describe 'pam::auth' do
 
             context 'in FIPS mode' do
               let(:facts) do
-                os_facts.merge({
-                                 fips_enabled: true,
-                               })
+                os_facts.merge(fips_enabled: true)
               end
 
               it {
@@ -182,32 +180,32 @@ describe 'pam::auth' do
           let(:params) do
             {
               cracklib_dcredit: 1,
-           cracklib_difok: 2,
-           cracklib_enforce_for_root: false,
-           cracklib_gecoscheck: false,
-           cracklib_lcredit: 3,
-           cracklib_maxclassrepeat: 4,
-           cracklib_maxrepeat: 5,
-           cracklib_maxsequence: 6,
-           cracklib_minclass: 7,
-           cracklib_minlen: 8,
-           cracklib_ocredit: 9,
-           cracklib_reject_username: false,
-           cracklib_retry: 10,
-           cracklib_ucredit: 11,
-           deny: 12,
-           faillock: false,
-           display_account_lock: true,
-           fail_interval: 13,
-           remember: 14,
-           root_unlock_time: 15,
-           rounds: 16,
-           uid: 17,
-           unlock_time: 18,
-           use_netgroups: true,
-           use_openshift: true,
-           sssd: true,
-           tty_audit_users: [],
+              cracklib_difok: 2,
+              cracklib_enforce_for_root: false,
+              cracklib_gecoscheck: false,
+              cracklib_lcredit: 3,
+              cracklib_maxclassrepeat: 4,
+              cracklib_maxrepeat: 5,
+              cracklib_maxsequence: 6,
+              cracklib_minclass: 7,
+              cracklib_minlen: 8,
+              cracklib_ocredit: 9,
+              cracklib_reject_username: false,
+              cracklib_retry: 10,
+              cracklib_ucredit: 11,
+              deny: 12,
+              faillock: false,
+              display_account_lock: true,
+              fail_interval: 13,
+              remember: 14,
+              root_unlock_time: 15,
+              rounds: 16,
+              uid: 17,
+              unlock_time: 18,
+              use_netgroups: true,
+              use_openshift: true,
+              sssd: true,
+              tty_audit_users: [],
             }
           end
 
@@ -235,8 +233,8 @@ describe 'pam::auth' do
           let(:params) do
             {
               sssd: true,
-           use_openshift: true,
-           tty_audit_users: ['root', 'user1', 'user2'],
+              use_openshift: true,
+              tty_audit_users: ['root', 'user1', 'user2'],
             }
           end
 
@@ -264,15 +262,15 @@ describe 'pam::auth' do
           let(:params) do
             {
               sssd: true,
-           auth_content_pre: [
-             'auth     sufficient pam_centrifydc.so',
-             'auth     requisite  pam_centrifydc.so deny',
-             'account  sufficient pam_centrifydc.so',
-             'account  requisite  pam_centrifydc.so deny',
-             'session  required   pam_centrifydc.so homedir',
-             'password sufficient pam_centrifydc.so try_first_pass',
-             'password requisite  pam_centrifydc.so deny',
-           ],
+              auth_content_pre: [
+                'auth     sufficient pam_centrifydc.so',
+                'auth     requisite  pam_centrifydc.so deny',
+                'account  sufficient pam_centrifydc.so',
+                'account  requisite  pam_centrifydc.so deny',
+                'session  required   pam_centrifydc.so homedir',
+                'password sufficient pam_centrifydc.so try_first_pass',
+                'password requisite  pam_centrifydc.so deny',
+              ],
             }
           end
 
@@ -302,8 +300,8 @@ describe 'pam::auth' do
               let(:params) do
                 {
                   enable_separator: true,
-                 separator: separator,
-                 tty_audit_users: ['root'],
+                  separator: separator,
+                  tty_audit_users: ['root'],
                 }
               end
 

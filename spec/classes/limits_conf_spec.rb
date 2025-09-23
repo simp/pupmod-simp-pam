@@ -21,13 +21,13 @@ describe 'pam::limits' do
                   'value'   => 0,
                   'order'   => 50,
                 },
-              'disable_core_for_all' => {
-                'domains' => ['*'],
-                'type'    => 'hard',
-                'item'    => 'core',
-                'value'   => 0,
-                'order'   => 100,
-              },
+                'disable_core_for_all' => {
+                  'domains' => ['*'],
+                  'type'    => 'hard',
+                  'item'    => 'core',
+                  'value'   => 0,
+                  'order'   => 100,
+                },
               },
             }
           end

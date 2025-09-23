@@ -8,7 +8,7 @@ describe 'pam::wheel' do
 
         let(:params) { { wheel_group: 'administrators' } }
         let(:pre_condition) do
-          'include ::pam'
+          'include pam'
         end
 
         it { is_expected.to compile.with_all_deps }
@@ -21,7 +21,7 @@ describe 'pam::wheel' do
           let(:params) do
             {
               wheel_group: 'administrators',
-           root_only: true,
+              root_only: true,
             }
           end
 
@@ -34,7 +34,7 @@ describe 'pam::wheel' do
           let(:params) do
             {
               wheel_group: 'administrators',
-           use_openshift: true,
+              use_openshift: true,
             }
           end
 
