@@ -18,7 +18,7 @@ describe 'pam class' do
   end
 
   let(:manifest) do
-    <<-EOS
+    <<~EOS
       include 'pam'
       include 'pam::limits'
 
@@ -27,7 +27,7 @@ describe 'pam class' do
         type    => 'soft',
         item    => 'nproc',
         value   => 50,
-        order   => 1
+        order   => 1,
       }
 
       pam::limits::rule { 'limit_test_nproc_soft':
@@ -35,7 +35,7 @@ describe 'pam class' do
         type    => 'soft',
         item    => 'nproc',
         value   => 20,
-        order   => 9
+        order   => 9,
       }
 
       pam::limits::rule { 'limit_test_nproc_hard':
@@ -43,7 +43,7 @@ describe 'pam class' do
         type    => 'hard',
         item    => 'nproc',
         value   => 50,
-        order   => 10
+        order   => 10,
       }
     EOS
   end

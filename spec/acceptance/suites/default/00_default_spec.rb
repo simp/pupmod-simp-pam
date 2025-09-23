@@ -4,8 +4,8 @@ test_name 'pam class'
 
 describe 'pam class' do
   let(:manifest) do
-    <<-EOS
-      include '::pam'
+    <<~EOS
+      include 'pam'
     EOS
   end
 

@@ -10,8 +10,8 @@ describe 'pam::access::rule' do
         let(:params) do
           {
             users: ['user1', 'user2'],
-         origins: ['foo.bar.baz', 'bar.baz.foo'],
-         order: 1,
+            origins: ['foo.bar.baz', 'bar.baz.foo'],
+            order: 1,
           }
         end
 
@@ -19,28 +19,27 @@ describe 'pam::access::rule' do
 
         it {
           is_expected.to create_concat__fragment("pam_access_rule_#{title}").with_content(
-          %(+:#{params[:users].join(',')}:#{params[:origins].join(',')}\n),
-        )
+            %(+:#{params[:users].join(',')}:#{params[:origins].join(',')}\n),
+          )
         }
 
         context 'with_comment' do
           let(:params) do
             {
               users: ['user1', 'user2'],
-           origins: ['foo.bar.baz', 'bar.baz.foo'],
-           order: 1,
-           comment: "foo\nbar\nbaz",
+              origins: ['foo.bar.baz', 'bar.baz.foo'],
+              order: 1,
+              comment: "foo\nbar\nbaz",
             }
           end
 
           it {
-            is_expected.to create_concat__fragment("pam_access_rule_#{title}").with_content(<<-EOM.gsub(%r{^\s+}, ''),
-            # foo
-            # bar
-            # baz
-            +:#{params[:users].join(',')}:#{params[:origins].join(',')}
+            is_expected.to create_concat__fragment("pam_access_rule_#{title}").with_content(<<-EOM)
+              # foo
+              # bar
+              # baz
+              +:#{params[:users].join(',')}:#{params[:origins].join(',')}
             EOM
-                                                                                           )
           }
         end
       end

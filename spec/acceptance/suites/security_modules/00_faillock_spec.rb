@@ -17,10 +17,10 @@ describe 'pam check faillock' do
   let(:client_manifest) { "include 'ssh::client'" }
 
   let(:server_manifest) do
-    <<-SERVER_CONFIG
-         include 'ssh::server'
-         include 'pam'
-     SERVER_CONFIG
+    <<~SERVER_CONFIG
+      include 'ssh::server'
+      include 'pam'
+    SERVER_CONFIG
   end
   let(:test_user) { 'tst0_usr' }
   let(:vagrant_user) { 'vagrant' }
