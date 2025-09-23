@@ -6,12 +6,12 @@ test_name 'pam check oath'
 describe 'pam check oath' do
   let(:server_hieradata) do
     {
-      'simp_options::trusted_nets' => ['ALL'],
+      'simp_options::trusted_nets'                => ['ALL'],
       'ssh::server::conf::banner'                 => '/dev/null',
       'ssh::server::conf::permitrootlogin'        => true,
       'ssh::server::conf::passwordauthentication' => true,
       'ssh::server::conf::authorizedkeysfile'     => '.ssh/authorized_keys',
-      'simp_options::oath'                        =>  true,
+      'simp_options::oath'                        => true,
       'oath::oath_users'                          => JSON.parse(%({"tst0_usr": {"token_type": "HOTP/T30/6", "pin": "-", "secret_key": "000001"}})),
     }
   end
@@ -21,11 +21,11 @@ describe 'pam check oath' do
   let(:client_manifest) { "include 'ssh::client'" }
 
   let(:server_manifest) do
-    <<-SERVER_CONFIG
-         include 'ssh::server'
-         include 'pam'
-         include 'oath'
-     SERVER_CONFIG
+    <<~SERVER_CONFIG
+      include 'ssh::server'
+      include 'pam'
+      include 'oath'
+    SERVER_CONFIG
   end
   let(:password) { 'suP3rF00B@rB@11bx23' }
 
