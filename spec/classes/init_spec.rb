@@ -44,17 +44,17 @@ describe 'pam' do
         let(:params) do
           {
             manage_faillock_conf: false,
-         display_account_lock: false,
-         deny: 6,
-         faillock_audit: true,
-         unlock_time: 600,
-         fail_interval: 600,
-         faillock_log_dir: '/var/log/faillock',
-         faillock_no_log_info: true,
-         faillock_local_users_only: true,
-         faillock_nodelay: true,
-         faillock_admin_group: 'admin',
-         even_deny_root: true,
+            display_account_lock: false,
+            deny: 6,
+            faillock_audit: true,
+            unlock_time: 600,
+            fail_interval: 600,
+            faillock_log_dir: '/var/log/faillock',
+            faillock_no_log_info: true,
+            faillock_local_users_only: true,
+            faillock_nodelay: true,
+            faillock_admin_group: 'admin',
+            even_deny_root: true,
           }
         end
 
@@ -85,11 +85,11 @@ describe 'pam' do
         let(:params) do
           {
             manage_pwhistory_conf: false,
-         remember_debug: true,
-         remember: 18,
-         remember_for_root: true,
-         remember_retry: 3,
-         remember_file: '/etc/test/opasswd',
+            remember_debug: true,
+            remember: 18,
+            remember_for_root: true,
+            remember_retry: 3,
+            remember_file: '/etc/test/opasswd',
           }
         end
 
@@ -128,7 +128,7 @@ describe 'pam' do
         let(:params) do
           {
             cert_auth: 'try',
-         sssd: true,
+            sssd: true,
           }
         end
 

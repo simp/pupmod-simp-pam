@@ -10,10 +10,10 @@ describe 'pam::limits::rule' do
         let(:params) do
           {
             domains: ['*'],
-         item: 'core',
-         value: 0,
-         type: '-',
-         order: 1,
+            item: 'core',
+            value: 0,
+            type: '-',
+            order: 1,
           }
         end
 

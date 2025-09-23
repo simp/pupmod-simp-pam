@@ -88,7 +88,7 @@ describe 'pam check faillock' do
           end
         end
 
-        it 'stills fail with correct password' do
+        it 'still fails with correct password' do
           on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
         end
 
