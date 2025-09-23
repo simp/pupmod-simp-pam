@@ -21,7 +21,7 @@ describe 'pam::wheel' do
           let(:params) do
             {
               wheel_group: 'administrators',
-           root_only: true
+           root_only: true,
             }
           end
 
@@ -34,7 +34,7 @@ describe 'pam::wheel' do
           let(:params) do
             {
               wheel_group: 'administrators',
-           use_openshift: true
+           use_openshift: true,
             }
           end
 
@@ -46,7 +46,7 @@ describe 'pam::wheel' do
         context 'with extra content' do
           let(:params) do
             {
-              su_content_extra: ['auth sufficient pam_centrifydc.so enable_dzpamgate']
+              su_content_extra: ['auth sufficient pam_centrifydc.so enable_dzpamgate'],
             }
           end
 
@@ -56,7 +56,7 @@ describe 'pam::wheel' do
         context 'with custom content' do
           let(:params) do
             {
-              content: 'this is valid pam su configuration, I promise'
+              content: 'this is valid pam su configuration, I promise',
             }
           end
 

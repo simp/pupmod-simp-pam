@@ -24,11 +24,11 @@ describe 'pam::auth' do
           os_facts.merge(
             {
               'login_defs' => {
-                'uid_min' => 1000
+                'uid_min' => 1000,
               },
               'simplib__auditd' => {
-                'enforcing' => false
-              }
+                'enforcing' => false,
+              },
             },
           )
         end
@@ -65,7 +65,7 @@ describe 'pam::auth' do
           let(:params) do
             {
               sssd: false,
-           content: 'this is valid pam fingerprint_auth configuration, I promise'
+           content: 'this is valid pam fingerprint_auth configuration, I promise',
             }
           end
 
@@ -83,7 +83,7 @@ describe 'pam::auth' do
         context 'Generate file without locale_file' do
           let(:params) do
             {
-              locale_file: :undef
+              locale_file: :undef,
             }
           end
 
@@ -128,7 +128,7 @@ describe 'pam::auth' do
         context 'Generate file with disabled root_unlock_time' do
           let(:params) do
             {
-              even_deny_root: false
+              even_deny_root: false,
             }
           end
 
@@ -162,7 +162,7 @@ describe 'pam::auth' do
             context 'in FIPS mode' do
               let(:facts) do
                 os_facts.merge({
-                                 fips_enabled: true
+                                 fips_enabled: true,
                                })
               end
 
@@ -207,7 +207,7 @@ describe 'pam::auth' do
            use_netgroups: true,
            use_openshift: true,
            sssd: true,
-           tty_audit_users: []
+           tty_audit_users: [],
             }
           end
 
@@ -236,7 +236,7 @@ describe 'pam::auth' do
             {
               sssd: true,
            use_openshift: true,
-           tty_audit_users: ['root', 'user1', 'user2']
+           tty_audit_users: ['root', 'user1', 'user2'],
             }
           end
 
@@ -272,7 +272,7 @@ describe 'pam::auth' do
              'session  required   pam_centrifydc.so homedir',
              'password sufficient pam_centrifydc.so try_first_pass',
              'password requisite  pam_centrifydc.so deny',
-           ]
+           ],
             }
           end
 
@@ -303,7 +303,7 @@ describe 'pam::auth' do
                 {
                   enable_separator: true,
                  separator: separator,
-                 tty_audit_users: ['root']
+                 tty_audit_users: ['root'],
                 }
               end
 

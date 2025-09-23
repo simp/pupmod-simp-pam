@@ -54,7 +54,7 @@ describe 'pam' do
          faillock_local_users_only: true,
          faillock_nodelay: true,
          faillock_admin_group: 'admin',
-         even_deny_root: true
+         even_deny_root: true,
           }
         end
 
@@ -89,7 +89,7 @@ describe 'pam' do
          remember: 18,
          remember_for_root: true,
          remember_retry: 3,
-         remember_file: '/etc/test/opasswd'
+         remember_file: '/etc/test/opasswd',
           }
         end
 
@@ -128,7 +128,7 @@ describe 'pam' do
         let(:params) do
           {
             cert_auth: 'try',
-         sssd: true
+         sssd: true,
           }
         end
 

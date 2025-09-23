@@ -13,7 +13,7 @@ describe 'pam::access' do
                                                                          permission: '-',
             users: ['ALL'],
             origins: ['ALL'],
-            order: 9_999_999_999
+            order: 9_999_999_999,
                                                                        })
         }
         it {
@@ -21,7 +21,7 @@ describe 'pam::access' do
                                                                              permission: '+',
             users: ['root'],
             origins: ['LOCAL'],
-            order: 1
+            order: 1,
                                                                            })
         }
       end
@@ -34,28 +34,28 @@ describe 'pam::access' do
             is_expected.to create_pam__access__rule('rule_vagrant').with({
                                                                            users: ['vagrant'],
             origins: ['ALL'],
-            permission: '+'
+            permission: '+',
                                                                          })
           }
           it {
             is_expected.to create_pam__access__rule('rule_(simp)').with({
                                                                           users: ['(simp)'],
             origins: ['ALL'],
-            permission: '+'
+            permission: '+',
                                                                         })
           }
           it {
             is_expected.to create_pam__access__rule('rule_test').with({
                                                                         users: ['test'],
             origins: ['192.168.0.1/24'],
-            permission: '+'
+            permission: '+',
                                                                       })
           }
           it {
             is_expected.to create_pam__access__rule('rule_baddude').with({
                                                                            users: ['baddude'],
             origins: ['ALL'],
-            permission: '-'
+            permission: '-',
                                                                          })
           }
         end
@@ -66,28 +66,28 @@ describe 'pam::access' do
             is_expected.to create_pam__access__rule('rule_vagrant').with({
                                                                            users: ['vagrant'],
             origins: ['ALL'],
-            permission: '+'
+            permission: '+',
                                                                          })
           }
           it {
             is_expected.to create_pam__access__rule('rule_(simp)').with({
                                                                           users: ['(simp)'],
             origins: ['ALL'],
-            permission: '+'
+            permission: '+',
                                                                         })
           }
           it {
             is_expected.to create_pam__access__rule('rule_test').with({
                                                                         users: ['test'],
             origins: ['192.168.0.1/24'],
-            permission: '+'
+            permission: '+',
                                                                       })
           }
           it {
             is_expected.to create_pam__access__rule('rule_baddude').with({
                                                                            users: ['baddude'],
             origins: ['ALL'],
-            permission: '-'
+            permission: '-',
                                                                          })
           }
         end

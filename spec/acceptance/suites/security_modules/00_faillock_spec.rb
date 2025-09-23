@@ -9,7 +9,7 @@ describe 'pam check faillock' do
       'ssh::server::conf::banner'                 => '/dev/null',
       'ssh::server::conf::permitrootlogin'        => true,
       'ssh::server::conf::passwordauthentication' => true,
-      'ssh::server::conf::authorizedkeysfile'     => '.ssh/authorized_keys'
+      'ssh::server::conf::authorizedkeysfile'     => '.ssh/authorized_keys',
     }
   end
 

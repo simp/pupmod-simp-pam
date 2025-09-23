@@ -13,7 +13,7 @@ describe 'pam::limits::rule' do
          item: 'core',
          value: 0,
          type: '-',
-         order: 1
+         order: 1,
           }
         end
 
