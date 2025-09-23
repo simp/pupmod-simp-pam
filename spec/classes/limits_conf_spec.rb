@@ -19,16 +19,16 @@ describe 'pam::limits' do
                   'type'    => 'hard',
                   'item'    => 'core',
                   'value'   => 0,
-                  'order'   => 50
+                  'order'   => 50,
                 },
               'disable_core_for_all' => {
                 'domains' => ['*'],
                 'type'    => 'hard',
                 'item'    => 'core',
                 'value'   => 0,
-                'order'   => 100
-              }
-              }
+                'order'   => 100,
+              },
+              },
             }
           end
 

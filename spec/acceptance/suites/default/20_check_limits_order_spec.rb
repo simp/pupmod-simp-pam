@@ -11,9 +11,9 @@ describe 'pam class' do
           'type'    => 'hard',
           'item'    => 'core',
           'value'   => 0,
-          'order'   => 100
-        }
-      }
+          'order'   => 100,
+        },
+      },
     }
   end
 

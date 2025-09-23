@@ -12,7 +12,7 @@ describe 'pam check oath' do
       'ssh::server::conf::passwordauthentication' => true,
       'ssh::server::conf::authorizedkeysfile'     => '.ssh/authorized_keys',
       'simp_options::oath'                        =>  true,
-      'oath::oath_users'                          => JSON.parse(%({"tst0_usr": {"token_type": "HOTP/T30/6", "pin": "-", "secret_key": "000001"}}))
+      'oath::oath_users'                          => JSON.parse(%({"tst0_usr": {"token_type": "HOTP/T30/6", "pin": "-", "secret_key": "000001"}})),
     }
   end
 

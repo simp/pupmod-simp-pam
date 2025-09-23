@@ -11,7 +11,7 @@ describe 'pam::access::rule' do
           {
             users: ['user1', 'user2'],
          origins: ['foo.bar.baz', 'bar.baz.foo'],
-         order: 1
+         order: 1,
           }
         end
 
@@ -29,7 +29,7 @@ describe 'pam::access::rule' do
               users: ['user1', 'user2'],
            origins: ['foo.bar.baz', 'bar.baz.foo'],
            order: 1,
-           comment: "foo\nbar\nbaz"
+           comment: "foo\nbar\nbaz",
             }
           end
 
