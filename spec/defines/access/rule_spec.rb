@@ -34,7 +34,7 @@ describe 'pam::access::rule' do
           end
 
           it {
-            is_expected.to create_concat__fragment("pam_access_rule_#{title}").with_content(<<-EOM)
+            is_expected.to create_concat__fragment("pam_access_rule_#{title}").with_content(<<~EOM)
               # foo
               # bar
               # baz

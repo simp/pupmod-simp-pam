@@ -4,29 +4,35 @@ require 'spec_helper'
 v1_profiles = './spec/fixtures/modules/compliance_markup/data/compliance_profiles'
 FileUtils.rm_rf(v1_profiles) if File.directory?(v1_profiles)
 
+def compliance_profiles
+  @compliance_profiles ||= [
+    'disa_stig',
+    'nist_800_53:rev4',
+  ].freeze
+end
+
 # This is the class that needs to be added to the catalog last to make the
 # reporting work.
 describe 'compliance_markup', type: :class do
-  compliance_profiles = [
-    'disa_stig',
-    'nist_800_53:rev4',
-  ]
-
   # A list of classes that we expect to be included for compliance
   #
   # This needs to be well defined since we can also manipulate defined type
   # defaults
-  expected_classes = [
-    'pam',
-    'pam::wheel',
-  ]
+  let(:expected_classes) do
+    [
+      'pam',
+      'pam::wheel',
+    ]
+  end
 
-  allowed_failures = {
-    'documented_missing_parameters' => [
-    ] + expected_classes.map { |c| Regexp.new("^(?!#{c}(::.*)?)") },
-    'documented_missing_resources' => [
-    ] + expected_classes.map { |c| Regexp.new("^(?!#{c}(::.*)?)") },
-  }
+  let(:allowed_failures) do
+    {
+      'documented_missing_parameters' => [
+      ] + expected_classes.map { |c| Regexp.new("^(?!#{c}(::.*)?)") },
+      'documented_missing_resources' => [
+      ] + expected_classes.map { |c| Regexp.new("^(?!#{c}(::.*)?)") },
+    }
+  end
 
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
