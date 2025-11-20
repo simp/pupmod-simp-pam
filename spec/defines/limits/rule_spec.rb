@@ -20,9 +20,8 @@ describe 'pam::limits::rule' do
         it { is_expected.to compile.with_all_deps }
 
         it {
-          is_expected.to create_concat__fragment("pam_limits_rule_#{title}").with_content(
-          %r{#{Regexp.escape(params[:domains].first)}\s#{params[:type]}\s#{params[:item]}\s#{params[:value]}},
-        )
+          is_expected.to create_concat__fragment("pam_limits_rule_#{title}")
+            .with_content(%r{#{Regexp.escape(params[:domains].first)}\s#{params[:type]}\s#{params[:item]}\s#{params[:value]}})
         }
       end
     end
