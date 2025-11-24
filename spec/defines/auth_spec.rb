@@ -9,7 +9,7 @@ def get_expected(filename)
   IO.read(path)
 end
 
-shared_examples_for "a pam.d config file generator" do
+shared_examples_for 'a pam.d config file generator' do
   it { is_expected.to compile.with_all_deps }
   it { is_expected.to create_class('oddjob::mkhomedir') }
   it { is_expected.to contain_file(filename).with_mode('0644') }
@@ -24,18 +24,18 @@ describe 'pam::auth' do
           os_facts.merge(
             {
               'login_defs' => {
-                'uid_min' => 1000
+                'uid_min' => 1000,
               },
               'simplib__auditd' => {
-                'enforcing' => false
-              }
-            }
+                'enforcing' => false,
+              },
+            },
           )
         end
 
-        let(:pre_condition){
-          'class { "::pam": auth_sections => [] }'
-        }
+        let(:pre_condition) do
+          'class { "pam": auth_sections => [] }'
+        end
 
         # The three test contexts (scenarios) allow all auth.erb code paths to be
         # exercised at least once.
@@ -44,89 +44,100 @@ describe 'pam::auth' do
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
-              let(:title){ auth_type }
-              let(:el_version){
+              let(:title) { auth_type }
+              let(:el_version) do
                 if Integer(os_facts[:os][:release][:major]) <= 7
                   'el7'
                 else
                   'el8'
                 end
-              }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              end
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_default_params") }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
 
         context 'Generate file using content params' do
-          let(:params) {{
-            :sssd    => false,
-            :content => 'this is valid pam fingerprint_auth configuration, I promise'
-          }}
+          let(:params) do
+            {
+              sssd: false,
+              content: 'this is valid pam fingerprint_auth configuration, I promise',
+            }
+          end
+
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:title){ auth_type }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:title) { auth_type }
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(params[:content]) }
             end
           end
         end
 
         context 'Generate file without locale_file' do
-          let(:params) {{
-            :locale_file => :undef
-          }}
+          let(:params) do
+            {
+              locale_file: :undef,
+            }
+          end
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:title){ auth_type }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:title) { auth_type }
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
 
-              it_should_behave_like "a pam.d config file generator"
-              it { is_expected.to contain_file(filename).without_content(%r(/envfile=.*locale/)) }
+              it_behaves_like 'a pam.d config file generator'
+              it { is_expected.to contain_file(filename).without_content(%r{/envfile=.*locale/}) }
             end
           end
         end
 
         context 'Generate file using never param for unlock_time' do
-          let(:params) {{
-            :unlock_time => 'never',
-          }}
+          let(:params) do
+            {
+              unlock_time: 'never',
+            }
+          end
+
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
-              let(:title){ auth_type }
-              let(:el_version){
+              let(:title) { auth_type }
+              let(:el_version) do
                 if Integer(os_facts[:os][:release][:major]) <= 7
                   'el7'
                 else
                   'el8'
                 end
-              }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              end
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_unlock_time_never") }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
 
         context 'Generate file with disabled root_unlock_time' do
-          let(:params) {{
-            :even_deny_root => false
-          }}
+          let(:params) do
+            {
+              even_deny_root: false,
+            }
+          end
+
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
-              let(:title){ auth_type }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              let(:title) { auth_type }
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.not_to contain_file(filename).with_content('even_deny_root') }
               it { is_expected.not_to contain_file(filename).with_content('root_unlock_time') }
             end
@@ -135,29 +146,28 @@ describe 'pam::auth' do
 
         context 'Generate file using different hash algorithm' do
           ['password', 'system'].each do |auth_type|
-            let(:title){ auth_type }
-            let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
-            let(:params) {{
-              :hash_algorithm => 'blowfish',
-            }}
+            let(:title) { auth_type }
+            let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+            let(:params) do
+              {
+                hash_algorithm: 'blowfish',
+              }
+            end
 
             context "auth type '#{auth_type}'" do
-
-              it_should_behave_like "a pam.d config file generator"
-              it { is_expected.to contain_file(filename).with_content(/blowfish/) }
+              it_behaves_like 'a pam.d config file generator'
+              it { is_expected.to contain_file(filename).with_content(%r{blowfish}) }
             end
 
             context 'in FIPS mode' do
-              let(:facts) {
-                os_facts.merge({
-                  :fips_enabled => true
-                })
-              }
+              let(:facts) do
+                os_facts.merge(fips_enabled: true)
+              end
 
               it {
                 expect {
-                  should compile.with_all_deps
-                }.to raise_error(/Only sha256 and sha512/)
+                  is_expected.to compile.with_all_deps
+                }.to raise_error(%r{Only sha256 and sha512})
               }
             end
           end
@@ -167,111 +177,118 @@ describe 'pam::auth' do
           # In this context, we will also verify the logic to deliver config to
           # auth.erb works for all config parameters, by setting these parameters
           # to non-default values.
-          let(:params){{
-            :cracklib_dcredit          => 1,
-            :cracklib_difok            => 2,
-            :cracklib_enforce_for_root => false,
-            :cracklib_gecoscheck       => false,
-            :cracklib_lcredit          => 3,
-            :cracklib_maxclassrepeat   => 4,
-            :cracklib_maxrepeat        => 5,
-            :cracklib_maxsequence      => 6,
-            :cracklib_minclass         => 7,
-            :cracklib_minlen           => 8,
-            :cracklib_ocredit          => 9,
-            :cracklib_reject_username  => false,
-            :cracklib_retry            => 10,
-            :cracklib_ucredit          => 11,
-            :deny                      => 12,
-            :faillock                  => false,
-            :display_account_lock      => true,
-            :fail_interval             => 13,
-            :remember                  => 14,
-            :root_unlock_time          => 15,
-            :rounds                    => 16,
-            :uid                       => 17,
-            :unlock_time               => 18,
-            :use_netgroups             => true,
-            :use_openshift             => true,
-            :sssd                      => true,
-            :tty_audit_users           => []
-          }}
+          let(:params) do
+            {
+              cracklib_dcredit: 1,
+              cracklib_difok: 2,
+              cracklib_enforce_for_root: false,
+              cracklib_gecoscheck: false,
+              cracklib_lcredit: 3,
+              cracklib_maxclassrepeat: 4,
+              cracklib_maxrepeat: 5,
+              cracklib_maxsequence: 6,
+              cracklib_minclass: 7,
+              cracklib_minlen: 8,
+              cracklib_ocredit: 9,
+              cracklib_reject_username: false,
+              cracklib_retry: 10,
+              cracklib_ucredit: 11,
+              deny: 12,
+              faillock: false,
+              display_account_lock: true,
+              fail_interval: 13,
+              remember: 14,
+              root_unlock_time: 15,
+              rounds: 16,
+              uid: 17,
+              unlock_time: 18,
+              use_netgroups: true,
+              use_openshift: true,
+              sssd: true,
+              tty_audit_users: [],
+            }
+          end
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
-              let(:title){ auth_type }
-              let(:el_version){
+              let(:title) { auth_type }
+              let(:el_version) do
                 if Integer(os_facts[:os][:release][:major]) <= 7
                   'el7'
                 else
                   'el8'
                 end
-              }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              end
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_no_tty_audit") }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
 
         context 'Generate file using SSSD, OpenShift, and TTY auditing of multiple users' do
-          let(:params){{
-            :sssd            => true,
-            :use_openshift   => true,
-            :tty_audit_users => ['root', 'user1', 'user2']
-          }}
+          let(:params) do
+            {
+              sssd: true,
+              use_openshift: true,
+              tty_audit_users: ['root', 'user1', 'user2'],
+            }
+          end
 
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
-              let(:title){ auth_type }
-              let(:el_version){
+              let(:title) { auth_type }
+              let(:el_version) do
                 if Integer(os_facts[:os][:release][:major]) <= 7
                   'el7'
                 else
                   'el8'
                 end
-              }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              end
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_openshift_multi_tty_audit") }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
 
         context 'Generate file using auth_content_pre params for Centrify' do
-          let(:params) {{
-            :sssd             => true,
-            :auth_content_pre => [
-              'auth     sufficient pam_centrifydc.so',
-              'auth     requisite  pam_centrifydc.so deny',
-              'account  sufficient pam_centrifydc.so',
-              'account  requisite  pam_centrifydc.so deny',
-              'session  required   pam_centrifydc.so homedir',
-              'password sufficient pam_centrifydc.so try_first_pass',
-              'password requisite  pam_centrifydc.so deny',
-            ]
-          }}
+          let(:params) do
+            {
+              sssd: true,
+              auth_content_pre: [
+                'auth     sufficient pam_centrifydc.so',
+                'auth     requisite  pam_centrifydc.so deny',
+                'account  sufficient pam_centrifydc.so',
+                'account  requisite  pam_centrifydc.so deny',
+                'session  required   pam_centrifydc.so homedir',
+                'password sufficient pam_centrifydc.so try_first_pass',
+                'password requisite  pam_centrifydc.so deny',
+              ],
+            }
+          end
+
           ['fingerprint', 'password', 'smartcard', 'system'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
-              let(:title){ auth_type }
-              let(:el_version){
+              let(:title) { auth_type }
+              let(:el_version) do
                 if Integer(os_facts[:os][:release][:major]) <= 7
                   'el7'
                 else
                   'el8'
                 end
-              }
-              let(:filename){ "/etc/pam.d/#{auth_type}-auth" }
+              end
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_user_specified_centrify") }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
@@ -280,88 +297,96 @@ describe 'pam::auth' do
         context 'Generate file with varying list separators when list_separator == true' do
           ['!', ',', '@'].each_with_index do |separator, index|
             context "auth type separator = '#{separator}'" do
-            let(:params){{
-              :enable_separator => true,
-              :separator => separator,
-              :tty_audit_users => ['root']
-            }}
+              let(:params) do
+                {
+                  enable_separator: true,
+                  separator: separator,
+                  tty_audit_users: ['root'],
+                }
+              end
 
               let(:pw_backend) { 'pwquality' }
-              let(:title){ 'password' }
-              let(:filename){ "/etc/pam.d/password-auth" }
-              let(:el_version){
+              let(:title) { 'password' }
+              let(:filename) { '/etc/pam.d/password-auth' }
+              let(:el_version) do
                 if Integer(os_facts[:os][:release][:major]) <= 7
                   'el7'
                 else
                   'el8'
                 end
-              }
+              end
               let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-#{index}") }
 
-              it_should_behave_like "a pam.d config file generator"
+              it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
             end
           end
         end
 
         context 'Generate file with when enable_separator == false`' do
-          let(:params){{
-            :enable_separator => false,
-          }}
-            let(:pw_backend) { 'pwquality' }
-            let(:title){ 'password' }
-            let(:filename){ "/etc/pam.d/password-auth" }
-            let(:el_version){
-              if Integer(os_facts[:os][:release][:major]) <= 7
-                'el7'
-              else
-                'el8'
-              end
+          let(:params) do
+            {
+              enable_separator: false,
             }
-            let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-false") }
+          end
+          let(:pw_backend) { 'pwquality' }
+          let(:title) { 'password' }
+          let(:filename) { '/etc/pam.d/password-auth' }
+          let(:el_version) do
+            if Integer(os_facts[:os][:release][:major]) <= 7
+              'el7'
+            else
+              'el8'
+            end
+          end
+          let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-false") }
 
-            it_should_behave_like "a pam.d config file generator"
-            it { is_expected.to contain_file(filename).with_content(file_content) }
+          it_behaves_like 'a pam.d config file generator'
+          it { is_expected.to contain_file(filename).with_content(file_content) }
         end
 
         context 'Generate file with when oath == true' do
-          let(:params){{
-            :oath => true,
-          }}
-            let(:pw_backend) { 'pwquality' }
-            let(:title){ 'system' }
-            let(:filename){ "/etc/pam.d/system-auth" }
-            let(:el_version){
-              if Integer(os_facts[:os][:release][:major]) <= 7
-                'el7'
-              else
-                'el8'
-              end
+          let(:params) do
+            {
+              oath: true,
             }
-            let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_oath_enabled") }
+          end
+          let(:pw_backend) { 'pwquality' }
+          let(:title) { 'system' }
+          let(:filename) { '/etc/pam.d/system-auth' }
+          let(:el_version) do
+            if Integer(os_facts[:os][:release][:major]) <= 7
+              'el7'
+            else
+              'el8'
+            end
+          end
+          let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_oath_enabled") }
 
-            it_should_behave_like "a pam.d config file generator"
-            it { is_expected.to contain_file(filename).with_content(file_content) }
+          it_behaves_like 'a pam.d config file generator'
+          it { is_expected.to contain_file(filename).with_content(file_content) }
         end
 
         context 'Generate file with when nullok == true' do
-          let(:params){{
-            :nullok => true,
-          }}
-            let(:pw_backend) { 'pwquality' }
-            let(:title){ 'system' }
-            let(:filename){ "/etc/pam.d/system-auth" }
-            let(:el_version){
-              if Integer(os_facts[:os][:release][:major]) <= 7
-                'el7'
-              else
-                'el8'
-              end
+          let(:params) do
+            {
+              nullok: true,
             }
-            let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_nullok") }
+          end
+          let(:pw_backend) { 'pwquality' }
+          let(:title) { 'system' }
+          let(:filename) { '/etc/pam.d/system-auth' }
+          let(:el_version) do
+            if Integer(os_facts[:os][:release][:major]) <= 7
+              'el7'
+            else
+              'el8'
+            end
+          end
+          let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_nullok") }
 
-            it_should_behave_like "a pam.d config file generator"
-            it { is_expected.to contain_file(filename).with_content(file_content) }
+          it_behaves_like 'a pam.d config file generator'
+          it { is_expected.to contain_file(filename).with_content(file_content) }
         end
       end
     end
