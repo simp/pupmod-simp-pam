@@ -1,3 +1,6 @@
+* Tue Nov 25 2025 Steven Pritchard <steve@sicura.us> - 7.4.0
+- Move OS-specific data to Hiera
+
 * Wed Sep 17 2025 Steven Pritchard <steve@sicura.us> - 7.3.2
 - Dependency updates
 

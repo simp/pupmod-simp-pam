@@ -1,0 +1,21 @@
+---
+# EL7 OS capabilities
+# EL7 uses pwquality but without some newer options, and doesn't support
+# faillock.conf or pwhistory.conf files
+
+# pwquality options not supported in EL7
+pam::cracklib_retry_supported: false
+pam::pwquality_enforce_for_root_supported: false
+pam::pwquality_reject_username_supported: false
+pam::pwquality_dictcheck_supported: false
+
+# Config file support
+pam::faillock_conf_supported: false
+pam::pwhistory_conf_supported: false
+
+# authconfig is present and needs to be disabled
+pam::authconfig_present: true
+
+# Other EL7-specific settings
+pam::password_check_backend: 'pwquality'
+pam::locale_file: '/etc/locale.conf'

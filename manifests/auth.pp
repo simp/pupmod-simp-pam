@@ -58,6 +58,8 @@
 # @param enable_separator
 # @param inactive
 # @param cert_auth
+# @param faillock_conf_supported
+# @param pwhistory_conf_supported
 # @param content
 #
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
@@ -115,6 +117,8 @@ define pam::auth (
   Integer[0]                      $oath_window               = $pam::oath_window,
   Optional[Integer]               $inactive                  = $pam::inactive,
   Optional[Enum['try','require']] $cert_auth                 = $pam::cert_auth,
+  Boolean                         $faillock_conf_supported   = $pam::faillock_conf_supported,
+  Boolean                         $pwhistory_conf_supported  = $pam::pwhistory_conf_supported,
   Optional[String]                $content                   = undef
 ) {
   include 'oddjob::mkhomedir'
@@ -167,22 +171,35 @@ define pam::auth (
       $_content = $_top_var
     }
     else {
-      if ($facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) < 8) or
-      ($facts['os']['name'] == 'Amazon') and Integer(($facts['os']['release']['major']) < 2022) {
-        $_cracklib_retry = $cracklib_retry
-        $_cracklib_enforce_for_root = $cracklib_enforce_for_root
-        $_cracklib_reject_username = $cracklib_reject_username
-        # faillock.conf and pwhistory.conf don't exist in el 7 and Amazon Linux 2
-        $_manage_faillock_conf = false
-        $_manage_pwhistory_conf = false
-      } else {
-        $_manage_faillock_conf = $manage_faillock_conf
-        $_manage_pwhistory_conf = $manage_pwhistory_conf
-        # retry, enforce_for_root, and reject_username will be enforced via pwquality.conf in el8 and Amazon Linux 2022 and higher
-        $_cracklib_retry = false
-        $_cracklib_enforce_for_root = false
-        $_cracklib_reject_username = false
+      # Use OS capability flags to determine configuration file support
+      # faillock.conf and pwhistory.conf don't exist in EL 7 and Amazon Linux 2
+      $_manage_faillock_conf = $faillock_conf_supported ? {
+        true    => $manage_faillock_conf,
+        default => false
       }
+
+      $_manage_pwhistory_conf = $pwhistory_conf_supported ? {
+        true    => $manage_pwhistory_conf,
+        default => false
+      }
+
+      # retry, enforce_for_root, and reject_username will be enforced via
+      # pwquality.conf in EL8+ and Amazon Linux 2022+
+      $_cracklib_retry = $faillock_conf_supported ? {
+        true    => false,
+        default => $cracklib_retry
+      }
+
+      $_cracklib_enforce_for_root = $faillock_conf_supported ? {
+        true    => false,
+        default => $cracklib_enforce_for_root
+      }
+
+      $_cracklib_reject_username = $faillock_conf_supported ? {
+        true    => false,
+        default => $cracklib_reject_username
+      }
+
       $_content = epp("${module_name}/etc/pam.d/auth.epp", {
           name                      => $name,
           password_check_backend    => $password_check_backend,

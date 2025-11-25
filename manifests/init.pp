@@ -327,6 +327,34 @@
 #   If a group name is specified with this option, members of the group will be handled by
 #   this module the same as the root account.
 #
+# @param cracklib_retry_supported
+#   Whether the OS supports the 'retry' option in pwquality.conf
+#   This is automatically set via Hiera based on OS version
+#
+# @param pwquality_enforce_for_root_supported
+#   Whether the OS supports the 'enforce_for_root' option in pwquality.conf
+#   This is automatically set via Hiera based on OS version
+#
+# @param pwquality_reject_username_supported
+#   Whether the OS supports the 'reject_username' option in pwquality.conf
+#   This is automatically set via Hiera based on OS version
+#
+# @param pwquality_dictcheck_supported
+#   Whether the OS supports the 'dictcheck' option in pwquality.conf
+#   This is automatically set via Hiera based on OS version
+#
+# @param faillock_conf_supported
+#   Whether the OS supports /etc/security/faillock.conf
+#   This is automatically set via Hiera based on OS version
+#
+# @param pwhistory_conf_supported
+#   Whether the OS supports /etc/security/pwhistory.conf
+#   This is automatically set via Hiera based on OS version
+#
+# @param authconfig_present
+#   Whether authconfig is present on the OS and needs to be disabled
+#   This is automatically set via Hiera based on OS version
+#
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
 class pam (
@@ -403,7 +431,15 @@ class pam (
   Boolean                         $faillock_no_log_info      = false,
   Boolean                         $faillock_local_users_only = false,
   Boolean                         $faillock_nodelay          = false,
-  Optional[String]                $faillock_admin_group      = undef
+  Optional[String]                $faillock_admin_group      = undef,
+  # OS capability flags - set via Hiera based on OS version
+  Boolean                         $cracklib_retry_supported            = false,
+  Boolean                         $pwquality_enforce_for_root_supported = false,
+  Boolean                         $pwquality_reject_username_supported = false,
+  Boolean                         $pwquality_dictcheck_supported       = false,
+  Boolean                         $faillock_conf_supported             = false,
+  Boolean                         $pwhistory_conf_supported            = false,
+  Boolean                         $authconfig_present                  = false
 ) {
   if simplib::lookup('simp_options::pam', { 'default_value' => true }) {
     if $enable {
