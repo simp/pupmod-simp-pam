@@ -24,29 +24,33 @@ class pam::config {
   }
 
   if ($pam::password_check_backend == 'pwquality') {
-    # The 'retry' option  was introduced in RHEL 8.4 and Amazon Linux 2022, set it to false if
-    # lower than those versions so it doesn't get included
-    if ($facts['os']['name'] == 'Amazon' and Integer($facts['os']['release']['major']) < 2022) or
-    ($facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) < 8) or
-    # CentOS Streams doesn't provide a minor version number:
-    (Integer($facts['os']['release']['major']) == 8 and
-    $facts['os']['release']['minor'] and Integer($facts['os']['release']['minor']) < 4) {
-      $_cracklib_retry = false
-    } else {
+    # The 'retry' option was introduced in RHEL 8.4 and Amazon Linux 2022
+    # Use the OS capability flag to determine if it should be included
+    if $pam::cracklib_retry_supported {
       $_cracklib_retry = $pam::cracklib_retry
+    } else {
+      $_cracklib_retry = false
     }
 
-    # The dictcheck, enforce_for_root, and reject_username options were introduced to the pwquality.conf file in RHEL 8 and Amazon 2022,
-    # Set them to false if less than those versions.
-    if ($facts['os']['name'] == 'Amazon' and Integer($facts['os']['release']['major']) < 2022) or
-    ($facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) < 8) {
-      $_cracklib_enforce_for_root = false
-      $_cracklib_reject_username = false
-      $_dictcheck = false
-    } else {
+    # The dictcheck, enforce_for_root, and reject_username options were introduced
+    # to the pwquality.conf file in RHEL 8 and Amazon 2022
+    # Use the OS capability flags to determine if they should be included
+    if $pam::pwquality_enforce_for_root_supported {
       $_cracklib_enforce_for_root = $pam::cracklib_enforce_for_root
+    } else {
+      $_cracklib_enforce_for_root = false
+    }
+
+    if $pam::pwquality_reject_username_supported {
       $_cracklib_reject_username = $pam::cracklib_reject_username
+    } else {
+      $_cracklib_reject_username = false
+    }
+
+    if $pam::pwquality_dictcheck_supported {
       $_dictcheck = $pam::dictcheck
+    } else {
+      $_dictcheck = false
     }
 
     file { '/etc/security/pwquality.conf':
@@ -122,9 +126,7 @@ class pam::config {
       ;
   }
 
-  if (($facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) < 8) or
-  ($facts['os']['name'] == 'Amazon' and Integer($facts['os']['release']['major']) < 2022)) and
-  ($pam::disable_authconfig == true) {
+  if $pam::authconfig_present and ($pam::disable_authconfig == true) {
     # Replace authconfig and authconfig-tui with a no-op script
     # so that those tools can't be used to modify PAM.
     file { '/usr/local/sbin/simp_authconfig.sh':
@@ -171,10 +173,9 @@ class pam::config {
     }
   }
 
-  # EL 7 and Amazon Linux 2 don't utilize faillock.conf and pwhistory.conf, it will break if used
-  if ($facts['os']['family'] == 'RedHat' and Integer($facts['os']['release']['major']) > 7) or
-  (($facts['os']['name'] == 'Amazon') and Integer($facts['os']['release']['major']) >= 2022) {
-    if ($pam::manage_faillock_conf) {
+  # EL 7 and Amazon Linux 2 don't utilize faillock.conf and pwhistory.conf
+  if $pam::faillock_conf_supported or $pam::pwhistory_conf_supported {
+    if ($pam::manage_faillock_conf and $pam::faillock_conf_supported) {
       file { '/etc/security/faillock.conf':
         ensure  => 'file',
         owner   => 'root',
@@ -197,7 +198,7 @@ class pam::config {
       }
     }
 
-    if ($pam::manage_pwhistory_conf) {
+    if ($pam::manage_pwhistory_conf and $pam::pwhistory_conf_supported) {
       file { '/etc/security/pwhistory.conf':
         ensure  => 'file',
         owner   => 'root',

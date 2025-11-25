@@ -1,0 +1,20 @@
+---
+# Amazon Linux 2 OS capabilities
+# Amazon Linux 2 is similar to EL7 - uses pwquality but without newer options
+
+# pwquality options not supported in Amazon Linux 2
+pam::cracklib_retry_supported: false
+pam::pwquality_enforce_for_root_supported: false
+pam::pwquality_reject_username_supported: false
+pam::pwquality_dictcheck_supported: false
+
+# Config file support
+pam::faillock_conf_supported: false
+pam::pwhistory_conf_supported: false
+
+# authconfig is present and needs to be disabled
+pam::authconfig_present: true
+
+# Other Amazon Linux 2-specific settings
+pam::password_check_backend: 'pwquality'
+pam::locale_file: '/etc/locale.conf'

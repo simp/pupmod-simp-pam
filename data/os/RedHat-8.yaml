@@ -1,0 +1,25 @@
+---
+# EL8 OS capabilities
+# EL8 supports newer pwquality options and config files
+#
+# NOTE: The 'retry' option was introduced in RHEL 8.4. If you are deploying
+# to RHEL/CentOS 8.0-8.3, you should override pam::cracklib_retry_supported
+# to false in your Hiera data. These older minor versions are now end-of-life
+# and are not commonly deployed.
+
+# pwquality options supported in EL8
+pam::cracklib_retry_supported: true
+pam::pwquality_enforce_for_root_supported: true
+pam::pwquality_reject_username_supported: true
+pam::pwquality_dictcheck_supported: true
+
+# Config file support
+pam::faillock_conf_supported: true
+pam::pwhistory_conf_supported: true
+
+# authconfig has been replaced with authselect
+pam::authconfig_present: false
+
+# Other EL8-specific settings
+pam::password_check_backend: 'pwquality'
+pam::locale_file: '/etc/locale.conf'

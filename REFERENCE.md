@@ -62,6 +62,7 @@ The following parameters are available in the `pam` class:
 * [`cracklib_badwords`](#-pam--cracklib_badwords)
 * [`cracklib_dictpath`](#-pam--cracklib_dictpath)
 * [`dictcheck`](#-pam--dictcheck)
+* [`nullok`](#-pam--nullok)
 * [`rm_pwquality_conf_d`](#-pam--rm_pwquality_conf_d)
 * [`deny`](#-pam--deny)
 * [`faillock`](#-pam--faillock)
@@ -115,6 +116,13 @@ The following parameters are available in the `pam` class:
 * [`faillock_local_users_only`](#-pam--faillock_local_users_only)
 * [`faillock_nodelay`](#-pam--faillock_nodelay)
 * [`faillock_admin_group`](#-pam--faillock_admin_group)
+* [`cracklib_retry_supported`](#-pam--cracklib_retry_supported)
+* [`pwquality_enforce_for_root_supported`](#-pam--pwquality_enforce_for_root_supported)
+* [`pwquality_reject_username_supported`](#-pam--pwquality_reject_username_supported)
+* [`pwquality_dictcheck_supported`](#-pam--pwquality_dictcheck_supported)
+* [`faillock_conf_supported`](#-pam--faillock_conf_supported)
+* [`pwhistory_conf_supported`](#-pam--pwhistory_conf_supported)
+* [`authconfig_present`](#-pam--authconfig_present)
 
 ##### <a name="-pam--password_check_backend"></a>`password_check_backend`
 
@@ -323,6 +331,16 @@ performed using the cracklib library. This option will be ignored
 unless the OS major version is higher than 7.
 
 Default value: `1`
+
+##### <a name="-pam--nullok"></a>`nullok`
+
+Data type: `Boolean`
+
+If true, blank passwords will be allowed for users. DO NOT set this to true
+unless you and your organization are willing to accept the risks of having
+accounts with blank passwords.
+
+Default value: `false`
 
 ##### <a name="-pam--rm_pwquality_conf_d"></a>`rm_pwquality_conf_d`
 
@@ -792,6 +810,69 @@ this module the same as the root account.
 
 Default value: `undef`
 
+##### <a name="-pam--cracklib_retry_supported"></a>`cracklib_retry_supported`
+
+Data type: `Boolean`
+
+Whether the OS supports the 'retry' option in pwquality.conf
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
+##### <a name="-pam--pwquality_enforce_for_root_supported"></a>`pwquality_enforce_for_root_supported`
+
+Data type: `Boolean`
+
+Whether the OS supports the 'enforce_for_root' option in pwquality.conf
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
+##### <a name="-pam--pwquality_reject_username_supported"></a>`pwquality_reject_username_supported`
+
+Data type: `Boolean`
+
+Whether the OS supports the 'reject_username' option in pwquality.conf
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
+##### <a name="-pam--pwquality_dictcheck_supported"></a>`pwquality_dictcheck_supported`
+
+Data type: `Boolean`
+
+Whether the OS supports the 'dictcheck' option in pwquality.conf
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
+##### <a name="-pam--faillock_conf_supported"></a>`faillock_conf_supported`
+
+Data type: `Boolean`
+
+Whether the OS supports /etc/security/faillock.conf
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
+##### <a name="-pam--pwhistory_conf_supported"></a>`pwhistory_conf_supported`
+
+Data type: `Boolean`
+
+Whether the OS supports /etc/security/pwhistory.conf
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
+##### <a name="-pam--authconfig_present"></a>`authconfig_present`
+
+Data type: `Boolean`
+
+Whether authconfig is present on the OS and needs to be disabled
+This is automatically set via Hiera based on OS version
+
+Default value: `false`
+
 ### <a name="pam--access"></a>`pam::access`
 
 Use ``pam::access::rule`` to manage ``access.conf`` entries and remember
@@ -1118,6 +1199,7 @@ The following parameters are available in the `pam::auth` defined type:
 * [`cracklib_minclass`](#-pam--auth--cracklib_minclass)
 * [`cracklib_minlen`](#-pam--auth--cracklib_minlen)
 * [`cracklib_retry`](#-pam--auth--cracklib_retry)
+* [`nullok`](#-pam--auth--nullok)
 * [`oath`](#-pam--auth--oath)
 * [`oath_window`](#-pam--auth--oath_window)
 * [`deny`](#-pam--auth--deny)
@@ -1146,6 +1228,8 @@ The following parameters are available in the `pam::auth` defined type:
 * [`enable_separator`](#-pam--auth--enable_separator)
 * [`inactive`](#-pam--auth--inactive)
 * [`cert_auth`](#-pam--auth--cert_auth)
+* [`faillock_conf_supported`](#-pam--auth--faillock_conf_supported)
+* [`pwhistory_conf_supported`](#-pam--auth--pwhistory_conf_supported)
 * [`content`](#-pam--auth--content)
 
 ##### <a name="-pam--auth--password_check_backend"></a>`password_check_backend`
@@ -1331,6 +1415,14 @@ Data type: `Integer[0]`
 
 
 Default value: `$pam::cracklib_retry`
+
+##### <a name="-pam--auth--nullok"></a>`nullok`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::nullok`
 
 ##### <a name="-pam--auth--oath"></a>`oath`
 
@@ -1555,6 +1647,22 @@ Data type: `Optional[Enum['try','require']]`
 
 
 Default value: `$pam::cert_auth`
+
+##### <a name="-pam--auth--faillock_conf_supported"></a>`faillock_conf_supported`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::faillock_conf_supported`
+
+##### <a name="-pam--auth--pwhistory_conf_supported"></a>`pwhistory_conf_supported`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::pwhistory_conf_supported`
 
 ##### <a name="-pam--auth--content"></a>`content`
 

@@ -1,0 +1,20 @@
+---
+# EL9 OS capabilities
+# EL9 has the same capabilities as EL8
+
+# pwquality options supported in EL9
+pam::cracklib_retry_supported: true
+pam::pwquality_enforce_for_root_supported: true
+pam::pwquality_reject_username_supported: true
+pam::pwquality_dictcheck_supported: true
+
+# Config file support
+pam::faillock_conf_supported: true
+pam::pwhistory_conf_supported: true
+
+# authconfig has been replaced with authselect
+pam::authconfig_present: false
+
+# Other EL9-specific settings
+pam::password_check_backend: 'pwquality'
+pam::locale_file: '/etc/locale.conf'
