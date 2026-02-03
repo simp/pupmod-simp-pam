@@ -73,8 +73,8 @@ describe 'pam' do
         let(:params) { { manage_faillock_conf: true } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] > '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] >= '2022'))
+        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major].to_i > 7)) ||
+           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i >= 2022))
           it { is_expected.to contain_file('/etc/security/faillock.conf') }
         else
           it { is_expected.not_to contain_file('/etc/security/faillock.conf') }
@@ -108,8 +108,8 @@ describe 'pam' do
         let(:params) { { manage_pwhistory_conf: true } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] > '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] >= '2022'))
+        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major].to_i > 7)) ||
+           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i >= 2022))
           it { is_expected.to contain_file('/etc/security/pwhistory.conf') }
         else
           it { is_expected.not_to contain_file('/etc/security/pwhistory.conf') }
@@ -135,6 +135,23 @@ describe 'pam' do
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$}) }
         it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$}) }
+      end
+
+      context 'with use_authselect set to true' do
+        let(:params) { { use_authselect: true } }
+
+        it { is_expected.to compile.with_all_deps }
+        it {
+          is_expected.to contain_authselect__custom_profile('simp').with(
+          'base_profile'     => 'sssd',
+          'vendor'           => true,
+          'symlink_meta'     => true,
+          'symlink_nsswitch' => true,
+          'symlink_pam'      => false,
+          'symlink_dconf'    => true,
+        )
+        }
+        it { is_expected.to contain_class('authselect').with_profile('simp') }
       end
     end
   end

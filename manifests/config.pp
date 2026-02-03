@@ -13,16 +13,6 @@ class pam::config {
     recurse => true,
   }
 
-  if $pam::use_authselect {
-    file { '/etc/pam.d/simp':
-      ensure  => 'directory',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      recurse => true,
-    }
-  }
-
   if ($pam::password_check_backend == 'pwquality') {
     # The 'retry' option was introduced in RHEL 8.4 and Amazon Linux 2022
     # Use the OS capability flag to determine if it should be included
@@ -216,4 +206,27 @@ class pam::config {
   }
 
   if ! empty($pam::auth_sections) { ::pam::auth { $pam::auth_sections: } }
+
+  # If $pam::use_authselect is true, select the $pam::authselect_profile_name authselect profile
+  if $pam::use_authselect {
+    # Created the 'simp' authselect profile skeleton with all of the non-pam bits
+    # symlinked from the $pam::authselect_base_profile profile. The pam::auth class
+    # will fill the content of the pam files in a later step.
+    authselect::custom_profile { $pam::authselect_profile_name:
+      base_profile     => $pam::authselect_base_profile,
+      vendor           => true,
+      symlink_meta     => true,
+      symlink_nsswitch => true,
+      symlink_pam      => false,
+      symlink_dconf    => true,
+    }
+
+    class { 'authselect':
+      profile => $pam::authselect_profile_name,
+    }
+
+    Pam::Auth <| |> -> Class['authselect']
+    Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth <| |>
+    Authselect::Custom_profile[$pam::authselect_profile_name] -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
+  }
 }

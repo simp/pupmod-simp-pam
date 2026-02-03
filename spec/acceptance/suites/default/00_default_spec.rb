@@ -12,6 +12,10 @@ describe 'pam class' do
   hosts.each do |host|
     context "on #{host}" do
       context 'default parameters' do
+        def os_major(host)
+          on(host, 'facter -p os.release.major').stdout.strip.to_i
+        end
+
         it 'works with no errors' do
           apply_manifest_on(host, manifest, catch_failures: true)
         end
@@ -23,7 +27,7 @@ describe 'pam class' do
         os_major = fact_on(host, 'os.release.major')
 
         # Total hack to support Amazon without a bunch of logic
-        if ['7', '2'].include?(os_major)
+        if ['2'].include?(os_major)
           it 'replaces authconfig and authconfi-tui links' do
             result = on(host, 'ls -l /usr/sbin/authconfig')
             expect(result.stdout).to match(%r{authconfig -> /usr/local/sbin/simp_authconfig.sh})
@@ -43,6 +47,10 @@ describe 'pam class' do
           end
         else
           it 'does not replace authconfig and authselect should do nothing if not forced' do
+            skip('authselect works differently on el10+ and does not require --force') unless os_major(host) < 10
+            # Install the authconfig package if it doesn't exist
+            on(host, 'dnf install -y authconfig')
+
             # OEL symlinks this internally
             result = on(host, 'ls -l /usr/sbin/authconfig', accept_all_exit_codes: true)
             expect(result.stdout).not_to match(%r{simp_auth})
@@ -51,6 +59,28 @@ describe 'pam class' do
             expect(result.stderr).to match(%r{Refusing to activate profile})
             apply_manifest_on(host, manifest, { catch_changes: true })
           end
+        end
+      end
+      context 'with use_authselect set to true' do
+        let(:manifest) do
+          <<~EOS
+            class { 'pam':
+              use_authselect => true,
+            }
+          EOS
+        end
+
+        it 'applies the manifest without error' do
+          apply_manifest_on(host, manifest, catch_failures: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, { catch_changes: true })
+        end
+
+        it 'activates the simp authselect profile' do
+          result = on(host, '/usr/bin/authselect current')
+          expect(result.stdout).to match(%r{Profile ID:\s+simp})
         end
       end
     end

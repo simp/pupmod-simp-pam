@@ -107,6 +107,8 @@ The following parameters are available in the `pam` class:
 * [`separator`](#-pam--separator)
 * [`disable_authconfig`](#-pam--disable_authconfig)
 * [`use_authselect`](#-pam--use_authselect)
+* [`authselect_profile_name`](#-pam--authselect_profile_name)
+* [`authselect_base_profile`](#-pam--authselect_base_profile)
 * [`auth_basedir`](#-pam--auth_basedir)
 * [`package_ensure`](#-pam--package_ensure)
 * [`manage_faillock_conf`](#-pam--manage_faillock_conf)
@@ -735,13 +737,30 @@ will just live under a different directory and be included by the original files
 
 Default value: `simplib::lookup('simp_options::authselect', { 'default_value' => false })`
 
+##### <a name="-pam--authselect_profile_name"></a>`authselect_profile_name`
+
+Data type: `String`
+
+The name of the authselect profile to create and use.
+
+Default value: `'simp'`
+
+##### <a name="-pam--authselect_base_profile"></a>`authselect_base_profile`
+
+Data type: `String`
+
+The base profile to use when creating the 'simp' authselect profile.
+This is only used if 'use_authselect' is true. The default is 'sssd'.
+
+Default value: `'sssd'`
+
 ##### <a name="-pam--auth_basedir"></a>`auth_basedir`
 
-Data type: `Optional[StdLib::Absolutepath]`
+Data type: `StdLib::Absolutepath`
 
 The directory in which the auth files will be created
 
-Default value: `undef`
+Default value: `'/usr/share/authselect/vendor/simp'`
 
 ##### <a name="-pam--package_ensure"></a>`package_ensure`
 

@@ -145,14 +145,9 @@ define pam::auth (
     fail("\$name must be one of '${_valid_targets_join}'.")
   }
 
-  unless $pam::auth_basedir {
-    $basedir = $pam::use_authselect ? {
-      true => '/etc/pam.d/simp',
-      default => '/etc/pam.d',
-    }
-  }
-  else {
-    $basedir = $pam::auth_basedir
+  $basedir = $pam::use_authselect ? {
+    true => $pam::auth_basedir,
+    default => '/etc/pam.d',
   }
 
   $target = "${name}-auth"

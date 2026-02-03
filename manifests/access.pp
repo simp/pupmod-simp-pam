@@ -34,8 +34,7 @@ class pam::access (
   Boolean          $default_deny     = true,
   Optional[Hash]   $users            = undef,
   Stdlib::Filemode $access_file_mode = '0644',
-){
-
+) {
   if $default_deny {
     include 'pam::access::default_deny'
   }
@@ -45,7 +44,7 @@ class pam::access (
     group          => 'root',
     mode           => $access_file_mode,
     ensure_newline => true,
-    warn           => true
+    warn           => true,
   }
 
   # Allow root locally by default.
@@ -53,7 +52,7 @@ class pam::access (
     permission => '+',
     users      => ['root'],
     origins    => ['LOCAL'],
-    order      => 1
+    order      => 1,
   }
 
   if $users {
@@ -81,6 +80,4 @@ class pam::access (
       }
     }
   }
-
 }
-

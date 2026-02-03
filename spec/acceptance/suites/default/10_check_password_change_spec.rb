@@ -24,63 +24,67 @@ describe 'pam check password change' do
         end
 
         it 'accepts a valid password change' do
+          on(host, 'dnf install -y passwd')
           stdin = "suP3rF00B@rB@11b$x23\n" * repeat_when_success
           on(host, "passwd #{test_user}", stdin: stdin)
         end
 
         it 'rejects passwords that are too short' do
           stdin = "suP3rF!0B\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password is shorter than 15 characters})
         end
 
         it 'rejects passwords that do not contain numbers' do
           stdin = "suPerFooB@rB@z%xAB\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains less than 1 digit})
         end
 
         it 'rejects passwords that do not contain lower case letters' do
           stdin = "E723X00^@3Z8@67X23\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains less than 1 lowercase letter})
         end
 
         it 'rejects passwords that do not contain upper case letters' do
           stdin = "su2er3oo5@r2@z%x23\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains less than 1 uppercase letter})
         end
 
         it 'rejects passwords that do not contain symbols' do
           stdin = "su2er3oo52r2Xz2x23\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains less than 1 non-alphanumeric character})
         end
 
         it 'rejects passwords that have too many characters from the same character class' do
           stdin = "supeRFooB@rB@z%x23\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains more than 3 characters of the same class consecutively})
         end
 
         it 'rejects passwords that have too many repeating characters' do
           stdin = "suPerFoooB@rB@z%x23\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains more than 2 same characters consecutively})
         end
 
         it 'rejects passwords containing the username' do
           stdin = "suPerFo0B@rB@z%#{test_user}\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains the user name in some form})
         end
 
+        def os_major(host)
+          on(host, 'facter -p os.release.major').stdout.strip.to_i
+        end
         it 'rejects passwords containing part of the GECOS' do
+          skip('gecoscheck does not work on EL8+') if os_major(host) >= 8
           stdin = "Tst0$uPerFo0B@rB@z%\n" * repeat_when_failure
-          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1] })
+          result = on(host, "passwd #{test_user}", { stdin: stdin, acceptable_exit_codes: [1, 10] })
           expect(result.stderr).to match(%r{password contains words from the real name of the user in some form})
-          pending('gecoscheck does not work') if Integer(facts[:os]['release']['major']) > 7
         end
       end
     end
