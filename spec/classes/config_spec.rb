@@ -170,9 +170,7 @@ describe 'pam' do
           else
             it { is_expected.to contain_file('/etc/security/pwquality.conf').with_content(el_gt8_4_pwquality_conf) }
           end
-        elsif os_facts[:os][:release][:major] < '8'
-          it { is_expected.to contain_file('/etc/security/pwquality.conf').with_content(el7_pwquality_conf) }
-        elsif os_facts[:os][:release][:minor] && os_facts[:os][:release][:major] == '8' && os_facts[:os][:release][:minor].to_i < 4
+        elsif os_facts[:os][:release][:minor] && os_facts[:os][:release][:major].to_i == 8 && os_facts[:os][:release][:minor].to_i < 4
           it { is_expected.to contain_file('/etc/security/pwquality.conf').with_content(el8_lt4_pwquality_conf) }
         else
           it { is_expected.to contain_file('/etc/security/pwquality.conf').with_content(el_gt8_4_pwquality_conf) }
@@ -234,8 +232,7 @@ describe 'pam' do
           EOM
         }
 
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] <= '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] < '2022'))
+        if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i < 2022)
           it {
             project_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
             expected = IO.read(File.join(project_dir, 'files', 'simp_authconfig.sh'))
@@ -452,8 +449,7 @@ describe 'pam' do
         let(:params) { { manage_faillock_conf: true } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] <= '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] <= '2022'))
+        if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
           it { is_expected.not_to contain_file('/etc/security/faillock.conf') }
         else
           it { is_expected.to contain_file('/etc/security/faillock.conf').with_content(default_faillock_conf) }
@@ -464,8 +460,7 @@ describe 'pam' do
         let(:params) { { manage_faillock_conf: true, even_deny_root: false } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] <= '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] <= '2022'))
+        if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
           it { is_expected.not_to contain_file('/etc/security/faillock.conf') }
         else
           it { is_expected.to contain_file('/etc/security/faillock.conf').with_content(no_even_deny_root_faillock_conf) }
@@ -492,8 +487,7 @@ describe 'pam' do
         end
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] <= '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] <= '2022'))
+        if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
           it { is_expected.not_to contain_file('/etc/security/faillock.conf') }
         else
           it { is_expected.to contain_file('/etc/security/faillock.conf').with_content(all_params_faillock_conf) }
@@ -504,8 +498,7 @@ describe 'pam' do
         let(:params) { { manage_pwhistory_conf: true } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] <= '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] <= '2022'))
+        if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
           it { is_expected.not_to contain_file('/etc/security/pwhistory.conf') }
         else
           it { is_expected.to contain_file('/etc/security/pwhistory.conf').with_content(default_pwhistory_conf) }
@@ -525,8 +518,7 @@ describe 'pam' do
         end
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major] <= '7')) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major] <= '2022'))
+        if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
           it { is_expected.not_to contain_file('/etc/security/pwhistory.conf') }
         else
           it { is_expected.to contain_file('/etc/security/pwhistory.conf').with_content(all_params_pwhistory_conf) }

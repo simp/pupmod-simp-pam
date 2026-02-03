@@ -79,9 +79,9 @@ define pam::access::rule (
   Optional[String]      $comment    = undef,
   Integer[1,9999999999] $order      = 1000
 ) {
-  include '::pam::access'
+  include 'pam::access'
   if (simplib::lookup('pam::enable_separator', { 'default_value'    => true }) == true) {
-    $_separator = simplib::lookup('pam::separator', { 'default_value' => ','})
+    $_separator = simplib::lookup('pam::separator', { 'default_value' => ',' })
   } else {
     $_separator = ' '
   }
@@ -106,6 +106,6 @@ define pam::access::rule (
   concat::fragment { "pam_access_rule_${_name}":
     order   => $order,
     target  => '/etc/security/access.conf',
-    content => $_content
+    content => $_content,
   }
 }

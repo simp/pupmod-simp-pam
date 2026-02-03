@@ -46,7 +46,7 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
               let(:el_version) do
-                if Integer(os_facts[:os][:release][:major]) <= 7
+                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
                   'el7'
                 else
                   'el8'
@@ -110,7 +110,7 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
               let(:el_version) do
-                if Integer(os_facts[:os][:release][:major]) <= 7
+                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
                   'el7'
                 else
                   'el8'
@@ -214,7 +214,7 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
               let(:el_version) do
-                if Integer(os_facts[:os][:release][:major]) <= 7
+                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
                   'el7'
                 else
                   'el8'
@@ -243,7 +243,7 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
               let(:el_version) do
-                if Integer(os_facts[:os][:release][:major]) <= 7
+                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
                   'el7'
                 else
                   'el8'
@@ -279,7 +279,7 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
               let(:el_version) do
-                if Integer(os_facts[:os][:release][:major]) <= 7
+                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
                   'el7'
                 else
                   'el8'
@@ -309,7 +309,7 @@ describe 'pam::auth' do
               let(:title) { 'password' }
               let(:filename) { '/etc/pam.d/password-auth' }
               let(:el_version) do
-                if Integer(os_facts[:os][:release][:major]) <= 7
+                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
                   'el7'
                 else
                   'el8'
@@ -333,7 +333,7 @@ describe 'pam::auth' do
           let(:title) { 'password' }
           let(:filename) { '/etc/pam.d/password-auth' }
           let(:el_version) do
-            if Integer(os_facts[:os][:release][:major]) <= 7
+            if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
               'el7'
             else
               'el8'
@@ -355,7 +355,7 @@ describe 'pam::auth' do
           let(:title) { 'system' }
           let(:filename) { '/etc/pam.d/system-auth' }
           let(:el_version) do
-            if Integer(os_facts[:os][:release][:major]) <= 7
+            if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
               'el7'
             else
               'el8'
@@ -377,7 +377,7 @@ describe 'pam::auth' do
           let(:title) { 'system' }
           let(:filename) { '/etc/pam.d/system-auth' }
           let(:el_version) do
-            if Integer(os_facts[:os][:release][:major]) <= 7
+            if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
               'el7'
             else
               'el8'

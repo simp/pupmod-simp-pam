@@ -39,7 +39,7 @@ class pam::limits (
     mode           => '0640',
     order          => 'numeric',
     ensure_newline => true,
-    warn           => true
+    warn           => true,
   }
 
   if ($rules and !empty($rules)) { create_resources('pam::limits::rule', $rules) }

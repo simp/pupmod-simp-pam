@@ -9,7 +9,6 @@ class pam::access::default_deny {
     permission => '-',
     users      => ['ALL'],
     origins    => ['ALL'],
-    order      => 9999999999
+    order      => 9999999999,
   }
 }
-

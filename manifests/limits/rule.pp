@@ -62,7 +62,7 @@ define pam::limits::rule (
   Enum['hard','soft','-']   $type   = '-',
   Integer[0]                $order  = 1000
 ) {
-  include '::pam::limits'
+  include 'pam::limits'
 
   if $item in ['priority','nice'] {
     if $value in ['unlimited','infinity'] {
@@ -79,6 +79,6 @@ define pam::limits::rule (
   concat::fragment { "pam_limits_rule_${_name}":
     order   => $order,
     target  => '/etc/security/limits.conf',
-    content => join($_content,"\n")
+    content => join($_content,"\n"),
   }
 }

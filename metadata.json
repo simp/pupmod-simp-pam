@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "7.4.0",
+  "version": "8.0.0",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -38,6 +38,10 @@
       {
         "name": "simp/oath",
         "version_requirement": ">= 0.1.0 < 1.0.0"
+      },
+      {
+        "name": "voxpupuli/puppet-authselect",
+        "version_requirement": ">= 1.1.2 < 2.0.0"
       }
     ]
   },
@@ -51,39 +55,40 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7",
-        "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "7",
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "7",
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Rocky",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     }
   ],

@@ -297,6 +297,13 @@
 #   In short, if this value is true, the files will be created the same way, they
 #   will just live under a different directory and be included by the original files
 #
+# @param authselect_profile_name
+#   The name of the authselect profile to create and use.
+#
+# @param authselect_base_profile
+#   The base profile to use when creating the 'simp' authselect profile.
+#   This is only used if 'use_authselect' is true. The default is 'sssd'.
+#
 # @param auth_basedir
 #   The directory in which the auth files will be created
 #
@@ -412,11 +419,13 @@ class pam (
   Optional[String]                $system_auth_content       = undef,
   Optional[String]                $password_auth_content     = undef,
   Optional[String]                $smartcard_auth_content    = undef,
-  Optional[StdLib::Absolutepath]  $auth_basedir              = undef,
+  StdLib::Absolutepath            $auth_basedir              = '/usr/share/authselect/vendor/simp',
   Boolean                         $enable                    = true,
   Boolean                         $enable_warning            = true,
   Boolean                         $disable_authconfig        = true,
   Boolean                         $use_authselect            = simplib::lookup('simp_options::authselect', { 'default_value' => false }),
+  String                          $authselect_profile_name   = 'simp',
+  String                          $authselect_base_profile   = 'sssd',
   Simplib::PackageEnsure          $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' }),
   Boolean                         $faillock                  = true,
   Boolean                         $manage_faillock_conf      = false,
