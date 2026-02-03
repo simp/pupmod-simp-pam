@@ -40,7 +40,7 @@
         "version_requirement": ">= 0.1.0 < 1.0.0"
       },
       {
-        "name": "voxpupuli/puppet-authselect",
+        "name": "puppet-authselect",
         "version_requirement": ">= 1.1.2 < 2.0.0"
       }
     ]
