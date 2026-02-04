@@ -1,3 +1,6 @@
+* Wed Feb 04 2026 Mike Riddle <mike@siura.us> 8.0.1
+- Fixed an ordering issue in authselect profile creation
+
 * Tue Feb 03 2026 Mike Riddle <mike@sicura.us> - 8.0.0
 - Removed el7 support
 - Added el10 support

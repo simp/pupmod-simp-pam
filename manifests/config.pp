@@ -225,8 +225,7 @@ class pam::config {
       profile => $pam::authselect_profile_name,
     }
 
-    Pam::Auth <| |> -> Class['authselect']
-    Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth <| |>
-    Authselect::Custom_profile[$pam::authselect_profile_name] -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
+    Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth[$pam::auth_sections]
+    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
   }
 }
