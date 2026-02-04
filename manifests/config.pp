@@ -222,7 +222,7 @@ class pam::config {
     }
 
     class { 'authselect':
-      profile         => $pam::authselect_profile_name,
+      profile => $pam::authselect_profile_name,
     }
 
     Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth <| |>
