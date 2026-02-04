@@ -222,11 +222,10 @@ class pam::config {
     }
 
     class { 'authselect':
-      profile => $pam::authselect_profile_name,
+      profile         => $pam::authselect_profile_name,
     }
 
-    Pam::Auth <| |> -> Class['authselect']
     Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth <| |>
-    Authselect::Custom_profile[$pam::authselect_profile_name] -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
+    Pam::Auth <| |> -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
   }
 }

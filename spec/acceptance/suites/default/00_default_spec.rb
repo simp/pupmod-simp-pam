@@ -82,6 +82,14 @@ describe 'pam class' do
           result = on(host, '/usr/bin/authselect current')
           expect(result.stdout).to match(%r{Profile ID:\s+simp})
         end
+
+        it 'matches content of /etc/authselect/password-auth to /usr/share/authselect/vendor/simp/password-auth' do
+          on(host, 'dnf install -y diffutils') unless host.check_for_command('diff')
+          # Compare the two files ignoring comments and newlines, authselect adds some comments and blank lines when selecting a profile
+          result = on(host, 'diff <(grep -v "^\s*#" /etc/authselect/password-auth | tr -d "\n") <(grep -v "^\s*#" /usr/share/authselect/vendor/simp/password-auth | tr -d "\n")',
+accept_all_exit_codes: true)
+          expect(result.exit_code).to eq(0)
+        end
       end
     end
   end
