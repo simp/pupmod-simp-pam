@@ -132,14 +132,6 @@ auth     required      pam_faillock.so preauth
 auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny=<%= $deny %><%= $_faillock_audit %> unlock_time=<%= $unlock_time %> fail_interval=<%= $fail_interval %><%= $_faillock_log_dir %><%= $_faillock_no_log_info %><%= $_faillock_local_users_only %><%= $_faillock_nodelay %><%= $_faillock_admin_group %><%= $_even_deny_root %>
 <%   } -%>
 <% } -%>
-<%
-if $pam_cert_auth {
-  $_pam_cert_auth = " ${pam_cert_auth}"
-}
-else {
-  $_pam_cert_auth = ''
-}
--%>
 <% if $name == 'fingerprint' { -%>
 auth     sufficient    pam_fprintd.so
 <% } -%>
@@ -155,7 +147,10 @@ auth     requisite     pam_deny.so
 <% if $name in ['system', 'password'] { -%>
 <%   if $faillock { -%>
 <%     if $sssd { -%>
-auth     [success=2 default=ignore] pam_sss.so forward_pass<%= $_pam_cert_auth %>
+<%       if $pam_cert_auth { -%>
+auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
+<%       } -%>
+auth     [success=2 default=ignore] pam_sss.so forward_pass
 <%     } -%>
 <%     if $inactive { -%>
 auth required pam_lastlog.so inactive=<%= $inactive %>
@@ -170,7 +165,10 @@ auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_t
 <%       } -%>
 <%   } else { -%>
 <%     if $sssd { -%>
-auth     sufficient    pam_sss.so forward_pass<%= $_pam_cert_auth %>
+<%       if $pam_cert_auth { -%>
+auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
+<%       } -%>
+auth     sufficient    pam_sss.so forward_pass
 <%     } -%>
 auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= <%= $uid %> quiet
 auth     [default=1 success=ok] pam_localuser.so

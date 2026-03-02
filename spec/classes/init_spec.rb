@@ -133,8 +133,10 @@ describe 'pam' do
         end
 
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$}) }
-        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass try_cert_auth$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=done authinfo_unavail=ignore ignore=ignore default=die\] pam_sss.so try_cert_auth$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=done authinfo_unavail=ignore ignore=ignore default=die\] pam_sss.so try_cert_auth$}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
       end
 
       context 'with use_authselect set to true' do
