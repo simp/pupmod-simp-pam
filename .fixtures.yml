@@ -5,7 +5,6 @@ fixtures:
     augeasproviders_core: https://github.com/simp/augeasproviders_core.git
     augeasproviders_ssh: https://github.com/simp/augeasproviders_ssh.git
     authselect: https://github.com/voxpupuli/puppet-authselect.git
-    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup.git
     concat: https://github.com/simp/puppetlabs-concat.git
     haveged: https://github.com/simp/pupmod-simp-haveged.git
     iptables: https://github.com/simp/pupmod-simp-iptables.git
