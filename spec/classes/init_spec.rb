@@ -139,6 +139,14 @@ describe 'pam' do
         it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
       end
 
+      context 'smartcard profile defaults to require_cert_auth when cert_auth is unset' do
+        # Preserves the strict smartcard-only semantics that pam_pkcs11.so used
+        # to provide via 'wait_for_card card_only' before it was replaced by
+        # pam_sss.so.
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_file('/etc/pam.d/smartcard-auth').with_content(%r{^auth     \[success=done ignore=ignore default=die\] pam_sss.so require_cert_auth$}) }
+      end
+
       context 'with use_authselect set to true' do
         let(:params) { { use_authselect: true } }
 
