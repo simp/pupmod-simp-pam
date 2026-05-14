@@ -1,5 +1,15 @@
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 9.0.0
 - Remove unmaintained Compliance Engine data
+- Drop support for end-of-life Amazon Linux 2
+- Replace the puppet requirement with openvox (>= 8 < 9)
+- Drop Puppet 7/Ruby 2.7 from the test bundle; pick up openvox alongside
+  puppet for the transition period
+- Run pr_tests workflows on Ruby 3.2/3.4 (was 2.7); expand the
+  acceptance matrix to cover the full supported-OS docker nodeset list
+  (Rocky/RHEL 8, 9, 10 and Oracle Linux 10 were missing)
+- Add docker_oel10 and docker_rocky10 acceptance nodesets
+- Source Oracle Linux vagrant boxes from oracle.github.io upstream JSON
+  metadata instead of the deprecated generic/oracle* boxes
 
 * Wed Feb 04 2026 Mike Riddle <mike@siura.us> 8.0.1
 - Fixed an ordering issue in authselect profile creation
