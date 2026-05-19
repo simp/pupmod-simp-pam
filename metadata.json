@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "8.0.1",
+  "version": "9.0.0",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -47,12 +47,6 @@
   },
   "operatingsystem_support": [
     {
-      "operatingsystem": "Amazon",
-      "operatingsystemrelease": [
-        "2"
-      ]
-    },
-    {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "9",
@@ -94,8 +88,8 @@
   ],
   "requirements": [
     {
-      "name": "puppet",
-      "version_requirement": ">= 7.0.0 < 9.0.0"
+      "name": "openvox",
+      "version_requirement": ">= 8.0.0 < 9.0.0"
     }
   ]
 }

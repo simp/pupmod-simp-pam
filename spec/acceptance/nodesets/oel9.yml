@@ -4,7 +4,8 @@ HOSTS:
     roles:
     - client
     platform: el-9-x86_64
-    box: generic/oracle9
+    box: oraclelinux/9
+    box_url: https://oracle.github.io/vagrant-projects/boxes/oraclelinux/9.json
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     family: oracle-linux-cloud/oracle-linux-9
     gce_machine_type: n1-standard-2

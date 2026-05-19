@@ -1,3 +1,13 @@
+* Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 9.0.0
+- Remove unmaintained Compliance Engine data
+- Drop support for end-of-life Amazon Linux 2
+- Drop Puppet 7 support; require openvox >= 8 < 9
+- Fix `try_cert_auth`/`require_cert_auth` breaking password fallback by
+  splitting the `pam_sss.so` cert auth and `forward_pass` directives onto
+  separate lines. Combining them on a single line caused PAM to ignore the
+  `authinfo_unavail` flag, making password authentication fail when a smart
+  card was not present.
+
 * Wed Feb 04 2026 Mike Riddle <mike@siura.us> 8.0.1
 - Fixed an ordering issue in authselect profile creation
 
