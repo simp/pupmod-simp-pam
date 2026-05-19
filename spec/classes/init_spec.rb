@@ -40,6 +40,23 @@ describe 'pam' do
         it { is_expected.to contain_package('libpwquality').with_ensure('latest') }
       end
 
+      context 'with enable_ssh_agent_auth=false (default)' do
+        it { is_expected.not_to contain_package('pam_ssh_agent_auth') }
+      end
+
+      context 'with enable_ssh_agent_auth=true' do
+        let(:params) { { enable_ssh_agent_auth: true } }
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_package('pam_ssh_agent_auth').with_ensure('present') }
+      end
+
+      context 'with enable_ssh_agent_auth=true and package_ensure=latest' do
+        let(:params) { { enable_ssh_agent_auth: true, package_ensure: 'latest' } }
+
+        it { is_expected.to contain_package('pam_ssh_agent_auth').with_ensure('latest') }
+      end
+
       context 'with all possible faillock params set' do
         let(:params) do
           {

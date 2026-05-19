@@ -10,4 +10,8 @@ class pam::install {
   if $pam::password_check_backend == 'pwquality' {
     package { 'libpwquality': ensure => $pam::package_ensure }
   }
+
+  if $pam::enable_ssh_agent_auth {
+    package { 'pam_ssh_agent_auth': ensure => $pam::package_ensure }
+  }
 }
