@@ -225,6 +225,18 @@
 #
 #   * Set to an empty Array to not audit TTY actions for any user
 #
+# @param enable_ssh_agent_auth
+#   Install ``pam_ssh_agent_auth`` and enable it for ``sudo`` and ``sudo-i``
+#   so users may authenticate using an SSH agent identity whose public key
+#   matches one returned by ``ssh_agent_auth_authorized_keys_command``.
+#
+#   * The ``pam_ssh_agent_auth`` package typically ships in EPEL on RHEL-like
+#     systems; ensure the appropriate repository is enabled.
+#
+# @param ssh_agent_auth_authorized_keys_command
+#   Absolute path to the helper used by ``pam_ssh_agent_auth.so`` to look up
+#   a user's authorized keys. Only used when ``enable_ssh_agent_auth`` is true.
+#
 # @param su_content_extra
 #   User-specified content to be added to ``/etc/pam.d/su`` in addition to
 #   the rest of the templated content
@@ -408,6 +420,8 @@ class pam (
   Boolean                         $enable_separator          = true,
   String[0]                       $separator                 = ',',
   Array[String[0]]                $tty_audit_users           = ['root'],
+  Boolean                         $enable_ssh_agent_auth     = false,
+  Stdlib::Absolutepath            $ssh_agent_auth_authorized_keys_command = '/usr/bin/sss_ssh_authorizedkeys',
   Pam::AuthSections               $auth_sections             = ['fingerprint', 'system', 'password', 'smartcard'],
   Optional[Enum['try','require']] $cert_auth                 = undef,
   Optional[Integer]               $inactive                  = undef,
