@@ -136,7 +136,11 @@ auth     required      pam_faillock.so preauth<%= $_display_account_lock %> deny
 auth     sufficient    pam_fprintd.so
 <% } -%>
 <% if $name == 'smartcard' { -%>
-auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only
+<%   if $pam_cert_auth { -%>
+auth     [success=done ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
+<%   } else { -%>
+auth     [success=done ignore=ignore default=die] pam_sss.so require_cert_auth
+<%   } -%>
 <% } -%>
 <% if $oath and ($name == 'system') { -%>
 auth     [success=3 default=ignore] pam_listfile.so item=group sense=allow file=/etc/liboath/exclude_groups.oath quiet
@@ -293,11 +297,7 @@ password     sufficient    pam_sss.so use_authtok
 <%= $_pam_unix %>
 <%   } -%>
 <% } -%>
-<% if $name == 'smartcard' { -%>
-password     required      pam_pkcs11.so
-<% } else { -%>
 password     required      pam_deny.so
-<% } -%>
 
 session      optional      pam_keyinit.so revoke
 session      required      pam_limits.so

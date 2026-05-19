@@ -6,7 +6,7 @@
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
 auth     required      pam_faillock.so preauth silent deny=5 audit unlock_time=900 fail_interval=900 even_deny_root root_unlock_time=60
-auth     [success=done ignore=ignore default=die] pam_pkcs11.so wait_for_card card_only
+auth     [success=done ignore=ignore default=die] pam_sss.so require_cert_auth
 auth     requisite     pam_succeed_if.so uid >= 1000 quiet
 auth     required      pam_deny.so
 
@@ -17,7 +17,7 @@ account     sufficient    pam_succeed_if.so uid < 1000 quiet
 account     requisite     pam_access.so listsep=, nodefgroup
 account     required      pam_permit.so
 
-password     required      pam_pkcs11.so
+password     required      pam_deny.so
 
 session      optional      pam_keyinit.so revoke
 session      required      pam_limits.so
