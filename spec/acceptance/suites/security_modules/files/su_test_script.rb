@@ -81,7 +81,7 @@ def main
   outputs = run_interactive("su -l #{options[:user]}", options[:pass],
                             %r{#{options[:prompt]}})
   if outputs.match?(%r{#{options[:output]}}m)
-    puts 'Login successful'
+    warn 'Login successful'
   else
     abort 'Login failed'
   end
