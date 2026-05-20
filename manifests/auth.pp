@@ -152,9 +152,22 @@ define pam::auth (
 
   $target = "${name}-auth"
 
-  $_pam_cert_auth = $cert_auth ? {
+  # The 'smartcard' profile previously used pam_pkcs11.so with 'card_only',
+  # which enforced strict smartcard-only auth. Now that the stack uses
+  # pam_sss.so, default $cert_auth to 'require' for that profile so the
+  # equivalent behavior (require_cert_auth) is preserved when the caller
+  # doesn't specify it explicitly.
+  if $cert_auth {
+    $_cert_auth = $cert_auth
+  } elsif $name == 'smartcard' {
+    $_cert_auth = 'require'
+  } else {
+    $_cert_auth = undef
+  }
+
+  $_pam_cert_auth = $_cert_auth ? {
     undef   => undef,
-    default => "${cert_auth}_cert_auth"
+    default => "${_cert_auth}_cert_auth"
   }
 
   if $content {
