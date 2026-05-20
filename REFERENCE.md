@@ -90,6 +90,8 @@ The following parameters are available in the `pam` class:
 * [`use_openshift`](#-pam--use_openshift)
 * [`sssd`](#-pam--sssd)
 * [`tty_audit_users`](#-pam--tty_audit_users)
+* [`enable_ssh_agent_auth`](#-pam--enable_ssh_agent_auth)
+* [`ssh_agent_auth_authorized_keys_command`](#-pam--ssh_agent_auth_authorized_keys_command)
 * [`su_content_extra`](#-pam--su_content_extra)
 * [`su_content`](#-pam--su_content)
 * [`other_content`](#-pam--other_content)
@@ -579,6 +581,28 @@ The users for which TTY auditing is enabled
 * Set to an empty Array to not audit TTY actions for any user
 
 Default value: `['root']`
+
+##### <a name="-pam--enable_ssh_agent_auth"></a>`enable_ssh_agent_auth`
+
+Data type: `Boolean`
+
+Install ``pam_ssh_agent_auth`` and enable it for ``sudo`` and ``sudo-i``
+so users may authenticate using an SSH agent identity whose public key
+matches one returned by ``ssh_agent_auth_authorized_keys_command``.
+
+* The ``pam_ssh_agent_auth`` package typically ships in EPEL on RHEL-like
+  systems; ensure the appropriate repository is enabled.
+
+Default value: `false`
+
+##### <a name="-pam--ssh_agent_auth_authorized_keys_command"></a>`ssh_agent_auth_authorized_keys_command`
+
+Data type: `Stdlib::Absolutepath`
+
+Absolute path to the helper used by ``pam_ssh_agent_auth.so`` to look up
+a user's authorized keys. Only used when ``enable_ssh_agent_auth`` is true.
+
+Default value: `'/usr/bin/sss_ssh_authorizedkeys'`
 
 ##### <a name="-pam--su_content_extra"></a>`su_content_extra`
 
