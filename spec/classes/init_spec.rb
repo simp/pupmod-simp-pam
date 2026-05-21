@@ -163,7 +163,7 @@ describe 'pam' do
         # to provide via 'wait_for_card card_only' before it was replaced by
         # pam_sss.so.
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_file('/etc/pam.d/smartcard-auth').with_content(%r{^auth     \[success=done ignore=ignore default=die\] pam_sss.so require_cert_auth$}) }
+        it { is_expected.to contain_file('/etc/pam.d/smartcard-auth').with_content(%r{^auth     sufficient    pam_sss\.so require_cert_auth$}) }
       end
 
       context 'with cert_auth set to require' do
