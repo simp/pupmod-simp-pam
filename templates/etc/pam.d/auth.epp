@@ -137,9 +137,9 @@ auth     sufficient    pam_fprintd.so
 <% } -%>
 <% if $name == 'smartcard' { -%>
 <%   if $pam_cert_auth { -%>
-auth     [success=done ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
+auth     sufficient    pam_sss.so <%= $pam_cert_auth %>
 <%   } else { -%>
-auth     [success=done ignore=ignore default=die] pam_sss.so require_cert_auth
+auth     sufficient    pam_sss.so require_cert_auth
 <%   } -%>
 <% } -%>
 <% if $oath and ($name == 'system') { -%>

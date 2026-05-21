@@ -5,7 +5,7 @@
 # SIMP defined auth content
 auth     optional      pam_faildelay.so
 auth     required      pam_env.so
-auth     [success=done ignore=ignore default=die] pam_sss.so require_cert_auth
+auth     sufficient    pam_sss.so require_cert_auth
 auth     requisite     pam_succeed_if.so uid >= 17 quiet
 auth     required      pam_deny.so
 
