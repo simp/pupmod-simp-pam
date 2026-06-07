@@ -53,10 +53,10 @@ describe 'pam class' do
 
             # OEL symlinks this internally
             result = on(host, 'ls -l /usr/sbin/authconfig', accept_all_exit_codes: true)
-            expect(result.stdout).not_to match(%r{simp_auth})
+            expect(result.stdout).not_to include('simp_auth')
 
             result = on(host, '/usr/bin/authselect select sssd', accept_all_exit_codes: true)
-            expect(result.stderr).to match(%r{Refusing to activate profile})
+            expect(result.stderr).to include('Refusing to activate profile')
             apply_manifest_on(host, manifest, { catch_changes: true })
           end
         end
