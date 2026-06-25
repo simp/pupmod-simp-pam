@@ -2,6 +2,7 @@
 - Change smartcard-auth pam_sss.so control flag from
   `[success=done ignore=ignore default=die]` to `sufficient` to align with
   DISA STIG guidance for the smartcard-auth stack
+- Point `issues_url` at GitHub Issues; allow `simp-oddjob` 3.x, `simp-useradd` 2.x, and `simp-oath` 1.x.
 
 * Wed May 20 2026 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 9.0.0
 - Remove deprecated pam_pkcs11 from auth file stacks, replace with STIG compliant pam_sss
