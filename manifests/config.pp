@@ -6,11 +6,17 @@ class pam::config {
   assert_private()
 
   file { '/etc/pam.d':
-    ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    recurse => true,
+    ensure                  => 'directory',
+    owner                   => 'root',
+    group                   => 'root',
+    mode                    => '0644',
+    recurse                 => true,
+    # Do not manage the SELinux context of the recursively-managed files.
+    # authselect regenerates the *-auth files (and their contexts) on every
+    # run, so enforcing a puppet-computed seluser here flaps
+    # unconfined_u <-> system_u each apply and breaks idempotency on
+    # SELinux-enforcing hosts.
+    selinux_ignore_defaults => true,
   }
 
   if ($pam::password_check_backend == 'pwquality') {
@@ -49,23 +55,23 @@ class pam::config {
       group   => 'root',
       mode    => '0644',
       content => epp("${module_name}/etc/security/pwquality.conf.epp", {
-          difok            => $pam::cracklib_difok,
-          maxrepeat        => $pam::cracklib_maxrepeat,
-          maxsequence      => $pam::cracklib_maxsequence,
-          maxclassrepeat   => $pam::cracklib_maxclassrepeat,
-          gecoscheck       => $pam::cracklib_gecoscheck,
-          dcredit          => $pam::cracklib_dcredit,
-          ucredit          => $pam::cracklib_ucredit,
-          lcredit          => $pam::cracklib_lcredit,
-          ocredit          => $pam::cracklib_ocredit,
-          minclass         => $pam::cracklib_minclass,
-          minlen           => $pam::cracklib_minlen,
-          retry            => $_cracklib_retry,
-          enforce_for_root => $_cracklib_enforce_for_root,
-          reject_username  => $_cracklib_reject_username,
-          badwords         => $pam::cracklib_badwords,
-          dictpath         => $pam::cracklib_dictpath,
-          dictcheck        => $_dictcheck
+        difok            => $pam::cracklib_difok,
+        maxrepeat        => $pam::cracklib_maxrepeat,
+        maxsequence      => $pam::cracklib_maxsequence,
+        maxclassrepeat   => $pam::cracklib_maxclassrepeat,
+        gecoscheck       => $pam::cracklib_gecoscheck,
+        dcredit          => $pam::cracklib_dcredit,
+        ucredit          => $pam::cracklib_ucredit,
+        lcredit          => $pam::cracklib_lcredit,
+        ocredit          => $pam::cracklib_ocredit,
+        minclass         => $pam::cracklib_minclass,
+        minlen           => $pam::cracklib_minlen,
+        retry            => $_cracklib_retry,
+        enforce_for_root => $_cracklib_enforce_for_root,
+        reject_username  => $_cracklib_reject_username,
+        badwords         => $pam::cracklib_badwords,
+        dictpath         => $pam::cracklib_dictpath,
+        dictcheck        => $_dictcheck
       }),
     }
 
@@ -83,8 +89,8 @@ class pam::config {
   }
   else {
     $_other_content = epp("${module_name}/etc/pam.d/other.epp", {
-        warn_if_unknown => $pam::warn_if_unknown,
-        deny_if_unknown => $pam::deny_if_unknown
+      warn_if_unknown => $pam::warn_if_unknown,
+      deny_if_unknown => $pam::deny_if_unknown
     })
   }
 
@@ -94,30 +100,30 @@ class pam::config {
       owner  => 'root',
       group  => 'root',
       mode   => '0644',
-      ;
+    ;
     ['/etc/pam.d/atd', '/etc/pam.d/crond']:
-      ;
+    ;
     '/etc/pam.d/sudo':
       content => epp('pam/etc/pam.d/sudo', {
-          'pam_module_path'                        => 'system-auth',
-          'force_revoke'                           => false,
-          'tty_audit_users'                        => $pam::tty_audit_users,
-          'enable_ssh_agent_auth'                  => $pam::enable_ssh_agent_auth,
-          'ssh_agent_auth_authorized_keys_command' => $pam::ssh_agent_auth_authorized_keys_command,
+        'pam_module_path'                        => 'system-auth',
+        'force_revoke'                           => false,
+        'tty_audit_users'                        => $pam::tty_audit_users,
+        'enable_ssh_agent_auth'                  => $pam::enable_ssh_agent_auth,
+        'ssh_agent_auth_authorized_keys_command' => $pam::ssh_agent_auth_authorized_keys_command,
       })
-      ;
+    ;
     '/etc/pam.d/sudo-i':
       content => epp('pam/etc/pam.d/sudo', {
-          'pam_module_path'                        => 'sudo',
-          'force_revoke'                           => true,
-          'tty_audit_users'                        => $pam::tty_audit_users,
-          'enable_ssh_agent_auth'                  => $pam::enable_ssh_agent_auth,
-          'ssh_agent_auth_authorized_keys_command' => $pam::ssh_agent_auth_authorized_keys_command,
+        'pam_module_path'                        => 'sudo',
+        'force_revoke'                           => true,
+        'tty_audit_users'                        => $pam::tty_audit_users,
+        'enable_ssh_agent_auth'                  => $pam::enable_ssh_agent_auth,
+        'ssh_agent_auth_authorized_keys_command' => $pam::ssh_agent_auth_authorized_keys_command,
       })
-      ;
+    ;
     '/etc/pam.d/other':
       content => $_other_content,
-      ;
+    ;
   }
 
   if $pam::authconfig_present and ($pam::disable_authconfig == true) {
@@ -176,18 +182,18 @@ class pam::config {
         group   => 'root',
         mode    => '0644',
         content => epp("${module_name}/etc/security/faillock.conf.epp", {
-            dir              => $pam::faillock_log_dir,
-            audit            => $pam::faillock_audit,
-            silent           => !$pam::display_account_lock,
-            no_log_info      => $pam::faillock_no_log_info,
-            local_users_only => $pam::faillock_local_users_only,
-            nodelay          => $pam::faillock_nodelay,
-            deny             => $pam::deny,
-            fail_interval    => $pam::fail_interval,
-            unlock_time      => $pam::unlock_time,
-            even_deny_root   => $pam::even_deny_root,
-            root_unlock_time => $pam::root_unlock_time,
-            admin_group      => $pam::faillock_admin_group
+          dir              => $pam::faillock_log_dir,
+          audit            => $pam::faillock_audit,
+          silent           => !$pam::display_account_lock,
+          no_log_info      => $pam::faillock_no_log_info,
+          local_users_only => $pam::faillock_local_users_only,
+          nodelay          => $pam::faillock_nodelay,
+          deny             => $pam::deny,
+          fail_interval    => $pam::fail_interval,
+          unlock_time      => $pam::unlock_time,
+          even_deny_root   => $pam::even_deny_root,
+          root_unlock_time => $pam::root_unlock_time,
+          admin_group      => $pam::faillock_admin_group
         }),
       }
     }
@@ -199,11 +205,11 @@ class pam::config {
         group   => 'root',
         mode    => '0644',
         content => epp("${module_name}/etc/security/pwhistory.conf.epp", {
-            debug            => $pam::remember_debug,
-            enforce_for_root => $pam::remember_for_root,
-            remember         => $pam::remember,
-            retry            => $pam::remember_retry,
-            remember_file    => $pam::remember_file,
+          debug            => $pam::remember_debug,
+          enforce_for_root => $pam::remember_for_root,
+          remember         => $pam::remember,
+          retry            => $pam::remember_retry,
+          remember_file    => $pam::remember_file,
         }),
       }
     }

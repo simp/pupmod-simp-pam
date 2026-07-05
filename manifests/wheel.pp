@@ -33,10 +33,10 @@ class pam::wheel (
   }
   else {
     $_content = epp("${module_name}/etc/pam.d/su.epp", {
-        wheel_group      => $wheel_group,
-        root_only        => $root_only,
-        use_openshift    => $use_openshift,
-        su_content_extra => $su_content_extra,
+      wheel_group      => $wheel_group,
+      root_only        => $root_only,
+      use_openshift    => $use_openshift,
+      su_content_extra => $su_content_extra,
     })
   }
 

@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "source": "https://github.com/simp/pupmod-simp-pam",
   "project_page": "https://github.com/simp/pupmod-simp-pam",
-  "issues_url": "https://simp-project.atlassian.net",
+  "issues_url": "https://github.com/simp/pupmod-simp-pam/issues",
   "tags": [
     "simp",
     "pam"
@@ -22,7 +22,7 @@
     },
     {
       "name": "simp/oddjob",
-      "version_requirement": ">= 2.0.0 < 3.0.0"
+      "version_requirement": ">= 2.0.0 < 4.0.0"
     },
     {
       "name": "simp/simplib",
@@ -30,14 +30,14 @@
     },
     {
       "name": "simp/useradd",
-      "version_requirement": ">= 0.2.2 < 2.0.0"
+      "version_requirement": ">= 0.2.2 < 3.0.0"
     }
   ],
   "simp": {
     "optional_dependencies": [
       {
         "name": "simp/oath",
-        "version_requirement": ">= 0.1.0 < 1.0.0"
+        "version_requirement": ">= 0.1.0 < 2.0.0"
       },
       {
         "name": "puppet-authselect",
