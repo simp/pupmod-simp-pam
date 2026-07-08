@@ -137,6 +137,8 @@ The password checking library to use
 * The default is based on the OS being targeted and is pulled from module
   data
 
+Default value: `'cracklib'`
+
 ##### <a name="-pam--locale_file"></a>`locale_file`
 
 Data type: `Optional[Stdlib::Absolutepath]`
