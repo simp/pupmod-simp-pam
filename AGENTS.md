@@ -88,7 +88,7 @@ Private classes (call `assert_private()`):
   management: `pwquality.conf` (gated on OS capability flags,
   `config.pp`), `/etc/pam.d/{sudo,sudo-i,other,atd,crond}`, the
   `simp_authconfig.sh` no-op shim replacing `authconfig`/`authconfig-tui` on
-  systems where `$authconfig_present` (`config.pp`), `faillock.conf` /
+  systems where `$pam::authconfig_present` (`config.pp`), `faillock.conf` /
   `pwhistory.conf` (gated, `config.pp`), declares
   `::pam::auth { $pam::auth_sections }` (`config.pp`), and drives
   `authselect::custom_profile` + `class { 'authselect' }` when
@@ -152,9 +152,7 @@ The module's SIMP-catalyst seam. Calls (with `file:line`):
 | `access/rule.pp` | `pam::enable_separator` (module-local) | `true` |
 | `access/rule.pp` | `pam::separator` (module-local) | `','` |
 
-Keep routing SIMP feature toggles through `simplib::lookup('simp_options::*', {
-'default_value' => ... })` with an explicit default rather than assuming
-`simp_options` is included.
+Keep routing SIMP feature toggles through `simplib::lookup('simp_options::*', { 'default_value' => ... })` with an explicit default rather than assuming `simp_options` is included.
 
 ## Dependencies
 
