@@ -14,9 +14,9 @@ SSH-agent authentication for `sudo`.
 
 The module is gated on the global `simp_options::pam` catalyst and its own
 `$enable` flag: it only manages anything when **both** are true
-(`manifests/init.pp:467-468`). If the module is included while
+(`manifests/init.pp`). If the module is included while
 `simp_options::pam` is `false`, it emits a warning instead of managing state
-(`init.pp:480-483`).
+(`init.pp`).
 
 Much of the module's real complexity is **OS-version-conditional**: newer
 `pwquality.conf` options, `faillock.conf`, and `pwhistory.conf` only exist on
@@ -28,97 +28,97 @@ stacks.
 
 Public API (consumers `include`/declare these; none call `assert_private()`):
 
-- **`pam` (`manifests/init.pp:379-486`)** — main entry class. Huge parameter
-  list (`init.pp:379-465`); the only parameter with **no default** is
+- **`pam` (`manifests/init.pp`)** — main entry class. Huge parameter
+  list (`init.pp`); the only parameter with **no default** is
   `$password_check_backend` (`Pam::PasswordBackends`, from module data —
-  `cracklib` in `data/common.yaml:12`, `pwquality` on RedHat via
+  `cracklib` in `data/common.yaml`, `pwquality` on RedHat via
   `data/os/RedHat.yaml`). It is a pure orchestrator: under the
   `simp_options::pam` + `$enable` gate it calls
-  `simplib::assert_metadata($module_name)` (`init.pp:469`), then
+  `simplib::assert_metadata($module_name)` (`init.pp`), then
   `include 'pam::install'` and `include 'pam::config'` ordered
-  `Class['pam::install'] -> Class['pam::config']` (`init.pp:471-475`). All
+  `Class['pam::install'] -> Class['pam::config']` (`init.pp`). All
   resources live in the private classes / the `pam::auth` define.
-- **`pam::auth` (`manifests/auth.pp:67-282`)** — define that renders each
+- **`pam::auth` (`manifests/auth.pp`)** — define that renders each
   `*-auth` file. **Not `assert_private()`'d**, but its docstring says it is
-  "only meant to be called via the main pam class" (`auth.pp:3`). Titles must be
+  "only meant to be called via the main pam class" (`auth.pp`). Titles must be
   one of `smartcard`/`fingerprint`/`password`/`system` or it `fail()`s
-  (`auth.pp:136-146`). Most parameters default by reading `$pam::*`
-  (`auth.pp:68-122`). Key logic:
+  (`auth.pp`). Most parameters default by reading `$pam::*`
+  (`auth.pp`). Key logic:
   - If `$oath` is true, asserts the optional `simp/oath` dependency
-    (`auth.pp:126-128`).
+    (`auth.pp`).
   - **FIPS guard**: when the `fips_enabled` fact is set, only `sha256`/`sha512`
-    are allowed for `$hash_algorithm`, else `fail()` (`auth.pp:130-134`).
+    are allowed for `$hash_algorithm`, else `fail()` (`auth.pp`).
   - `smartcard` defaults `$cert_auth` to `'require'` (preserving the old
     `pam_pkcs11.so card_only` behavior now that the stack uses `pam_sss.so`)
-    (`auth.pp:160-166`).
+    (`auth.pp`).
   - OS capability flags (`$faillock_conf_supported`, `$pwhistory_conf_supported`)
     decide whether `faillock`/`pwhistory`/`retry`/`enforce_for_root`/
     `reject_username` are written into `faillock.conf`/`pwhistory.conf` vs.
-    inlined into the auth EPP (`auth.pp:182-210`).
+    inlined into the auth EPP (`auth.pp`).
   - Writes `${basedir}/${name}-auth` where `$basedir` is the authselect vendor
-    dir when `$pam::use_authselect`, else `/etc/pam.d` (`auth.pp:148-151`,
+    dir when `$pam::use_authselect`, else `/etc/pam.d` (`auth.pp`,
     `269-275`); removes the `-ac` companion file unless `$preserve_ac`
-    (`auth.pp:277-281`).
-- **`pam::wheel` (`manifests/wheel.pp:24-49`)** — `inherits pam`; manages
+    (`auth.pp`).
+- **`pam::wheel` (`manifests/wheel.pp`)** — `inherits pam`; manages
   `/etc/pam.d/su` from the `su.epp` template (or custom `$content`).
-- **`pam::access` (`manifests/access.pp:33-83`)** — manages
+- **`pam::access` (`manifests/access.pp`)** — manages
   `/etc/security/access.conf` as a `concat`. Always adds an
-  `allow_local_root` rule at order 1 (`access.pp:51-56`); optionally includes
+  `allow_local_root` rule at order 1 (`access.pp`); optionally includes
   `pam::access::default_deny`; can build rules from a `$users` hash (with an
-  optional `defaults` sub-hash) (`access.pp:58-82`).
-- **`pam::access::rule` (`manifests/access/rule.pp:75-111`)** — a
+  optional `defaults` sub-hash) (`access.pp`).
+- **`pam::access::rule` (`manifests/access/rule.pp`)** — a
   `concat::fragment` for one `permission:users:origins` line. Reads
   `pam::enable_separator` / `pam::separator` via `simplib::lookup` to pick the
-  list separator (`rule.pp:83-87`).
-- **`pam::access::default_deny` (`manifests/access/default_deny.pp:7-14`)** —
+  list separator (`rule.pp`).
+- **`pam::access::default_deny` (`manifests/access/default_deny.pp`)** —
   a single `-:ALL:ALL` rule at the max order (`9999999999`).
-- **`pam::limits` (`manifests/limits.pp:33-46`)** — manages
+- **`pam::limits` (`manifests/limits.pp`)** — manages
   `/etc/security/limits.conf` as a `concat`; can build rules from a `$rules`
-  hash via `create_resources` (`limits.pp:45`).
-- **`pam::limits::rule` (`manifests/limits/rule.pp:58-84`)** — a
+  hash via `create_resources` (`limits.pp`).
+- **`pam::limits::rule` (`manifests/limits/rule.pp`)** — a
   `concat::fragment` per limits entry; `fail()`s if `priority`/`nice` is given a
-  non-integer `unlimited`/`infinity` value (`limits/rule.pp:67-71`).
+  non-integer `unlimited`/`infinity` value (`limits/rule.pp`).
 
 Private classes (call `assert_private()`):
 
-- **`pam::install` (`manifests/install.pp:5-17`)** — installs `pam`,
+- **`pam::install` (`manifests/install.pp`)** — installs `pam`,
   conditionally `libpwquality` (when backend is `pwquality`) and
   `pam_ssh_agent_auth` (when `$enable_ssh_agent_auth`).
-- **`pam::config` (`manifests/config.pp:5-235`)** — the bulk of file
+- **`pam::config` (`manifests/config.pp`)** — the bulk of file
   management: `pwquality.conf` (gated on OS capability flags,
-  `config.pp:16-79`), `/etc/pam.d/{sudo,sudo-i,other,atd,crond}`, the
+  `config.pp`), `/etc/pam.d/{sudo,sudo-i,other,atd,crond}`, the
   `simp_authconfig.sh` no-op shim replacing `authconfig`/`authconfig-tui` on
-  systems where `$authconfig_present` (`config.pp:123-142`), `faillock.conf` /
-  `pwhistory.conf` (gated, `config.pp:171-210`), declares
-  `::pam::auth { $pam::auth_sections }` (`config.pp:212`), and drives
+  systems where `$authconfig_present` (`config.pp`), `faillock.conf` /
+  `pwhistory.conf` (gated, `config.pp`), declares
+  `::pam::auth { $pam::auth_sections }` (`config.pp`), and drives
   `authselect::custom_profile` + `class { 'authselect' }` when
-  `$pam::use_authselect` (`config.pp:215-234`).
+  `$pam::use_authselect` (`config.pp`).
 
 ### Gotchas / non-obvious details
 
 - **Two gates, both must be true.** Nothing is managed unless
   `simp_options::pam` (default `true`) **and** `$enable` (default `true`) are
-  both true (`init.pp:467-468`). Included with the catalyst off, the module only
-  warns (`init.pp:480-483`).
+  both true (`init.pp`). Included with the catalyst off, the module only
+  warns (`init.pp`).
 - **OS capability flags are the real control plane.** `data/os/RedHat-8.yaml`,
   `RedHat-9.yaml`, `RedHat-10.yaml`, `Amazon-2.yaml` set
   `pam::*_supported` / `pam::authconfig_present`. EL8+ turns on
   `faillock_conf_supported`, `pwhistory_conf_supported`, and the newer
   `pwquality` options; Amazon 2 turns them **off** and sets
   `authconfig_present: true`. These flags decide whether settings go into
-  dedicated `.conf` files or inline into the auth stacks (`config.pp:16-45`,
-  `171-210`; `auth.pp:182-210`). The docstrings note EL7/Amazon-2 fall back to
+  dedicated `.conf` files or inline into the auth stacks (`config.pp`,
+  `171-210`; `auth.pp`). The docstrings note EL7/Amazon-2 fall back to
   inline management.
 - **`retry` needs RHEL 8.4+.** `data/os/RedHat-8.yaml` warns that
   `cracklib_retry_supported` should be overridden to `false` on RHEL 8.0-8.3.
 - **FIPS restricts the hash algorithm.** With `fips_enabled` set, only
   `sha256`/`sha512` pass; anything else `fail()`s in `pam::auth`
-  (`auth.pp:130-134`).
+  (`auth.pp`).
 - **`simp/oath` and `puppet-authselect` are OPTIONAL dependencies**
   (`metadata.json` `simp.optional_dependencies`), not hard deps. `oath` is
   guarded at runtime with `simplib::assert_optional_dependency` only when
-  `$oath` is true (`auth.pp:126-128`). `authselect` is declared directly in
-  `pam::config` when `$use_authselect` is true (`config.pp:219-234`) — there is
+  `$oath` is true (`auth.pp`). `authselect` is declared directly in
+  `pam::config` when `$use_authselect` is true (`config.pp`) — there is
   **no** `assert_optional_dependency` guarding the authselect path, so enabling
   `use_authselect` without the module present will fail to compile.
 - **`simp/simp_options` is NOT a declared dependency** in `metadata.json`, yet
@@ -126,11 +126,11 @@ Private classes (call `assert_private()`):
   (provided by `simp/simplib`). `simp_options` appears only as a fixture
   (`.fixtures.yml`).
 - **Access rules: order matters, first match wins.** `pam::access` hard-codes
-  `allow_local_root` at order 1 (`access.pp:51-56`) and `default_deny` at order
-  `9999999999` (`default_deny.pp:12`). Limits rules are the opposite — **last**
-  match wins (`limits/rule.pp:1-4`).
+  `allow_local_root` at order 1 (`access.pp`) and `default_deny` at order
+  `9999999999` (`default_deny.pp`). Limits rules are the opposite — **last**
+  match wins (`limits/rule.pp`).
 - **`pam::access::rule` and `pam::limits::rule` each `include` their parent
-  class** (`access/rule.pp:82`, `limits/rule.pp:65`), so declaring a rule pulls
+  class** (`access/rule.pp`, `limits/rule.pp`), so declaring a rule pulls
   in the `concat` target automatically.
 - **`pam::wheel` is not wired into `pam::config`** — it is a standalone class
   (`inherits pam`) that a consumer must `include` explicitly; the default
@@ -140,17 +140,17 @@ Private classes (call `assert_private()`):
 
 The module's SIMP-catalyst seam. Calls (with `file:line`):
 
-| Line | Key | `default_value` |
+| File | Key | `default_value` |
 |------|-----|-----------------|
-| `init.pp:402` | `simp_options::oath` | `false` |
-| `init.pp:413` | `simp_options::uid::min` | `pick(fact('login_defs.uid_min'), 1000)` |
-| `init.pp:419` | `simp_options::sssd` | `false` |
-| `init.pp:440` | `simp_options::authselect` | `false` |
-| `init.pp:443` | `simp_options::package_ensure` | `'present'` |
-| `init.pp:467` | `simp_options::pam` | `true` |
-| `init.pp:481` | `simp_options::pam` | `true` |
-| `access/rule.pp:83` | `pam::enable_separator` (module-local) | `true` |
-| `access/rule.pp:84` | `pam::separator` (module-local) | `','` |
+| `init.pp` | `simp_options::oath` | `false` |
+| `init.pp` | `simp_options::uid::min` | `pick(fact('login_defs.uid_min'), 1000)` |
+| `init.pp` | `simp_options::sssd` | `false` |
+| `init.pp` | `simp_options::authselect` | `false` |
+| `init.pp` | `simp_options::package_ensure` | `'present'` |
+| `init.pp` | `simp_options::pam` | `true` |
+| `init.pp` | `simp_options::pam` | `true` |
+| `access/rule.pp` | `pam::enable_separator` (module-local) | `true` |
+| `access/rule.pp` | `pam::separator` (module-local) | `','` |
 
 Keep routing SIMP feature toggles through `simplib::lookup('simp_options::*', {
 'default_value' => ... })` with an explicit default rather than assuming
@@ -164,7 +164,7 @@ Module dependencies (from `metadata.json`):
   for `access.conf` and `limits.conf`)
 - `puppetlabs/stdlib` `>= 8.0.0 < 10.0.0`
 - `simp/oddjob` `>= 2.0.0 < 4.0.0` (`pam::auth` includes `oddjob::mkhomedir`,
-  `auth.pp:124`)
+  `auth.pp`)
 - `simp/simplib` `>= 4.9.0 < 6.0.0` (provides `simplib::lookup`,
   `simplib::assert_metadata`, `simplib::assert_optional_dependency`, the
   `Simplib::*` types, and the `login_defs` / `fips_enabled` facts)
@@ -206,7 +206,7 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
   `templates/etc/security/{faillock,pwhistory,pwquality}.conf.epp` — the EPP
   templates.
 - `files/simp_authconfig.sh` — the no-op shim that replaces
-  `authconfig`/`authconfig-tui` on Amazon-2 (`config.pp:131`).
+  `authconfig`/`authconfig-tui` on Amazon-2 (`config.pp`).
 - `data/common.yaml` — defaults (`password_check_backend: cracklib`, plus
   `lookup_options` deep-merge for `pam::access::users` / `pam::limits::rules`).
   `data/os/*.yaml` — OS capability flags and per-OS backend/locale overrides.
@@ -220,10 +220,10 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
   every custom type, fact, and function it uses comes from the dependencies
   above.
 - **Acceptance runs in CI:** `.github/workflows/pr_tests.yml` has an
-  `acceptance` job (`pr_tests.yml:115-146`) whose matrix nodes are
+  `acceptance` job (`pr_tests.yml`) whose matrix nodes are
   `almalinux8`, `almalinux9`, and `almalinux10`. Its final step runs
   `bundle exec rake beaker:suites[default,<node>]` under
-  `BEAKER_HYPERVISOR=vagrant_libvirt` (`pr_tests.yml:143`). Both `docker_*` and
+  `BEAKER_HYPERVISOR=vagrant_libvirt` (`pr_tests.yml`). Both `docker_*` and
   vagrant nodesets ship under `spec/acceptance/nodesets/`, but CI drives only
   the AlmaLinux vagrant nodes.
 
@@ -258,8 +258,8 @@ Relevant gem pins (from `Gemfile`): `simp-rake-helpers ~> 6.0`,
 `simp-rspec-puppet-facts ~> 4.0.0`, `simp-beaker-helpers ~> 3.1`,
 `rubocop ~> 1.85`. There is **no** `puppetlabs_spec_helper` pin — this module
 has moved to the **voxpupuli-test** harness, so `spec/spec_helper.rb` requires
-`voxpupuli/test/spec_helper` (`spec_helper.rb:11`). The test group installs
-**both** `openvox` and `puppet` gems (`Gemfile:29-32`) with the tested version
+`voxpupuli/test/spec_helper` (`spec_helper.rb`). The test group installs
+**both** `openvox` and `puppet` gems (`Gemfile`) with the tested version
 range `>= 8 < 9`.
 
 ## Conventions
@@ -273,7 +273,7 @@ range `>= 8 < 9`.
   `simplib::lookup('simp_options::*', { 'default_value' => ... })` rather than
   assuming `simp_options` is included.
 - Guard optional integrations with `simplib::assert_optional_dependency` and a
-  runtime check, as the `oath` path does (`auth.pp:126-128`).
+  runtime check, as the `oath` path does (`auth.pp`).
 - `Gemfile`, `spec/spec_helper.rb`, and `.github/workflows/pr_tests.yml` carry a
   **puppetsync** notice — they are baseline-managed and the next sync overwrites
   local edits. Push changes to those files upstream to the baseline, not here.
