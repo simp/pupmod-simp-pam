@@ -261,16 +261,16 @@ describe 'pam' do
         it { is_expected.to contain_pam__auth('smartcard') }
       end
 
-      context 'when auditing is enabled' do
-        let(:facts) do
-          os_facts
-            .merge(
-              simplib__auditd: {
-                'enforcing' => true,
-              },
-            )
-        end
+      context 'when tty_audit_enforcing is true' do
+        # The default facts set simplib__auditd enforcing => false; the
+        # parameter (not the live fact) must drive the output so the files
+        # stay idempotent as auditd transitions to enforcing.
+        let(:params) { { tty_audit_enforcing: true } }
 
+        it {
+          is_expected.to contain_file('/etc/pam.d/sudo')
+            .with_content(%r{session\s+required\s+pam_tty_audit.so})
+        }
         it {
           is_expected.to contain_file('/etc/pam.d/sudo-i')
             .with_content(%r{session\s+required\s+pam_tty_audit.so})

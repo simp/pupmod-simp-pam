@@ -225,6 +225,18 @@
 #
 #   * Set to an empty Array to not audit TTY actions for any user
 #
+# @param tty_audit_enforcing
+#   Whether `pam_tty_audit` should be `required` (as opposed to `optional`)
+#   in the generated PAM files
+#
+#   * When `true`, TTY auditing is enforced; when `false`, it is optional so
+#     that logins do not fail on systems where auditd is not active
+#   * Defaults to the `simp_options::auditd` catalyst so the value reflects
+#     the *intended* auditd state. It intentionally does NOT read the live
+#     `simplib__auditd` fact: that fact flips from `false` to `true` as the
+#     same catalog enables auditd, which rewrote the PAM files on every run
+#     and broke idempotency.
+#
 # @param enable_ssh_agent_auth
 #   Install ``pam_ssh_agent_auth`` and enable it for ``sudo`` and ``sudo-i``
 #   so users may authenticate using an SSH agent identity whose public key
@@ -420,6 +432,7 @@ class pam (
   Boolean                         $enable_separator          = true,
   String[0]                       $separator                 = ',',
   Array[String[0]]                $tty_audit_users           = ['root'],
+  Boolean                         $tty_audit_enforcing       = simplib::lookup('simp_options::auditd', { 'default_value' => false }),
   Boolean                         $enable_ssh_agent_auth     = false,
   Stdlib::Absolutepath            $ssh_agent_auth_authorized_keys_command = '/usr/bin/sss_ssh_authorizedkeys',
   Pam::AuthSections               $auth_sections             = ['fingerprint', 'system', 'password', 'smartcard'],

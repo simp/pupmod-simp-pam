@@ -54,6 +54,7 @@
 # @param use_openshift
 # @param sssd
 # @param tty_audit_users
+# @param tty_audit_enforcing
 # @param separator
 # @param enable_separator
 # @param inactive
@@ -111,6 +112,7 @@ define pam::auth (
   Boolean                         $use_openshift             = $pam::use_openshift,
   Boolean                         $sssd                      = $pam::sssd,
   Array[String[0]]                $tty_audit_users           = $pam::tty_audit_users,
+  Boolean                         $tty_audit_enforcing       = $pam::tty_audit_enforcing,
   String[0]                       $separator                 = $pam::separator,
   Boolean                         $enable_separator          = $pam::enable_separator,
   Boolean                         $oath                      = $pam::oath,
@@ -256,6 +258,7 @@ define pam::auth (
         use_openshift             => $use_openshift,
         sssd                      => $sssd,
         tty_audit_users           => $tty_audit_users,
+        tty_audit_enforcing       => $tty_audit_enforcing,
         separator                 => $separator,
         enable_separator          => $enable_separator,
         oath                      => $oath,

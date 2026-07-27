@@ -90,6 +90,7 @@ The following parameters are available in the `pam` class:
 * [`use_openshift`](#-pam--use_openshift)
 * [`sssd`](#-pam--sssd)
 * [`tty_audit_users`](#-pam--tty_audit_users)
+* [`tty_audit_enforcing`](#-pam--tty_audit_enforcing)
 * [`enable_ssh_agent_auth`](#-pam--enable_ssh_agent_auth)
 * [`ssh_agent_auth_authorized_keys_command`](#-pam--ssh_agent_auth_authorized_keys_command)
 * [`su_content_extra`](#-pam--su_content_extra)
@@ -583,6 +584,23 @@ The users for which TTY auditing is enabled
 * Set to an empty Array to not audit TTY actions for any user
 
 Default value: `['root']`
+
+##### <a name="-pam--tty_audit_enforcing"></a>`tty_audit_enforcing`
+
+Data type: `Boolean`
+
+Whether `pam_tty_audit` should be `required` (as opposed to `optional`)
+in the generated PAM files
+
+* When `true`, TTY auditing is enforced; when `false`, it is optional so
+  that logins do not fail on systems where auditd is not active
+* Defaults to the `simp_options::auditd` catalyst so the value reflects
+  the *intended* auditd state. It intentionally does NOT read the live
+  `simplib__auditd` fact: that fact flips from `false` to `true` as the
+  same catalog enables auditd, which rewrote the PAM files on every run
+  and broke idempotency.
+
+Default value: `simplib::lookup('simp_options::auditd', { 'default_value' => false })`
 
 ##### <a name="-pam--enable_ssh_agent_auth"></a>`enable_ssh_agent_auth`
 
@@ -1269,6 +1287,7 @@ The following parameters are available in the `pam::auth` defined type:
 * [`use_openshift`](#-pam--auth--use_openshift)
 * [`sssd`](#-pam--auth--sssd)
 * [`tty_audit_users`](#-pam--auth--tty_audit_users)
+* [`tty_audit_enforcing`](#-pam--auth--tty_audit_enforcing)
 * [`separator`](#-pam--auth--separator)
 * [`enable_separator`](#-pam--auth--enable_separator)
 * [`inactive`](#-pam--auth--inactive)
@@ -1660,6 +1679,14 @@ Data type: `Array[String[0]]`
 
 
 Default value: `$pam::tty_audit_users`
+
+##### <a name="-pam--auth--tty_audit_enforcing"></a>`tty_audit_enforcing`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::tty_audit_enforcing`
 
 ##### <a name="-pam--auth--separator"></a>`separator`
 

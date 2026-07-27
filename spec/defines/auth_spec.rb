@@ -258,6 +258,24 @@ describe 'pam::auth' do
           end
         end
 
+        context 'with tty_audit_enforcing true' do
+          # The default facts set simplib__auditd enforcing => false; the
+          # parameter (not the live fact) must drive pam_tty_audit so the
+          # generated files stay idempotent as auditd transitions to enforcing.
+          ['fingerprint', 'password', 'system'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title) { auth_type }
+              let(:params) { { tty_audit_enforcing: true } }
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+              it {
+                is_expected.to contain_file(filename)
+                  .with_content(%r{session\s+required\s+pam_tty_audit.so})
+              }
+            end
+          end
+        end
+
         context 'Generate file using auth_content_pre params for Centrify' do
           let(:params) do
             {

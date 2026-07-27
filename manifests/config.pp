@@ -108,6 +108,7 @@ class pam::config {
         'pam_module_path'                        => 'system-auth',
         'force_revoke'                           => false,
         'tty_audit_users'                        => $pam::tty_audit_users,
+        'tty_audit_enforcing'                    => $pam::tty_audit_enforcing,
         'enable_ssh_agent_auth'                  => $pam::enable_ssh_agent_auth,
         'ssh_agent_auth_authorized_keys_command' => $pam::ssh_agent_auth_authorized_keys_command,
       })
@@ -117,6 +118,7 @@ class pam::config {
         'pam_module_path'                        => 'sudo',
         'force_revoke'                           => true,
         'tty_audit_users'                        => $pam::tty_audit_users,
+        'tty_audit_enforcing'                    => $pam::tty_audit_enforcing,
         'enable_ssh_agent_auth'                  => $pam::enable_ssh_agent_auth,
         'ssh_agent_auth_authorized_keys_command' => $pam::ssh_agent_auth_authorized_keys_command,
       })

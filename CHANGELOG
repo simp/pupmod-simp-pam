@@ -1,3 +1,13 @@
+* Mon Jul 27 2026 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 9.0.1
+- Fix a `pam_tty_audit` idempotency bug: the `sudo`, `sudo-i`, and `*-auth`
+  files keyed their `required`/`optional` decision on the live
+  `simplib__auditd` fact, which flips from `false` to `true` as the same
+  catalog enables auditd. This rewrote the PAM files on every other run and
+  broke idempotency (surfaced on EL8 in the SIMP acceptance suite).
+- Add the `pam::tty_audit_enforcing` parameter (default:
+  `simp_options::auditd`) to drive that decision from the intended auditd
+  state instead of the mutable runtime fact.
+
 * Thu May 21 2026 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 9.0.0
 - Change smartcard-auth pam_sss.so control flag from
   `[success=done ignore=ignore default=die]` to `sufficient` to align with
