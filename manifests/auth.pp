@@ -58,6 +58,7 @@
 # @param enable_separator
 # @param inactive
 # @param cert_auth
+# @param cracklib_retry_in_auth_file
 # @param faillock_conf_supported
 # @param pwhistory_conf_supported
 # @param content
@@ -119,6 +120,7 @@ define pam::auth (
   Optional[Enum['try','require']] $cert_auth                 = $pam::cert_auth,
   Boolean                         $faillock_conf_supported   = $pam::faillock_conf_supported,
   Boolean                         $pwhistory_conf_supported  = $pam::pwhistory_conf_supported,
+  Boolean                         $cracklib_retry_in_auth_file = $pam::cracklib_retry_in_auth_file,
   Optional[String]                $content                   = undef
 ) {
   include 'oddjob::mkhomedir'
@@ -191,11 +193,17 @@ define pam::auth (
         default => false
       }
 
-      # retry, enforce_for_root, and reject_username will be enforced via
-      # pwquality.conf in EL8+ and Amazon Linux 2022+
-      $_cracklib_retry = $faillock_conf_supported ? {
-        true    => false,
-        default => $cracklib_retry
+      # retry, enforce_for_root, and reject_username are normally enforced via
+      # pwquality.conf in EL8+ and Amazon Linux 2022+. Oracle Linux 9's STIG
+      # (V-271612) additionally requires the pam_pwquality retry option on the
+      # password line of the auth files, so $cracklib_retry_in_auth_file is set
+      # true there via OS data. retry remains in pwquality.conf as well; this
+      # only also emits it on the PAM line.
+      if $faillock_conf_supported and !$cracklib_retry_in_auth_file {
+        $_cracklib_retry = false
+      }
+      else {
+        $_cracklib_retry = $cracklib_retry
       }
 
       $_cracklib_enforce_for_root = $faillock_conf_supported ? {

@@ -1,3 +1,13 @@
+* Tue Jul 28 2026 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 9.1.0
+- Emit the `pam_pwquality` `retry` option in the `system-auth` and
+  `password-auth` files on Oracle Linux 9, whose DISA STIG (V-271612) checks
+  the PAM files rather than `pwquality.conf`. `retry` is still written to
+  `pwquality.conf` as well.
+- Add the `pam::cracklib_retry_in_auth_file` parameter (default `false`,
+  set `true` for OEL 9 via `data/os/OracleLinux-9.yaml`) to drive this. Other
+  EL8+ platforms (RHEL/AlmaLinux/Rocky/CentOS 9 and EL10) are unchanged and
+  continue to enforce `retry` via `pwquality.conf`.
+
 * Thu May 21 2026 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 9.0.0
 - Change smartcard-auth pam_sss.so control flag from
   `[success=done ignore=ignore default=die]` to `sufficient` to align with

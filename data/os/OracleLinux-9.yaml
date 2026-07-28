@@ -1,0 +1,9 @@
+---
+# Oracle Linux 9-specific settings
+#
+# OEL 9's DISA STIG (V-271612) checks /etc/pam.d/system-auth for the
+# pam_pwquality "retry" option and requires it there, unlike RHEL 9 and its
+# derivatives (RHEL-09/V-258091), which check /etc/security/pwquality.conf.
+# Emit retry on the PAM password line as well; it is still written to
+# pwquality.conf.
+pam::cracklib_retry_in_auth_file: true

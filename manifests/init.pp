@@ -108,6 +108,15 @@
 # @param cracklib_retry
 #   Prompt user at most N times before returning with error
 #
+# @param cracklib_retry_in_auth_file
+#   Also emit the ``pam_pwquality``/``pam_cracklib`` ``retry`` option on the
+#   ``password`` line of the ``system-auth`` and ``password-auth`` files, even
+#   on platforms that otherwise enforce it via ``pwquality.conf``.
+#
+#   * Defaults to ``false``. Set ``true`` only where a platform's STIG requires
+#     ``retry`` in the auth files (e.g. Oracle Linux 9, STIG V-271612). This is
+#     additive: ``retry`` is still written to ``pwquality.conf`` as well.
+#
 # @param cracklib_badwords
 #   Array of words that must not be contained in the password.
 #   These are additional words to the cracklib dictionary check.
@@ -394,6 +403,7 @@ class pam (
   Integer[0]                      $cracklib_minclass         = 3,
   Integer[0]                      $cracklib_minlen           = 15,
   Integer[0]                      $cracklib_retry            = 3,
+  Boolean                         $cracklib_retry_in_auth_file = false,
   Optional[Array[String[1],1]]    $cracklib_badwords         = undef,
   Optional[StdLib::Absolutepath]  $cracklib_dictpath         = undef,
   Integer[0]                      $dictcheck                 = 1,
