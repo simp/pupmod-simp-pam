@@ -61,6 +61,23 @@ describe 'pam::auth' do
           end
         end
 
+        # cracklib_retry_in_auth_file lets a site emit the pam_pwquality retry
+        # option on the password line of system-auth/password-auth (opt-in;
+        # e.g. required by the Oracle Linux 9 STIG, V-271612). It is off by
+        # default -- EL8+ otherwise enforces retry via pwquality.conf (verified
+        # by the default-params content above).
+        context 'with cracklib_retry_in_auth_file => true' do
+          ['system', 'password'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title) { auth_type }
+              let(:params) { { cracklib_retry_in_auth_file: true } }
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+              it { is_expected.to contain_file(filename).with_content(%r{^password\s+requisite\s+pam_pwquality\.so retry=3$}) }
+            end
+          end
+        end
+
         context 'Generate file using content params' do
           let(:params) do
             {

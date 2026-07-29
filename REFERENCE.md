@@ -59,6 +59,7 @@ The following parameters are available in the `pam` class:
 * [`cracklib_minlen`](#-pam--cracklib_minlen)
 * [`cracklib_reject_username`](#-pam--cracklib_reject_username)
 * [`cracklib_retry`](#-pam--cracklib_retry)
+* [`cracklib_retry_in_auth_file`](#-pam--cracklib_retry_in_auth_file)
 * [`cracklib_badwords`](#-pam--cracklib_badwords)
 * [`cracklib_dictpath`](#-pam--cracklib_dictpath)
 * [`dictcheck`](#-pam--dictcheck)
@@ -309,6 +310,20 @@ Data type: `Integer[0]`
 Prompt user at most N times before returning with error
 
 Default value: `3`
+
+##### <a name="-pam--cracklib_retry_in_auth_file"></a>`cracklib_retry_in_auth_file`
+
+Data type: `Boolean`
+
+Also emit the ``pam_pwquality``/``pam_cracklib`` ``retry`` option on the
+``password`` line of the ``system-auth`` and ``password-auth`` files, even
+on platforms that otherwise enforce it via ``pwquality.conf``.
+
+* Defaults to ``false``. Set ``true`` only where a platform's STIG requires
+  ``retry`` in the auth files (e.g. Oracle Linux 9, STIG V-271612). This is
+  additive: ``retry`` is still written to ``pwquality.conf`` as well.
+
+Default value: `false`
 
 ##### <a name="-pam--cracklib_badwords"></a>`cracklib_badwords`
 
@@ -1273,6 +1288,7 @@ The following parameters are available in the `pam::auth` defined type:
 * [`enable_separator`](#-pam--auth--enable_separator)
 * [`inactive`](#-pam--auth--inactive)
 * [`cert_auth`](#-pam--auth--cert_auth)
+* [`cracklib_retry_in_auth_file`](#-pam--auth--cracklib_retry_in_auth_file)
 * [`faillock_conf_supported`](#-pam--auth--faillock_conf_supported)
 * [`pwhistory_conf_supported`](#-pam--auth--pwhistory_conf_supported)
 * [`content`](#-pam--auth--content)
@@ -1692,6 +1708,14 @@ Data type: `Optional[Enum['try','require']]`
 
 
 Default value: `$pam::cert_auth`
+
+##### <a name="-pam--auth--cracklib_retry_in_auth_file"></a>`cracklib_retry_in_auth_file`
+
+Data type: `Boolean`
+
+
+
+Default value: `$pam::cracklib_retry_in_auth_file`
 
 ##### <a name="-pam--auth--faillock_conf_supported"></a>`faillock_conf_supported`
 
