@@ -9,23 +9,6 @@ def get_expected(filename)
   IO.read(path)
 end
 
-# Oracle Linux 9's STIG (V-271612) requires the pam_pwquality "retry" option on
-# the password line of system-auth/password-auth, unlike other EL8+ platforms
-# which enforce it via pwquality.conf. The generated content is otherwise
-# identical to the shared el8 expectation, so derive the OEL 9 expectation by
-# inserting retry on the pwquality password line (a no-op for other OSes and
-# for auth types that do not emit that line).
-def get_expected_os(filename, os_facts, cracklib_retry: 3)
-  content = get_expected(filename)
-  if os_facts.dig(:os, :name) == 'OracleLinux' && os_facts.dig(:os, :release, :major).to_i == 9
-    content = content.sub(
-      'requisite     pam_pwquality.so',
-      "requisite     pam_pwquality.so retry=#{cracklib_retry}",
-    )
-  end
-  content
-end
-
 shared_examples_for 'a pam.d config file generator' do
   it { is_expected.to compile.with_all_deps }
   it { is_expected.to create_class('oddjob::mkhomedir') }
@@ -70,7 +53,7 @@ describe 'pam::auth' do
                 end
               end
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected_os("#{pw_backend}-#{auth_type}-#{el_version}-auth_default_params", os_facts) }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_default_params") }
 
               it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -78,20 +61,19 @@ describe 'pam::auth' do
           end
         end
 
-        # OEL 9's STIG (V-271612) requires the pam_pwquality retry option in the
-        # system-auth/password-auth files; other EL8+ platforms enforce it via
-        # pwquality.conf only. See data/os/OracleLinux-9.yaml.
-        context 'pam_pwquality retry in the auth files (STIG V-271612)' do
+        # cracklib_retry_in_auth_file lets a site emit the pam_pwquality retry
+        # option on the password line of system-auth/password-auth (opt-in;
+        # e.g. required by the Oracle Linux 9 STIG, V-271612). It is off by
+        # default -- EL8+ otherwise enforces retry via pwquality.conf (verified
+        # by the default-params content above).
+        context 'with cracklib_retry_in_auth_file => true' do
           ['system', 'password'].each do |auth_type|
             context "auth type '#{auth_type}'" do
               let(:title) { auth_type }
+              let(:params) { { cracklib_retry_in_auth_file: true } }
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
 
-              if (os_facts[:os][:name] == 'OracleLinux') && (os_facts[:os][:release][:major].to_i == 9)
-                it { is_expected.to contain_file(filename).with_content(%r{^password\s+requisite\s+pam_pwquality\.so retry=3$}) }
-              else
-                it { is_expected.not_to contain_file(filename).with_content(%r{pam_pwquality\.so.*retry=}) }
-              end
+              it { is_expected.to contain_file(filename).with_content(%r{^password\s+requisite\s+pam_pwquality\.so retry=3$}) }
             end
           end
         end
@@ -152,7 +134,7 @@ describe 'pam::auth' do
                 end
               end
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected_os("#{pw_backend}-#{auth_type}-#{el_version}-auth_unlock_time_never", os_facts) }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_unlock_time_never") }
 
               it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -256,7 +238,7 @@ describe 'pam::auth' do
                 end
               end
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected_os("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_no_tty_audit", os_facts, cracklib_retry: 10) }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_no_tty_audit") }
 
               it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -285,7 +267,7 @@ describe 'pam::auth' do
                 end
               end
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected_os("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_openshift_multi_tty_audit", os_facts) }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_openshift_multi_tty_audit") }
 
               it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -321,7 +303,7 @@ describe 'pam::auth' do
                 end
               end
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
-              let(:file_content) { get_expected_os("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_user_specified_centrify", os_facts) }
+              let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_user_specified_centrify") }
 
               it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -350,7 +332,7 @@ describe 'pam::auth' do
                   'el8'
                 end
               end
-              let(:file_content) { get_expected_os("#{pw_backend}-#{el_version}-password-separator-#{index}", os_facts) }
+              let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-#{index}") }
 
               it_behaves_like 'a pam.d config file generator'
               it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -374,7 +356,7 @@ describe 'pam::auth' do
               'el8'
             end
           end
-          let(:file_content) { get_expected_os("#{pw_backend}-#{el_version}-password-separator-false", os_facts) }
+          let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-false") }
 
           it_behaves_like 'a pam.d config file generator'
           it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -396,7 +378,7 @@ describe 'pam::auth' do
               'el8'
             end
           end
-          let(:file_content) { get_expected_os("#{pw_backend}-system-#{el_version}-auth_oath_enabled", os_facts) }
+          let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_oath_enabled") }
 
           it_behaves_like 'a pam.d config file generator'
           it { is_expected.to contain_file(filename).with_content(file_content) }
@@ -418,7 +400,7 @@ describe 'pam::auth' do
               'el8'
             end
           end
-          let(:file_content) { get_expected_os("#{pw_backend}-system-#{el_version}-auth_nullok", os_facts) }
+          let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_nullok") }
 
           it_behaves_like 'a pam.d config file generator'
           it { is_expected.to contain_file(filename).with_content(file_content) }
