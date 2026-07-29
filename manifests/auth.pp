@@ -194,11 +194,12 @@ define pam::auth (
       }
 
       # retry, enforce_for_root, and reject_username are normally enforced via
-      # pwquality.conf in EL8+ and Amazon Linux 2022+. Oracle Linux 9's STIG
-      # (V-271612) additionally requires the pam_pwquality retry option on the
-      # password line of the auth files, so $cracklib_retry_in_auth_file is set
-      # true there via OS data. retry remains in pwquality.conf as well; this
-      # only also emits it on the PAM line.
+      # pwquality.conf in EL8+ and Amazon Linux 2022+. Some platforms' STIGs
+      # instead check the auth files for the pam_pwquality retry option (e.g.
+      # Oracle Linux 9, V-271612). Enabling the opt-in $cracklib_retry_in_auth_file
+      # parameter -- expected to be set via compliance or site data, not by
+      # default -- also emits retry on the PAM password line; retry remains in
+      # pwquality.conf as well.
       if $faillock_conf_supported and !$cracklib_retry_in_auth_file {
         $_cracklib_retry = false
       }
