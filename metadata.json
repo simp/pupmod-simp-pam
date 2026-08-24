@@ -1,6 +1,6 @@
 {
   "name": "simp-pam",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "author": "SIMP Team",
   "summary": "A SIMP puppet module for managing pam",
   "license": "Apache-2.0",
@@ -14,11 +14,11 @@
   "dependencies": [
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 6.4.0 < 10.0.0"
+      "version_requirement": ">= 6.4.0 < 11.0.0"
     },
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 8.0.0 < 10.0.0"
+      "version_requirement": ">= 8.0.0 < 11.0.0"
     },
     {
       "name": "simp/oddjob",
@@ -26,11 +26,11 @@
     },
     {
       "name": "simp/simplib",
-      "version_requirement": ">= 4.9.0 < 6.0.0"
+      "version_requirement": ">= 4.9.0 < 8.0.0"
     },
     {
       "name": "simp/useradd",
-      "version_requirement": ">= 0.2.2 < 3.0.0"
+      "version_requirement": ">= 0.2.2 < 4.0.0"
     }
   ],
   "simp": {
