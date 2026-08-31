@@ -486,12 +486,16 @@ class pam (
   Boolean                         $pwhistory_conf_supported            = false,
   Boolean                         $authconfig_present                  = false
 ) {
-  # Deliberately warning() rather than the deprecation() used elsewhere in SIMP:
-  # deprecation() aborts compilation when `strict` is set to `error`, and these
-  # parameters still drive the transitional shim cleanup in pam::config. Failing
-  # the catalog would prevent the very cleanup this warning is announcing.
+  # The third parameter opts out of the `strict` setting so this can never abort
+  # compilation: these parameters still drive the transitional shim cleanup in
+  # pam::config, and failing the catalog would prevent the very cleanup this
+  # deprecation is announcing.
   if $authconfig_present or !$disable_authconfig {
-    warning("${module_name}: 'pam::authconfig_present' and 'pam::disable_authconfig' are deprecated and no longer configure authconfig. They now only drive the transitional shim cleanup in 'pam::config' and will be removed in the next major release.")
+    deprecation(
+      'pam::authconfig',
+      "${module_name}: 'pam::authconfig_present' and 'pam::disable_authconfig' are deprecated and no longer configure authconfig. They now only drive the transitional shim cleanup in 'pam::config' and will be removed in the next major release.",
+      false
+    )
   }
 
   if simplib::lookup('simp_options::pam', { 'default_value' => true }) {
