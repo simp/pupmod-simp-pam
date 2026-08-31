@@ -20,9 +20,8 @@ The module is gated on the global `simp_options::pam` catalyst and its own
 
 Much of the module's real complexity is **OS-version-conditional**: newer
 `pwquality.conf` options, `faillock.conf`, and `pwhistory.conf` only exist on
-EL8+ / Amazon 2022+, so capability flags in Hiera (`data/os/*.yaml`) drive
-whether those settings are written to config files or inlined into the auth
-stacks.
+EL8+, so capability flags in Hiera (`data/os/*.yaml`) drive whether those
+settings are written to config files or inlined into the auth stacks.
 
 ### Business logic
 
@@ -86,9 +85,7 @@ Private classes (call `assert_private()`):
   `pam_ssh_agent_auth` (when `$enable_ssh_agent_auth`).
 - **`pam::config` (`manifests/config.pp`)** — the bulk of file
   management: `pwquality.conf` (gated on OS capability flags,
-  `config.pp`), `/etc/pam.d/{sudo,sudo-i,other,atd,crond}`, the
-  `simp_authconfig.sh` no-op shim replacing `authconfig`/`authconfig-tui` on
-  systems where `$pam::authconfig_present` (`config.pp`), `faillock.conf` /
+  `config.pp`), `/etc/pam.d/{sudo,sudo-i,other,atd,crond}`, `faillock.conf` /
   `pwhistory.conf` (gated, `config.pp`), declares
   `::pam::auth { $pam::auth_sections }` (`config.pp`), and drives
   `authselect::custom_profile` + `class { 'authselect' }` when
@@ -101,14 +98,12 @@ Private classes (call `assert_private()`):
   both true (`init.pp`). Included with the catalyst off, the module only
   warns (`init.pp`).
 - **OS capability flags are the real control plane.** `data/os/RedHat-8.yaml`,
-  `RedHat-9.yaml`, `RedHat-10.yaml`, `Amazon-2.yaml` set
-  `pam::*_supported` / `pam::authconfig_present`. EL8+ turns on
+  `RedHat-9.yaml`, `RedHat-10.yaml` set `pam::*_supported`, turning on
   `faillock_conf_supported`, `pwhistory_conf_supported`, and the newer
-  `pwquality` options; Amazon 2 turns them **off** and sets
-  `authconfig_present: true`. These flags decide whether settings go into
-  dedicated `.conf` files or inline into the auth stacks (`config.pp`,
-  `171-210`; `auth.pp`). The docstrings note EL7/Amazon-2 fall back to
-  inline management.
+  `pwquality` options. These flags decide whether settings go into
+  dedicated `.conf` files or inline into the auth stacks (`config.pp`;
+  `auth.pp`); platforms without `.conf` support fall back to inline
+  management.
 - **`retry` needs RHEL 8.4+.** `data/os/RedHat-8.yaml` warns that
   `cracklib_retry_supported` should be overridden to `false` on RHEL 8.0-8.3.
 - **FIPS restricts the hash algorithm.** With `fips_enabled` set, only
@@ -203,8 +198,6 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
 - `templates/etc/pam.d/{auth,other,sudo,su}.epp` and
   `templates/etc/security/{faillock,pwhistory,pwquality}.conf.epp` — the EPP
   templates.
-- `files/simp_authconfig.sh` — the no-op shim that replaces
-  `authconfig`/`authconfig-tui` on Amazon-2 (`config.pp`).
 - `data/common.yaml` — defaults (`password_check_backend: cracklib`, plus
   `lookup_options` deep-merge for `pam::access::users` / `pam::limits::rules`).
   `data/os/*.yaml` — OS capability flags and per-OS backend/locale overrides.

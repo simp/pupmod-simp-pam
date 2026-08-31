@@ -309,8 +309,13 @@
 #   Separator to use for user and origin lists
 #
 # @param disable_authconfig
-#   Disable authconfig from being used, as it breaks this module's reconfiguration
-#   of PAM.
+#   Deprecated. authconfig only existed on platforms this module no longer
+#   supports (EL7, Amazon Linux 2), so this no longer configures anything.
+#
+#   Together with `authconfig_present` it now only controls the transitional
+#   cleanup in `pam::config` that removes the old authconfig shim from nodes
+#   that previously opted in. Both parameters will be removed in the next
+#   major release.
 #
 # @param use_authselect
 #   If true, the files created in this module will be created in a simp directory
@@ -380,8 +385,15 @@
 #   This is automatically set via Hiera based on OS version
 #
 # @param authconfig_present
-#   Whether authconfig is present on the OS and needs to be disabled
-#   This is automatically set via Hiera based on OS version
+#   Deprecated. authconfig only existed on platforms this module no longer
+#   supports (EL7, Amazon Linux 2), so this no longer installs the shim.
+#
+#   Setting it `true` now only triggers the transitional cleanup in
+#   `pam::config`, which removes `/usr/sbin/authconfig`,
+#   `/usr/sbin/authconfig-tui`, and `/usr/local/sbin/simp_authconfig.sh` from
+#   nodes that ran an earlier version with the shim enabled. Restore the real
+#   tool with `dnf reinstall authconfig` if it is still wanted. This parameter
+#   will be removed in the next major release.
 #
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
@@ -474,6 +486,18 @@ class pam (
   Boolean                         $pwhistory_conf_supported            = false,
   Boolean                         $authconfig_present                  = false
 ) {
+  # The third parameter opts out of the `strict` setting so this can never abort
+  # compilation: these parameters still drive the transitional shim cleanup in
+  # pam::config, and failing the catalog would prevent the very cleanup this
+  # deprecation is announcing.
+  if $authconfig_present or !$disable_authconfig {
+    deprecation(
+      'pam::authconfig',
+      "${module_name}: 'pam::authconfig_present' and 'pam::disable_authconfig' are deprecated and no longer configure authconfig. They now only drive the transitional shim cleanup in 'pam::config' and will be removed in the next major release.",
+      false
+    )
+  }
+
   if simplib::lookup('simp_options::pam', { 'default_value' => true }) {
     if $enable {
       simplib::assert_metadata( $module_name )

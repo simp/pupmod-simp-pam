@@ -762,8 +762,13 @@ Default value: `','`
 
 Data type: `Boolean`
 
-Disable authconfig from being used, as it breaks this module's reconfiguration
-of PAM.
+Deprecated. authconfig only existed on platforms this module no longer
+supports (EL7, Amazon Linux 2), so this no longer configures anything.
+
+Together with `authconfig_present` it now only controls the transitional
+cleanup in `pam::config` that removes the old authconfig shim from nodes
+that previously opted in. Both parameters will be removed in the next
+major release.
 
 Default value: `true`
 
@@ -928,8 +933,15 @@ Default value: `false`
 
 Data type: `Boolean`
 
-Whether authconfig is present on the OS and needs to be disabled
-This is automatically set via Hiera based on OS version
+Deprecated. authconfig only existed on platforms this module no longer
+supports (EL7, Amazon Linux 2), so this no longer installs the shim.
+
+Setting it `true` now only triggers the transitional cleanup in
+`pam::config`, which removes `/usr/sbin/authconfig`,
+`/usr/sbin/authconfig-tui`, and `/usr/local/sbin/simp_authconfig.sh` from
+nodes that ran an earlier version with the shim enabled. Restore the real
+tool with `dnf reinstall authconfig` if it is still wanted. This parameter
+will be removed in the next major release.
 
 Default value: `false`
 

@@ -182,7 +182,7 @@ define pam::auth (
     }
     else {
       # Use OS capability flags to determine configuration file support
-      # faillock.conf and pwhistory.conf don't exist in EL 7 and Amazon Linux 2
+      # faillock.conf and pwhistory.conf don't exist on platforms older than EL 8
       $_manage_faillock_conf = $faillock_conf_supported ? {
         true    => $manage_faillock_conf,
         default => false
@@ -194,7 +194,7 @@ define pam::auth (
       }
 
       # retry, enforce_for_root, and reject_username are normally enforced via
-      # pwquality.conf in EL8+ and Amazon Linux 2022+. Some platforms' STIGs
+      # pwquality.conf in EL8+. Some platforms' STIGs
       # instead check the auth files for the pam_pwquality retry option (e.g.
       # Oracle Linux 9, V-271612). Enabling the opt-in $cracklib_retry_in_auth_file
       # parameter -- expected to be set via compliance or site data, not by

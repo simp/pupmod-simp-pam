@@ -12,9 +12,6 @@ pam::pwquality_dictcheck_supported: true
 pam::faillock_conf_supported: true
 pam::pwhistory_conf_supported: true
 
-# authconfig has been replaced with authselect
-pam::authconfig_present: false
-
 # Other EL9-specific settings
 pam::password_check_backend: 'pwquality'
 pam::locale_file: '/etc/locale.conf'
