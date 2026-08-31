@@ -20,7 +20,7 @@ class pam::config {
   }
 
   if ($pam::password_check_backend == 'pwquality') {
-    # The 'retry' option was introduced in RHEL 8.4 and Amazon Linux 2022
+    # The 'retry' option was introduced in RHEL 8.4
     # Use the OS capability flag to determine if it should be included
     if $pam::cracklib_retry_supported {
       $_cracklib_retry = $pam::cracklib_retry
@@ -29,7 +29,7 @@ class pam::config {
     }
 
     # The dictcheck, enforce_for_root, and reject_username options were introduced
-    # to the pwquality.conf file in RHEL 8 and Amazon 2022
+    # to the pwquality.conf file in RHEL 8
     # Use the OS capability flags to determine if they should be included
     if $pam::pwquality_enforce_for_root_supported {
       $_cracklib_enforce_for_root = $pam::cracklib_enforce_for_root
@@ -126,27 +126,6 @@ class pam::config {
     ;
   }
 
-  if $pam::authconfig_present and ($pam::disable_authconfig == true) {
-    # Replace authconfig and authconfig-tui with a no-op script
-    # so that those tools can't be used to modify PAM.
-    file { '/usr/local/sbin/simp_authconfig.sh':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0755',
-      content => file("${module_name}/simp_authconfig.sh"),
-    }
-
-    file { [
-        '/usr/sbin/authconfig',
-        '/usr/sbin/authconfig-tui',
-      ]:
-        ensure  => 'link',
-        target  => '/usr/local/sbin/simp_authconfig.sh',
-        require => File['/usr/local/sbin/simp_authconfig.sh'],
-    }
-  }
-
   if ($pam::faillock_log_dir) {
     file { $pam::faillock_log_dir:
       ensure   => 'directory',
@@ -173,7 +152,7 @@ class pam::config {
     }
   }
 
-  # EL 7 and Amazon Linux 2 don't utilize faillock.conf and pwhistory.conf
+  # Platforms older than EL 8 don't utilize faillock.conf and pwhistory.conf
   if $pam::faillock_conf_supported or $pam::pwhistory_conf_supported {
     if ($pam::manage_faillock_conf and $pam::faillock_conf_supported) {
       file { '/etc/security/faillock.conf':

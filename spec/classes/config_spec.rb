@@ -445,14 +445,6 @@ describe 'pam' do
         end
       end
 
-      context 'with disable_authconfig = false' do
-        let(:params) { { disable_authconfig: false } }
-
-        it { is_expected.not_to contain_file('/usr/local/sbin/simp_authconfig.sh') }
-        it { is_expected.not_to contain_file('/usr/sbin/authconfig') }
-        it { is_expected.not_to contain_file('/usr/sbin/authconfig-tui') }
-      end
-
       context 'with empty auth_sections' do
         let(:params) { { auth_sections: [] } }
 

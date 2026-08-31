@@ -762,8 +762,9 @@ Default value: `','`
 
 Data type: `Boolean`
 
-Disable authconfig from being used, as it breaks this module's reconfiguration
-of PAM.
+Deprecated; has no effect. authconfig only existed on platforms this
+module no longer supports (EL7, Amazon Linux 2). This parameter will be
+removed in a future major release.
 
 Default value: `true`
 
@@ -928,8 +929,9 @@ Default value: `false`
 
 Data type: `Boolean`
 
-Whether authconfig is present on the OS and needs to be disabled
-This is automatically set via Hiera based on OS version
+Deprecated; has no effect. authconfig only existed on platforms this
+module no longer supports (EL7, Amazon Linux 2). This parameter will be
+removed in a future major release.
 
 Default value: `false`
 

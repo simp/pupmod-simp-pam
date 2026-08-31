@@ -1,3 +1,11 @@
+* Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
+- Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:
+  the unreachable Amazon spec branches, the `data/os/Amazon-2.yaml` capability
+  data, the `simp_authconfig.sh` no-op shim, and the `authconfig` disabling
+  block in `pam::config` (unreachable on every supported OS)
+- Deprecate the now no-op `authconfig_present` and `disable_authconfig`
+  parameters; they will be removed in the next major release
+
 * Mon Aug 24 2026 Steven Pritchard <steve@sicura.us> - 9.1.1
 - [puppetsync] Update metadata.json dependency ranges from the Forge
 

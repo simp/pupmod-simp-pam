@@ -309,8 +309,9 @@
 #   Separator to use for user and origin lists
 #
 # @param disable_authconfig
-#   Disable authconfig from being used, as it breaks this module's reconfiguration
-#   of PAM.
+#   Deprecated; has no effect. authconfig only existed on platforms this
+#   module no longer supports (EL7, Amazon Linux 2). This parameter will be
+#   removed in a future major release.
 #
 # @param use_authselect
 #   If true, the files created in this module will be created in a simp directory
@@ -380,8 +381,9 @@
 #   This is automatically set via Hiera based on OS version
 #
 # @param authconfig_present
-#   Whether authconfig is present on the OS and needs to be disabled
-#   This is automatically set via Hiera based on OS version
+#   Deprecated; has no effect. authconfig only existed on platforms this
+#   module no longer supports (EL7, Amazon Linux 2). This parameter will be
+#   removed in a future major release.
 #
 # @author https://github.com/simp/pupmod-simp-pam/graphs/contributors
 #
