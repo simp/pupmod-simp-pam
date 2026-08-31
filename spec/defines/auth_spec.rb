@@ -45,13 +45,7 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
-              let(:el_version) do
-                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-                  'el7'
-                else
-                  'el8'
-                end
-              end
+              let(:el_version) { 'el8' }
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_default_params") }
 
@@ -126,13 +120,7 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
-              let(:el_version) do
-                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-                  'el7'
-                else
-                  'el8'
-                end
-              end
+              let(:el_version) { 'el8' }
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_unlock_time_never") }
 
@@ -230,13 +218,7 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
-              let(:el_version) do
-                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-                  'el7'
-                else
-                  'el8'
-                end
-              end
+              let(:el_version) { 'el8' }
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_no_tty_audit") }
 
@@ -259,13 +241,7 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
-              let(:el_version) do
-                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-                  'el7'
-                else
-                  'el8'
-                end
-              end
+              let(:el_version) { 'el8' }
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_openshift_multi_tty_audit") }
 
@@ -295,13 +271,7 @@ describe 'pam::auth' do
             context "auth type '#{auth_type}'" do
               let(:pw_backend) { 'pwquality' }
               let(:title) { auth_type }
-              let(:el_version) do
-                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-                  'el7'
-                else
-                  'el8'
-                end
-              end
+              let(:el_version) { 'el8' }
               let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
               let(:file_content) { get_expected("#{pw_backend}-#{auth_type}-#{el_version}-auth_sssd_user_specified_centrify") }
 
@@ -325,13 +295,7 @@ describe 'pam::auth' do
               let(:pw_backend) { 'pwquality' }
               let(:title) { 'password' }
               let(:filename) { '/etc/pam.d/password-auth' }
-              let(:el_version) do
-                if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-                  'el7'
-                else
-                  'el8'
-                end
-              end
+              let(:el_version) { 'el8' }
               let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-#{index}") }
 
               it_behaves_like 'a pam.d config file generator'
@@ -349,13 +313,7 @@ describe 'pam::auth' do
           let(:pw_backend) { 'pwquality' }
           let(:title) { 'password' }
           let(:filename) { '/etc/pam.d/password-auth' }
-          let(:el_version) do
-            if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-              'el7'
-            else
-              'el8'
-            end
-          end
+          let(:el_version) { 'el8' }
           let(:file_content) { get_expected("#{pw_backend}-#{el_version}-password-separator-false") }
 
           it_behaves_like 'a pam.d config file generator'
@@ -371,13 +329,7 @@ describe 'pam::auth' do
           let(:pw_backend) { 'pwquality' }
           let(:title) { 'system' }
           let(:filename) { '/etc/pam.d/system-auth' }
-          let(:el_version) do
-            if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-              'el7'
-            else
-              'el8'
-            end
-          end
+          let(:el_version) { 'el8' }
           let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_oath_enabled") }
 
           it_behaves_like 'a pam.d config file generator'
@@ -393,13 +345,7 @@ describe 'pam::auth' do
           let(:pw_backend) { 'pwquality' }
           let(:title) { 'system' }
           let(:filename) { '/etc/pam.d/system-auth' }
-          let(:el_version) do
-            if (os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i <= 2022)
-              'el7'
-            else
-              'el8'
-            end
-          end
+          let(:el_version) { 'el8' }
           let(:file_content) { get_expected("#{pw_backend}-system-#{el_version}-auth_nullok") }
 
           it_behaves_like 'a pam.d config file generator'

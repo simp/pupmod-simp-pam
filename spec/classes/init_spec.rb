@@ -90,12 +90,7 @@ describe 'pam' do
         let(:params) { { manage_faillock_conf: true } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major].to_i > 7)) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i >= 2022))
-          it { is_expected.to contain_file('/etc/security/faillock.conf') }
-        else
-          it { is_expected.not_to contain_file('/etc/security/faillock.conf') }
-        end
+        it { is_expected.to contain_file('/etc/security/faillock.conf') }
       end
 
       context 'with all possible pwhistory params set' do
@@ -125,12 +120,7 @@ describe 'pam' do
         let(:params) { { manage_pwhistory_conf: true } }
 
         it { is_expected.to compile.with_all_deps }
-        if ((os_facts[:os][:family] == 'RedHat') && (os_facts[:os][:release][:major].to_i > 7)) ||
-           ((os_facts[:os][:name] == 'Amazon') && (os_facts[:os][:release][:major].to_i >= 2022))
-          it { is_expected.to contain_file('/etc/security/pwhistory.conf') }
-        else
-          it { is_expected.not_to contain_file('/etc/security/pwhistory.conf') }
-        end
+        it { is_expected.to contain_file('/etc/security/pwhistory.conf') }
       end
 
       context 'with inactive set' do
