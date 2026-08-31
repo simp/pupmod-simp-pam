@@ -513,6 +513,41 @@ describe 'pam' do
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_file('/etc/security/pwhistory.conf').with_content(all_params_pwhistory_conf) }
       end
+
+      # The shim itself was removed in 9.2.0, but earlier versions left symlinks
+      # behind on nodes that opted in. Deleting the code that created them does
+      # not remove them, so the cleanup is gated on the same condition that
+      # created them: only opted-in nodes are reaped, everyone else keeps their
+      # real authconfig binary (asserted in the default context above).
+      context 'with the deprecated authconfig parameters left at their old opt-in values' do
+        let(:params) { { authconfig_present: true, disable_authconfig: true } }
+
+        it { is_expected.to compile.with_all_deps }
+
+        [
+          '/usr/sbin/authconfig',
+          '/usr/sbin/authconfig-tui',
+          '/usr/local/sbin/simp_authconfig.sh',
+        ].each do |shim_file|
+          it { is_expected.to contain_file(shim_file).with_ensure('absent') }
+        end
+      end
+
+      context 'with authconfig_present = true and disable_authconfig = false' do
+        let(:params) { { authconfig_present: true, disable_authconfig: false } }
+
+        it { is_expected.to compile.with_all_deps }
+
+        # disable_authconfig = false meant "leave authconfig alone", so such a
+        # node never had the shim installed and must not have anything reaped.
+        [
+          '/usr/sbin/authconfig',
+          '/usr/sbin/authconfig-tui',
+          '/usr/local/sbin/simp_authconfig.sh',
+        ].each do |shim_file|
+          it { is_expected.not_to contain_file(shim_file) }
+        end
+      end
     end
   end
 end

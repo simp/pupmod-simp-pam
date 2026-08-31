@@ -126,6 +126,30 @@ class pam::config {
     ;
   }
 
+  # Transitional cleanup for the authconfig shim removed in 9.2.0.
+  #
+  # Earlier versions replaced /usr/sbin/authconfig and /usr/sbin/authconfig-tui
+  # with symlinks to a no-op script. Deleting the code that created them does
+  # not remove them, so a node that opted in keeps an unmanaged shim that a
+  # later authconfig package update can silently overwrite -- ending the
+  # hardening with no signal. Reap them here instead.
+  #
+  # Gated on the same condition that created them so that nodes which never
+  # opted in are untouched and keep their real authconfig binary. Remove this
+  # block, and the two parameters, in the next major release.
+  #
+  # Operators who still want the real tool can restore it with
+  # `dnf reinstall authconfig`.
+  if $pam::authconfig_present and $pam::disable_authconfig {
+    file { [
+        '/usr/sbin/authconfig',
+        '/usr/sbin/authconfig-tui',
+        '/usr/local/sbin/simp_authconfig.sh',
+      ]:
+        ensure => absent,
+    }
+  }
+
   if ($pam::faillock_log_dir) {
     file { $pam::faillock_log_dir:
       ensure   => 'directory',

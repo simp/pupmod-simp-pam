@@ -3,8 +3,20 @@
   the unreachable Amazon spec branches, the `data/os/Amazon-2.yaml` capability
   data, the `simp_authconfig.sh` no-op shim, and the `authconfig` disabling
   block in `pam::config` (unreachable on every supported OS)
-- Deprecate the now no-op `authconfig_present` and `disable_authconfig`
-  parameters; they will be removed in the next major release
+- Reap the old authconfig shim from nodes that opted in: `pam::config` now sets
+  `/usr/sbin/authconfig`, `/usr/sbin/authconfig-tui`, and
+  `/usr/local/sbin/simp_authconfig.sh` to `absent` when
+  `pam::authconfig_present` is `true` and `pam::disable_authconfig` is `true`.
+  Removing the code that created the shim does not remove the shim itself, so
+  without this an upgraded node keeps an unmanaged symlink to a no-op script
+  that a later `authconfig` package update can silently overwrite. Nodes that
+  never opted in are untouched and keep their real `authconfig` binary.
+  Operators who still want the tool can restore it with
+  `dnf reinstall authconfig`.
+- Deprecate `authconfig_present` and `disable_authconfig`. They no longer
+  configure authconfig and now only drive the cleanup above; a non-default
+  value emits a deprecation warning. Both will be removed in the next major
+  release
 
 * Mon Aug 24 2026 Steven Pritchard <steve@sicura.us> - 9.1.1
 - [puppetsync] Update metadata.json dependency ranges from the Forge
