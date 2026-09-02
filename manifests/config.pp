@@ -227,7 +227,7 @@ class pam::config {
     # will fill the content of the pam files in a later step.
     authselect::custom_profile { $pam::authselect_profile_name:
       base_profile     => $pam::authselect_base_profile,
-      vendor           => true,
+      vendor           => $pam::authselect_vendor_profile,
       symlink_meta     => true,
       symlink_nsswitch => true,
       symlink_pam      => false,
@@ -235,10 +235,10 @@ class pam::config {
     }
 
     class { 'authselect':
-      profile => $pam::authselect_profile_name,
+      profile => $pam::_authselect_profile,
     }
 
     Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth[$pam::auth_sections]
-    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
+    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${pam::_authselect_profile} features=[]"]
   }
 }

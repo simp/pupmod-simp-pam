@@ -148,7 +148,7 @@ define pam::auth (
   }
 
   $basedir = $pam::use_authselect ? {
-    true => $pam::auth_basedir,
+    true => $pam::_auth_basedir,
     default => '/etc/pam.d',
   }
 

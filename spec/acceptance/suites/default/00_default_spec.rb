@@ -77,15 +77,28 @@ describe 'pam class' do
 
         it 'activates the simp authselect profile' do
           result = on(host, '/usr/bin/authselect current')
-          expect(result.stdout).to match(%r{Profile ID:\s+simp})
+          expect(result.stdout).to match(%r{Profile ID:\s+custom/simp})
         end
 
-        it 'matches content of /etc/authselect/password-auth to /usr/share/authselect/vendor/simp/password-auth' do
+        it 'matches content of /etc/authselect/password-auth to /etc/authselect/custom/simp/password-auth' do
           on(host, 'dnf install -y diffutils') unless host.check_for_command('diff')
           # Compare the two files ignoring comments and newlines, authselect adds some comments and blank lines when selecting a profile
-          result = on(host, 'diff <(grep -v "^\s*#" /etc/authselect/password-auth | tr -d "\n") <(grep -v "^\s*#" /usr/share/authselect/vendor/simp/password-auth | tr -d "\n")',
+          result = on(host, 'diff <(grep -v "^\s*#" /etc/authselect/password-auth | tr -d "\n") <(grep -v "^\s*#" /etc/authselect/custom/simp/password-auth | tr -d "\n")',
 accept_all_exit_codes: true)
           expect(result.exit_code).to eq(0)
+        end
+
+        # The CIS rule "Ensure active authselect profile includes pam modules"
+        # resolves the active profile's template directory to
+        # /etc/authselect/<profile> for a 'custom/'-prefixed name and to
+        # /usr/share/authselect/default/<profile> otherwise. A custom profile
+        # is the only one of the two layouts it can reach.
+        it 'puts the profile where the CIS authselect audit looks for it' do
+          profile = on(host, 'head -1 /etc/authselect/authselect.conf').stdout.strip
+          expect(profile).to start_with('custom/')
+
+          on(host, "test -d /etc/authselect/#{profile}")
+          on(host, "grep -P -- '\\bpam_unix\\.so\\b' /etc/authselect/#{profile}/{password,system}-auth")
         end
       end
     end

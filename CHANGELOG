@@ -1,3 +1,42 @@
+* Wed Sep 02 2026 Mike Riddle <mike@sicura.us> - 9.3.0
+- Give `pam_unix` a plain `sufficient` control in the faillock auth stack
+  (SIMP-#230). It was emitted as `auth [success=1 default=ignore]
+  pam_unix.so`, and the CIS rule "Ensure `pam_unix` module is enabled"
+  (EL8/EL9 5.3.2.5, EL10 5.3.1.5) only accepts `required`, `requisite` or
+  `sufficient`, so enforcing the module turned a passing host into a failing
+  one. The `pam_sss.so forward_pass` line loses its `[success=2
+  default=ignore]` jump for the same reason.
+- Drop the `pam_faillock.so authsucc` line from the faillock auth stack. It is
+  unreachable once `pam_unix` is `sufficient`; the failure tally is reset by
+  the `account required pam_faillock.so` line the module already emits, which
+  is the arrangement documented in `pam_faillock(8)` and used by authselect's
+  own `with-faillock` feature. Lockout behavior is unchanged --- `auth
+  [default=die] pam_faillock.so authfail` still records failures --- and
+  consecutive-failure semantics are preserved by the account-phase call.
+- Fix SSSD logins when `pam::inactive` was also set. The `[success=2 ...]`
+  jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
+  `pam_faillock.so authfail`, failing an otherwise successful SSSD
+  authentication. Removing the jump fixes this.
+- Add `pam::authselect_vendor_profile` (SIMP-#231), defaulting to `false`.
+  `pam::use_authselect` previously always built the profile as an authselect
+  *vendor* profile under `/usr/share/authselect/vendor/simp`. The CIS rule
+  "Ensure active authselect profile includes pam modules" (EL8 5.3.2.1, EL10
+  5.3.1.1) resolves the active profile to `/etc/authselect/<profile>` for a
+  `custom/`-prefixed name and to `/usr/share/authselect/default/<profile>`
+  otherwise, so a vendor profile is in neither place and the rule fails.
+- `pam::auth_basedir` now defaults to `undef` and is derived from
+  `pam::authselect_profile_name` and `pam::authselect_vendor_profile` so the
+  directory the auth files are written to always matches the profile that is
+  selected. An explicit value is still honored.
+
+  UPGRADE NOTE: nodes with `pam::use_authselect` set to `true` will move their
+  profile from `/usr/share/authselect/vendor/simp` to
+  `/etc/authselect/custom/simp`, and `/etc/authselect/authselect.conf` will
+  read `custom/simp` rather than `simp`. Anything parsing that file or the
+  `authselect_profile` fact needs to account for the prefix. The old vendor
+  directory is left in place and is not removed by this module. Set
+  `pam::authselect_vendor_profile: true` to keep the previous layout
+
 * Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
 - Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:
   the unreachable Amazon spec branches, the `data/os/Amazon-2.yaml` capability

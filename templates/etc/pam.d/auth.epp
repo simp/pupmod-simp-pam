@@ -154,18 +154,25 @@ auth     requisite     pam_deny.so
 <%       if $pam_cert_auth { -%>
 auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
 <%       } -%>
-auth     [success=2 default=ignore] pam_sss.so forward_pass
+auth     sufficient    pam_sss.so forward_pass
 <%     } -%>
 <%     if $inactive { -%>
 auth required pam_lastlog.so inactive=<%= $inactive %>
 <%     } -%>
-auth     [success=1 default=ignore] pam_unix.so try_first_pass
+<%-    # 'pam_unix' keeps a plain 'sufficient' control here on purpose. The CIS
+       # rule "Ensure pam_unix module is enabled" only accepts
+       # required/requisite/sufficient, so a bracketed jump such as
+       # [success=1 default=ignore] fails the benchmark. Dropping the jump makes
+       # the 'authsucc' call unreachable, so it is omitted: the tally is reset by
+       # the 'account required pam_faillock.so' line emitted below, which is the
+       # arrangement documented in pam_faillock(8) and used by authselect's own
+       # 'with-faillock' feature.
+-%>
+auth     sufficient    pam_unix.so try_first_pass
 <%       if $manage_faillock_conf { -%>
 auth     [default=die] pam_faillock.so authfail
-auth     sufficient    pam_faillock.so authsucc
 <%       } else { -%>
 auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
-auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
 <%       } -%>
 <%   } else { -%>
 <%     if $sssd { -%>
