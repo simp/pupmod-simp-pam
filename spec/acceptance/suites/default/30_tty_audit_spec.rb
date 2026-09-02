@@ -31,14 +31,8 @@ describe 'pam_tty_audit' do
 
   hosts.each do |host|
     context "on #{host}" do
-      # EL10 splits `auditctl` out into the `audit-rules` subpackage, which is
-      # not installed by default. Without the binary the simplib__auditd fact
-      # is confined out entirely, so there is no state for the templates to
-      # read and pam falls through to the optional branch on a stock EL10 node
-      # even while auditd is running. Install it where it is missing so the
-      # enforcing branch is genuinely reachable on every supported platform.
       before(:context) do
-        on(host, 'dnf install -y audit-rules') unless host.check_for_command('auditctl')
+        install_package(host, 'audit-rules') unless host.check_for_command('auditctl')
       end
 
       # `auditctl -e` is the only lever available: auditd.service sets
