@@ -54,10 +54,10 @@ Public API (consumers `include`/declare these; none call `assert_private()`):
     decide whether `faillock`/`pwhistory`/`retry`/`enforce_for_root`/
     `reject_username` are written into `faillock.conf`/`pwhistory.conf` vs.
     inlined into the auth EPP (`auth.pp`).
-  - Writes `${basedir}/${name}-auth` where `$basedir` is the authselect vendor
-    dir when `$pam::use_authselect`, else `/etc/pam.d` (`auth.pp`,
-    `269-275`); removes the `-ac` companion file unless `$preserve_ac`
-    (`auth.pp`).
+  - Writes `${basedir}/${name}-auth` where `$basedir` is `$pam::_auth_basedir`
+    (the active authselect profile's directory) when `$pam::use_authselect`,
+    else `/etc/pam.d` (`auth.pp`, `269-275`); removes the `-ac` companion file
+    unless `$preserve_ac` (`auth.pp`).
 - **`pam::wheel` (`manifests/wheel.pp`)** — `inherits pam`; manages
   `/etc/pam.d/su` from the `su.epp` template (or custom `$content`).
 - **`pam::access` (`manifests/access.pp`)** — manages
@@ -109,6 +109,22 @@ Private classes (call `assert_private()`):
 - **FIPS restricts the hash algorithm.** With `fips_enabled` set, only
   `sha256`/`sha512` pass; anything else `fail()`s in `pam::auth`
   (`auth.pp`).
+- **The authselect profile is a *custom* profile, not a vendor one.**
+  `pam::authselect_vendor_profile` defaults to `false`, so `pam::config`
+  creates `/etc/authselect/custom/simp` and selects it as `custom/simp`
+  (`config.pp`). Both the derived `$pam::_auth_basedir` and the
+  `custom/`-prefixed `$pam::_authselect_profile` are computed in `init.pp` so
+  the directory the auth files are written to can never disagree with the
+  profile that is selected --- change them together. A vendor profile
+  (`/usr/share/authselect/vendor/simp`) is invisible to the CIS authselect
+  audit, which only resolves `/etc/authselect/<profile>` or
+  `/usr/share/authselect/default/<profile>`.
+- **`pam_unix` auth lines must keep a plain control.** The CIS rule "Ensure
+  `pam_unix` module is enabled" only accepts `required`/`requisite`/
+  `sufficient`, so `templates/etc/pam.d/auth.epp` must never go back to a
+  bracketed jump such as `[success=1 default=ignore]` on `pam_unix`. The
+  faillock stack therefore has no `pam_faillock.so authsucc` line --- the
+  tally is reset by `account required pam_faillock.so`.
 - **`simp/oath` and `puppet-authselect` are OPTIONAL dependencies**
   (`metadata.json` `simp.optional_dependencies`), not hard deps. `oath` is
   guarded at runtime with `simplib::assert_optional_dependency` only when

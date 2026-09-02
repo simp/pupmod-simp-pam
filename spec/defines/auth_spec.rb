@@ -72,6 +72,43 @@ describe 'pam::auth' do
           end
         end
 
+        # CIS "Ensure pam_unix module is enabled" (EL8/EL9 5.3.2.5, EL10
+        # 5.3.1.5) greps the auth stacks for
+        #   ^\h*auth\h+(required|requisite|sufficient)\h+pam_unix\.so\b
+        # so the pam_unix auth line must carry a plain control, never a
+        # bracketed jump such as [success=1 default=ignore].
+        context 'CIS pam_unix control' do
+          let(:cis_pam_unix) { %r{^[ \t]*auth[ \t]+(?:required|requisite|sufficient)[ \t]+pam_unix\.so\b} }
+
+          {
+            'with faillock'            => { faillock: true },
+            'without faillock'         => { faillock: false },
+            'with faillock and sssd'   => { faillock: true, sssd: true },
+            'with faillock via faillock.conf' => { faillock: true, manage_faillock_conf: true },
+          }.each do |description, extra_params|
+            context description do
+              ['system', 'password'].each do |auth_type|
+                context "auth type '#{auth_type}'" do
+                  let(:title) { auth_type }
+                  let(:params) { extra_params }
+                  let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+                  it { is_expected.to contain_file(filename).with_content(cis_pam_unix) }
+                  it { is_expected.to contain_file(filename).without_content(%r{^auth\s+\[[^\]]*\]\s+pam_unix\.so}) }
+
+                  if extra_params[:faillock]
+                    # 'authsucc' is unreachable once pam_unix is 'sufficient';
+                    # the tally is reset by the account-phase pam_faillock call.
+                    it { is_expected.to contain_file(filename).without_content(%r{pam_faillock\.so authsucc}) }
+                    it { is_expected.to contain_file(filename).with_content(%r{^auth\s+\[default=die\]\s+pam_faillock\.so authfail}) }
+                    it { is_expected.to contain_file(filename).with_content(%r{^account\s+required\s+pam_faillock\.so$}) }
+                  end
+                end
+              end
+            end
+          end
+        end
+
         context 'Generate file using content params' do
           let(:params) do
             {

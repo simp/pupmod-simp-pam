@@ -141,11 +141,11 @@ describe 'pam' do
 
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=done authinfo_unavail=ignore ignore=ignore default=die\] pam_sss.so try_cert_auth$}) }
-        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     sufficient    pam_sss.so forward_pass$}) }
         it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=done authinfo_unavail=ignore ignore=ignore default=die\] pam_sss.so try_cert_auth$}) }
-        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
-        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{pam_sss\.so try_cert_auth\nauth     \[success=2 default=ignore\] pam_sss\.so forward_pass}) }
-        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{pam_sss\.so try_cert_auth\nauth     \[success=2 default=ignore\] pam_sss\.so forward_pass}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     sufficient    pam_sss.so forward_pass$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{pam_sss\.so try_cert_auth\nauth     sufficient    pam_sss\.so forward_pass}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{pam_sss\.so try_cert_auth\nauth     sufficient    pam_sss\.so forward_pass}) }
       end
 
       context 'smartcard profile defaults to require_cert_auth when cert_auth is unset' do
@@ -166,13 +166,17 @@ describe 'pam' do
 
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=done authinfo_unavail=ignore ignore=ignore default=die\] pam_sss.so require_cert_auth$}) }
-        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth     sufficient    pam_sss.so forward_pass$}) }
         it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=done authinfo_unavail=ignore ignore=ignore default=die\] pam_sss.so require_cert_auth$}) }
-        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     \[success=2 default=ignore\] pam_sss.so forward_pass$}) }
-        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{pam_sss\.so require_cert_auth\nauth     \[success=2 default=ignore\] pam_sss\.so forward_pass}) }
-        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{pam_sss\.so require_cert_auth\nauth     \[success=2 default=ignore\] pam_sss\.so forward_pass}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth     sufficient    pam_sss.so forward_pass$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{pam_sss\.so require_cert_auth\nauth     sufficient    pam_sss\.so forward_pass}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{pam_sss\.so require_cert_auth\nauth     sufficient    pam_sss\.so forward_pass}) }
       end
 
+      # The profile is created as a custom profile by default: the CIS rule
+      # "Ensure active authselect profile includes pam modules" only resolves
+      # the active profile under /etc/authselect (custom) or
+      # /usr/share/authselect/default, so a vendor profile is invisible to it.
       context 'with use_authselect set to true' do
         let(:params) { { use_authselect: true } }
 
@@ -180,14 +184,51 @@ describe 'pam' do
         it {
           is_expected.to contain_authselect__custom_profile('simp').with(
           'base_profile'     => 'sssd',
-          'vendor'           => true,
+          'vendor'           => false,
           'symlink_meta'     => true,
           'symlink_nsswitch' => true,
           'symlink_pam'      => false,
           'symlink_dconf'    => true,
         )
         }
+        it { is_expected.to contain_class('authselect').with_profile('custom/simp') }
+
+        it 'writes the auth files into the custom profile directory' do
+          is_expected.to contain_file('/etc/authselect/custom/simp/system-auth')
+        end
+      end
+
+      context 'with use_authselect and authselect_vendor_profile set to true' do
+        let(:params) { { use_authselect: true, authselect_vendor_profile: true } }
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_authselect__custom_profile('simp').with_vendor(true) }
         it { is_expected.to contain_class('authselect').with_profile('simp') }
+
+        it 'writes the auth files into the vendor profile directory' do
+          is_expected.to contain_file('/usr/share/authselect/vendor/simp/system-auth')
+        end
+      end
+
+      context 'with use_authselect and an explicit auth_basedir' do
+        let(:params) { { use_authselect: true, auth_basedir: '/etc/authselect/custom/elsewhere' } }
+
+        it { is_expected.to compile.with_all_deps }
+
+        it 'honors the override' do
+          is_expected.to contain_file('/etc/authselect/custom/elsewhere/system-auth')
+        end
+      end
+
+      context 'with use_authselect and a non-default profile name' do
+        let(:params) { { use_authselect: true, authselect_profile_name: 'sitename' } }
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_class('authselect').with_profile('custom/sitename') }
+
+        it 'derives the auth files directory from the profile name' do
+          is_expected.to contain_file('/etc/authselect/custom/sitename/system-auth')
+        end
       end
     end
   end
