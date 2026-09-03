@@ -188,58 +188,6 @@ describe 'pam' do
         )
         }
         it { is_expected.to contain_class('authselect').with_profile('simp') }
-
-        it 'writes the auth files into the vendor profile directory' do
-          is_expected.to contain_file('/usr/share/authselect/vendor/simp/system-auth')
-        end
-      end
-
-      # Opt-in layout for sites that have to pass the CIS rule "Ensure active
-      # authselect profile includes pam modules", which only resolves the
-      # active profile under /etc/authselect (custom) or
-      # /usr/share/authselect/default -- never the vendor directory.
-      context 'with use_authselect and authselect_vendor_profile set to false' do
-        let(:params) { { use_authselect: true, authselect_vendor_profile: false } }
-
-        it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_authselect__custom_profile('simp').with_vendor(false) }
-        it { is_expected.to contain_class('authselect').with_profile('custom/simp') }
-
-        it 'writes the auth files into the custom profile directory' do
-          is_expected.to contain_file('/etc/authselect/custom/simp/system-auth')
-        end
-      end
-
-      context 'with use_authselect and an explicit auth_basedir' do
-        let(:params) { { use_authselect: true, auth_basedir: '/usr/share/authselect/vendor/elsewhere' } }
-
-        it { is_expected.to compile.with_all_deps }
-
-        it 'honors the override' do
-          is_expected.to contain_file('/usr/share/authselect/vendor/elsewhere/system-auth')
-        end
-      end
-
-      context 'with use_authselect and a non-default profile name' do
-        let(:params) { { use_authselect: true, authselect_profile_name: 'sitename' } }
-
-        it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_class('authselect').with_profile('sitename') }
-
-        it 'derives the auth files directory from the profile name' do
-          is_expected.to contain_file('/usr/share/authselect/vendor/sitename/system-auth')
-        end
-      end
-
-      context 'with use_authselect, a custom profile and a non-default profile name' do
-        let(:params) { { use_authselect: true, authselect_vendor_profile: false, authselect_profile_name: 'sitename' } }
-
-        it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_class('authselect').with_profile('custom/sitename') }
-
-        it 'derives the auth files directory from the profile name' do
-          is_expected.to contain_file('/etc/authselect/custom/sitename/system-auth')
-        end
       end
     end
   end

@@ -227,25 +227,18 @@ class pam::config {
     # will fill the content of the pam files in a later step.
     authselect::custom_profile { $pam::authselect_profile_name:
       base_profile     => $pam::authselect_base_profile,
-      vendor           => $pam::authselect_vendor_profile,
+      vendor           => true,
       symlink_meta     => true,
       symlink_nsswitch => true,
       symlink_pam      => false,
       symlink_dconf    => true,
     }
 
-    # Aliased to a local variable because it has to be interpolated into the
-    # Exec title below, and puppet-lint's lexer mis-parses a '::'-namespaced
-    # variable whose last segment starts with an underscore when it appears
-    # inside a string: it sees a bare '$pam' and fails the variable_scope
-    # check. Keep the alias if you touch this.
-    $_authselect_profile = $pam::_authselect_profile
-
     class { 'authselect':
-      profile => $_authselect_profile,
+      profile => $pam::authselect_profile_name,
     }
 
     Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth[$pam::auth_sections]
-    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${_authselect_profile} features=[]"]
+    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${pam::authselect_profile_name} features=[]"]
   }
 }

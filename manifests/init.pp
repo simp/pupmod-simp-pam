@@ -330,29 +330,8 @@
 #   The base profile to use when creating the 'simp' authselect profile.
 #   This is only used if 'use_authselect' is true. The default is 'sssd'.
 #
-# @param authselect_vendor_profile
-#   If true, create the authselect profile as a *vendor* profile under
-#   `/usr/share/authselect/vendor`. If false, create it as a custom profile
-#   under `/etc/authselect/custom`.
-#
-#   Set this to `false` if you need to pass the CIS Benchmark rule "Ensure
-#   active authselect profile includes pam modules". That check resolves the
-#   active profile to `/etc/authselect/<profile>` (for a `custom/`-prefixed
-#   name) or `/usr/share/authselect/default/<profile>`; a vendor profile lives
-#   in neither location, so the rule cannot see it and fails.
-#
-#   This defaults to `true` to preserve the historical layout. Note that a
-#   custom profile is selected as `custom/<name>`, so switching to `false`
-#   makes `/etc/authselect/authselect.conf` read `custom/simp` rather than
-#   `simp`, which is visible to anything parsing it.
-#
 # @param auth_basedir
 #   The directory in which the auth files will be created
-#
-#   If left unset, this is derived from `authselect_profile_name` and
-#   `authselect_vendor_profile` so that the auth files are always written into
-#   the directory of the profile that is actually selected. Only override this
-#   if you know that the two cannot disagree.
 #
 # @param package_ensure
 #   Ensure setting for all packages installed by this module
@@ -476,14 +455,13 @@ class pam (
   Optional[String]                $system_auth_content       = undef,
   Optional[String]                $password_auth_content     = undef,
   Optional[String]                $smartcard_auth_content    = undef,
-  Optional[StdLib::Absolutepath]  $auth_basedir              = undef,
+  StdLib::Absolutepath            $auth_basedir              = '/usr/share/authselect/vendor/simp',
   Boolean                         $enable                    = true,
   Boolean                         $enable_warning            = true,
   Boolean                         $disable_authconfig        = true,
   Boolean                         $use_authselect            = simplib::lookup('simp_options::authselect', { 'default_value' => false }),
   String                          $authselect_profile_name   = 'simp',
   String                          $authselect_base_profile   = 'sssd',
-  Boolean                         $authselect_vendor_profile = true,
   Simplib::PackageEnsure          $package_ensure            = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'present' }),
   Boolean                         $faillock                  = true,
   Boolean                         $manage_faillock_conf      = false,
@@ -508,25 +486,6 @@ class pam (
   Boolean                         $pwhistory_conf_supported            = false,
   Boolean                         $authconfig_present                  = false
 ) {
-  # authselect only reads the pam stacks from the directory of the profile it
-  # has selected, so $auth_basedir (where pam::auth writes them) has to track
-  # $authselect_vendor_profile. Deriving it here keeps the two from disagreeing
-  # while still letting a site pin the directory explicitly.
-  $_auth_basedir = $auth_basedir ? {
-    undef   => $authselect_vendor_profile ? {
-      true    => "/usr/share/authselect/vendor/${authselect_profile_name}",
-      default => "/etc/authselect/custom/${authselect_profile_name}",
-    },
-    default => $auth_basedir,
-  }
-
-  # A custom profile has to be selected by its 'custom/'-prefixed name; a
-  # vendor profile is selected by its bare name.
-  $_authselect_profile = $authselect_vendor_profile ? {
-    true    => $authselect_profile_name,
-    default => "custom/${authselect_profile_name}",
-  }
-
   # The third parameter opts out of the `strict` setting so this can never abort
   # compilation: these parameters still drive the transitional shim cleanup in
   # pam::config, and failing the catalog would prevent the very cleanup this
