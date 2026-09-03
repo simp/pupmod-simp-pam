@@ -1,3 +1,23 @@
+* Wed Sep 02 2026 Mike Riddle <mike@sicura.us> - 9.3.0
+- Give `pam_unix` a plain `sufficient` control in the faillock auth stack
+  (SIMP-#230). It was emitted as `auth [success=1 default=ignore]
+  pam_unix.so`, and the CIS rule "Ensure `pam_unix` module is enabled"
+  (EL8/EL9 5.3.2.5, EL10 5.3.1.5) only accepts `required`, `requisite` or
+  `sufficient`, so enforcing the module turned a passing host into a failing
+  one. The `pam_sss.so forward_pass` line loses its `[success=2
+  default=ignore]` jump for the same reason.
+- Drop the `pam_faillock.so authsucc` line from the faillock auth stack. It is
+  unreachable once `pam_unix` is `sufficient`; the failure tally is reset by
+  the `account required pam_faillock.so` line the module already emits, which
+  is the arrangement documented in `pam_faillock(8)` and used by authselect's
+  own `with-faillock` feature. Lockout behavior is unchanged --- `auth
+  [default=die] pam_faillock.so authfail` still records failures --- and
+  consecutive-failure semantics are preserved by the account-phase call.
+- Fix SSSD logins when `pam::inactive` was also set. The `[success=2 ...]`
+  jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
+  `pam_faillock.so authfail`, failing an otherwise successful SSSD
+  authentication. Removing the jump fixes this.
+
 * Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
 - Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:
   the unreachable Amazon spec branches, the `data/os/Amazon-2.yaml` capability

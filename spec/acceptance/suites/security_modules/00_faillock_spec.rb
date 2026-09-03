@@ -28,6 +28,12 @@ describe 'pam check faillock' do
 
   let(:files_dir) { File.join(File.dirname(__FILE__), 'files') }
 
+  # Number of failures pam_faillock currently has recorded for a user. Each
+  # entry in `faillock --user` output starts with the date of the failure.
+  def recorded_failures(host, user)
+    on(host, "faillock --user #{user}").stdout.lines.grep(%r{^\d{4}-\d{2}-\d{2}\s}).size
+  end
+
   hosts_as('server').each do |sut_server|
     os = sut_server.hostname.split('-').first
     context "on #{os}:" do
@@ -94,6 +100,44 @@ describe 'pam check faillock' do
 
         it 'clear faillock' do
           on(server, "faillock --user #{test_user} --reset")
+        end
+      end
+
+      # The pam_unix auth line has to keep a plain control for the CIS rule
+      # "Ensure pam_unix module is enabled" (EL8/EL9 5.3.2.5, EL10 5.3.1.5).
+      # This is the benchmark's own OVAL pattern.
+      context 'CIS pam_unix control' do
+        ['/etc/pam.d/system-auth', '/etc/pam.d/password-auth'].each do |pam_file|
+          it "emits an accepted pam_unix control in #{pam_file}" do
+            on(server, "grep -P -- '^\\h*auth\\h+(required|requisite|sufficient)\\h+pam_unix\\.so\\b' #{pam_file}")
+          end
+        end
+      end
+
+      # A plain 'sufficient' control on pam_unix makes the 'authsucc' call
+      # unreachable, so the tally is reset by 'account required
+      # pam_faillock.so' instead. If that reset ever stops happening, failures
+      # accumulate across successful logins and eventually lock the user out.
+      context 'A successful login clears the faillock tally' do
+        it 'starts from a clean tally' do
+          on(server, "faillock --user #{test_user} --reset")
+          expect(recorded_failures(server, test_user)).to eq(0)
+        end
+
+        it 'records failures below the deny threshold' do
+          3.times do
+            on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
+          end
+
+          expect(recorded_failures(server, test_user)).to eq(3)
+        end
+
+        it 'still allows a login with the correct password' do
+          on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'")
+        end
+
+        it 'clears the recorded failures' do
+          expect(recorded_failures(server, test_user)).to eq(0)
         end
       end
 

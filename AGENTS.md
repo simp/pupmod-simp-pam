@@ -109,6 +109,12 @@ Private classes (call `assert_private()`):
 - **FIPS restricts the hash algorithm.** With `fips_enabled` set, only
   `sha256`/`sha512` pass; anything else `fail()`s in `pam::auth`
   (`auth.pp`).
+- **`pam_unix` auth lines must keep a plain control.** The CIS rule "Ensure
+  `pam_unix` module is enabled" only accepts `required`/`requisite`/
+  `sufficient`, so `templates/etc/pam.d/auth.epp` must never go back to a
+  bracketed jump such as `[success=1 default=ignore]` on `pam_unix`. The
+  faillock stack therefore has no `pam_faillock.so authsucc` line --- the
+  tally is reset by `account required pam_faillock.so`.
 - **`simp/oath` and `puppet-authselect` are OPTIONAL dependencies**
   (`metadata.json` `simp.optional_dependencies`), not hard deps. `oath` is
   guarded at runtime with `simplib::assert_optional_dependency` only when
