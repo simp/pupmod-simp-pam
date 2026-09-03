@@ -343,6 +343,31 @@
 # @param faillock_log_dir
 #   The directory where the user files with the failure records are kept.
 #
+# @param faillock_authfail_control
+#   The PAM control to use on the ``pam_faillock.so authfail`` line of the auth
+#   stack.
+#
+#   Defaults to ``[default=die]``, which is the arrangement documented in
+#   ``pam_faillock(8)`` and aborts the stack the moment an authentication
+#   fails.
+#
+#   Set this to ``required`` (or ``requisite``) if you need to pass the CIS
+#   Benchmark rules that audit this line --- "Ensure active authselect profile
+#   includes pam modules" (EL8/EL9 5.3.2.1, EL10 5.3.1.1) and "Ensure
+#   pam_faillock module is enabled" (EL8/EL9 5.3.2.2, EL10 5.3.1.2) --- both of
+#   which accept only ``required`` or ``requisite`` there. A failed
+#   authentication then falls through to ``pam_deny.so`` rather than dying
+#   immediately; nothing between the two lines is ``sufficient``, so the
+#   outcome is the same either way.
+#
+#   Note that the benchmark's value checks on this line (``deny``,
+#   ``unlock_time``, ``root_unlock_time``) also match only plain controls, so
+#   they do not currently evaluate the default ``[default=die]`` line at all.
+#   Switching to a plain control brings them into scope. The module defaults
+#   (``deny=5``, ``unlock_time=900``, ``root_unlock_time=60``) all satisfy
+#   them, but a site that has tuned those may newly fail a rule it was
+#   previously passing by omission.
+#
 # @param faillock_audit
 #   If true, log the user name into the system log if the user is not found.
 #
@@ -472,6 +497,7 @@ class pam (
   Boolean                         $even_deny_root            = true,
   Integer[0]                      $root_unlock_time          = 60,
   Optional[Stdlib::Absolutepath]  $faillock_log_dir          = undef,
+  Pam::FaillockControl            $faillock_authfail_control = '[default=die]',
   Boolean                         $faillock_audit            = true,
   Boolean                         $faillock_no_log_info      = false,
   Boolean                         $faillock_local_users_only = false,

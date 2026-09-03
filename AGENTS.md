@@ -109,6 +109,28 @@ Private classes (call `assert_private()`):
 - **FIPS restricts the hash algorithm.** With `fips_enabled` set, only
   `sha256`/`sha512` pass; anything else `fail()`s in `pam::auth`
   (`auth.pp`).
+- **`pam_unix` must appear in every phase the CIS audit greps, with a plain
+  control.** The benchmark constrains the control field on exactly nine
+  (phase, module) pairs --- `pam_faillock` preauth/authfail/account,
+  `pam_unix` auth/account/password/session, and `pam_pwquality` /
+  `pam_pwhistory` password --- and nothing else in the auth stack. In
+  particular `session required pam_unix.so` is emitted unconditionally, *not*
+  as an alternative to `pam_sss.so` (`auth.epp`); authselect's own profiles
+  emit both.
+- **Most bracketed controls in `auth.epp` are load-bearing jump arithmetic**
+  (`pam_listfile` `success=3`, `pam_oath` `success=1`, the `pam_succeed_if`
+  chains). They count lines, so they cannot be turned into plain controls and
+  must not be exposed as configuration. The one exception is the
+  `pam_faillock.so authfail` line, whose `[default=die]` has a semantically
+  equivalent plain form; that one is a parameter
+  (`pam::faillock_authfail_control`, `Pam::FaillockControl`) because the CIS
+  audit will not accept the bracketed control.
+- **`pam_unix` auth lines must keep a plain control.** The CIS rule "Ensure
+  `pam_unix` module is enabled" only accepts `required`/`requisite`/
+  `sufficient`, so `templates/etc/pam.d/auth.epp` must never go back to a
+  bracketed jump such as `[success=1 default=ignore]` on `pam_unix`. The
+  faillock stack therefore has no `pam_faillock.so authsucc` line --- the
+  tally is reset by `account required pam_faillock.so`.
 - **`simp/oath` and `puppet-authselect` are OPTIONAL dependencies**
   (`metadata.json` `simp.optional_dependencies`), not hard deps. `oath` is
   guarded at runtime with `simplib::assert_optional_dependency` only when

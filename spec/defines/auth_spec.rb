@@ -72,6 +72,117 @@ describe 'pam::auth' do
           end
         end
 
+        # CIS "Ensure pam_unix module is enabled" (EL8/EL9 5.3.2.5, EL10
+        # 5.3.1.5) greps the auth stacks for
+        #   ^\h*auth\h+(required|requisite|sufficient)\h+pam_unix\.so\b
+        # so the pam_unix auth line must carry a plain control, never a
+        # bracketed jump such as [success=1 default=ignore].
+        context 'CIS pam_unix control' do
+          let(:cis_pam_unix) { %r{^[ \t]*auth[ \t]+(?:required|requisite|sufficient)[ \t]+pam_unix\.so\b} }
+
+          {
+            'with faillock'            => { faillock: true },
+            'without faillock'         => { faillock: false },
+            'with faillock and sssd'   => { faillock: true, sssd: true },
+            'with faillock via faillock.conf' => { faillock: true, manage_faillock_conf: true },
+          }.each do |description, extra_params|
+            context description do
+              ['system', 'password'].each do |auth_type|
+                context "auth type '#{auth_type}'" do
+                  let(:title) { auth_type }
+                  let(:params) { extra_params }
+                  let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+                  it { is_expected.to contain_file(filename).with_content(cis_pam_unix) }
+                  it { is_expected.to contain_file(filename).without_content(%r{^auth\s+\[[^\]]*\]\s+pam_unix\.so}) }
+
+                  if extra_params[:faillock]
+                    # 'authsucc' is unreachable once pam_unix is 'sufficient';
+                    # the tally is reset by the account-phase pam_faillock call.
+                    it { is_expected.to contain_file(filename).without_content(%r{pam_faillock\.so authsucc}) }
+                    it { is_expected.to contain_file(filename).with_content(%r{^auth\s+\[default=die\]\s+pam_faillock\.so authfail}) }
+                    it { is_expected.to contain_file(filename).with_content(%r{^account\s+required\s+pam_faillock\.so$}) }
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        # The same rules audit the pam_faillock authfail control and the
+        # session-phase pam_unix line. Both are checked by
+        # Assessor/sce/nix_authselect_profile_chk.sh and by the equivalent OVAL
+        # patterns in the EL9 content.
+        context 'CIS pam_faillock authfail control' do
+          let(:cis_authfail) { %r{^[ \t]*auth[ \t]+(?:required|requisite)[ \t]+pam_faillock\.so[ \t]+(?:[^#\n\r]+[ \t]+)?authfail\b} }
+
+          ['system', 'password'].each do |auth_type|
+            context "auth type '#{auth_type}'" do
+              let(:title) { auth_type }
+              let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+              context 'by default' do
+                let(:params) { {} }
+
+                # Preserved on purpose: '[default=die]' is the arrangement in
+                # the pam_faillock(8) man page.
+                it { is_expected.to contain_file(filename).with_content(%r{^auth\s+\[default=die\]\s+pam_faillock\.so authfail\b}) }
+                it { is_expected.to contain_file(filename).without_content(cis_authfail) }
+              end
+
+              ['required', 'requisite'].each do |control|
+                context "with faillock_authfail_control => '#{control}'" do
+                  let(:params) { { faillock_authfail_control: control } }
+
+                  it { is_expected.to contain_file(filename).with_content(cis_authfail) }
+                  it { is_expected.to contain_file(filename).without_content(%r{\[default=die\]\s+pam_faillock}) }
+
+                  # The control field is padded to the column width the rest
+                  # of the file uses.
+                  it { is_expected.to contain_file(filename).with_content(%r{^auth     #{control}#{' ' * (14 - control.length)}pam_faillock\.so authfail\b}) }
+                end
+              end
+
+              context 'with an unsupported control' do
+                let(:params) { { faillock_authfail_control: 'sufficient' } }
+
+                it { is_expected.to compile.and_raise_error(%r{Pam::FaillockControl}) }
+              end
+            end
+          end
+        end
+
+        # pam_unix is not an alternative to pam_sss in the session phase; both
+        # authselect and the CIS session-stack check expect pam_unix present
+        # regardless.
+        context 'session stack pam_unix' do
+          let(:cis_session_unix) { %r{^[ \t]*session[ \t]+(?:required|requisite)[ \t]+pam_unix\.so\b} }
+
+          [true, false].each do |sssd|
+            context "with sssd => #{sssd}" do
+              ['system', 'password'].each do |auth_type|
+                context "auth type '#{auth_type}'" do
+                  let(:title) { auth_type }
+                  let(:params) { { sssd: sssd } }
+                  let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+                  it { is_expected.to contain_file(filename).with_content(cis_session_unix) }
+
+                  if sssd
+                    it 'orders pam_sss after pam_unix, as authselect does' do
+                      is_expected.to contain_file(filename).with_content(
+                        %r{^session      required      pam_unix\.so\nsession      optional      pam_sss\.so$},
+                      )
+                    end
+                  else
+                    it { is_expected.to contain_file(filename).without_content(%r{^session\s+\S+\s+pam_sss\.so}) }
+                  end
+                end
+              end
+            end
+          end
+        end
+
         context 'Generate file using content params' do
           let(:params) do
             {

@@ -28,6 +28,12 @@ describe 'pam check faillock' do
 
   let(:files_dir) { File.join(File.dirname(__FILE__), 'files') }
 
+  # Number of failures pam_faillock currently has recorded for a user. Each
+  # entry in `faillock --user` output starts with the date of the failure.
+  def recorded_failures(host, user)
+    on(host, "faillock --user #{user}").stdout.lines.grep(%r{^\d{4}-\d{2}-\d{2}\s}).size
+  end
+
   hosts_as('server').each do |sut_server|
     os = sut_server.hostname.split('-').first
     context "on #{os}:" do
@@ -97,6 +103,48 @@ describe 'pam check faillock' do
         end
       end
 
+      # The pam_unix auth line has to keep a plain control for the CIS rule
+      # "Ensure pam_unix module is enabled" (EL8/EL9 5.3.2.5, EL10 5.3.1.5).
+      # This is the benchmark's own OVAL pattern.
+      context 'CIS pam_unix control' do
+        ['/etc/pam.d/system-auth', '/etc/pam.d/password-auth'].each do |pam_file|
+          it "emits an accepted pam_unix auth control in #{pam_file}" do
+            on(server, "grep -P -- '^\\h*auth\\h+(required|requisite|sufficient)\\h+pam_unix\\.so\\b' #{pam_file}")
+          end
+
+          it "keeps pam_unix in the session stack of #{pam_file}" do
+            on(server, "grep -P -- '^\\h*session\\h+(required|requisite)\\h+pam_unix\\.so\\b' #{pam_file}")
+          end
+        end
+      end
+
+      # A plain 'sufficient' control on pam_unix makes the 'authsucc' call
+      # unreachable, so the tally is reset by 'account required
+      # pam_faillock.so' instead. If that reset ever stops happening, failures
+      # accumulate across successful logins and eventually lock the user out.
+      context 'A successful login clears the faillock tally' do
+        it 'starts from a clean tally' do
+          on(server, "faillock --user #{test_user} --reset")
+          expect(recorded_failures(server, test_user)).to eq(0)
+        end
+
+        it 'records failures below the deny threshold' do
+          3.times do
+            on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
+          end
+
+          expect(recorded_failures(server, test_user)).to eq(3)
+        end
+
+        it 'still allows a login with the correct password' do
+          on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'")
+        end
+
+        it 'clears the recorded failures' do
+          expect(recorded_failures(server, test_user)).to eq(0)
+        end
+      end
+
       context 'Test /etc/pam.d/system-auth faillock through su' do
         it 'check that the test user can su' do
           on(server, "su -l #{vagrant_user} -c '/usr/local/bin/su_test_script.rb -u #{test_user} -p #{password}'")
@@ -113,6 +161,53 @@ describe 'pam check faillock' do
         end
 
         it 'clear faillock' do
+          on(server, "faillock --user #{test_user} --reset")
+        end
+      end
+
+      # 'required' is the control the CIS audit accepts on the authfail line.
+      # Lockout has to keep working with it, and a successful login below the
+      # deny threshold has to keep clearing the tally -- getting this wrong
+      # either stops recording failures or locks people out.
+      context 'With faillock_authfail_control set to required' do
+        it 'applies the change' do
+          set_hieradata_on(server, server_hieradata.merge({ 'pam::faillock_authfail_control' => 'required' }))
+          apply_manifest_on(server, server_manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(server, server_manifest, catch_changes: true)
+        end
+
+        ['/etc/pam.d/system-auth', '/etc/pam.d/password-auth'].each do |pam_file|
+          it "emits an accepted authfail control in #{pam_file}" do
+            on(server, "grep -P -- '^\\h*auth\\h+(required|requisite)\\h+pam_faillock\\.so\\h+([^#\\n\\r]+\\h+)?authfail\\b' #{pam_file}")
+          end
+        end
+
+        it 'still locks the account at the deny threshold' do
+          on(server, "faillock --user #{test_user} --reset")
+          5.times do
+            on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
+          end
+
+          on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
+        end
+
+        it 'still clears the tally on a successful login below the threshold' do
+          on(server, "faillock --user #{test_user} --reset")
+          3.times do
+            on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
+          end
+          expect(recorded_failures(server, test_user)).to eq(3)
+
+          on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'")
+          expect(recorded_failures(server, test_user)).to eq(0)
+        end
+
+        it 'restores the default control' do
+          set_hieradata_on(server, server_hieradata)
+          apply_manifest_on(server, server_manifest, expect_changes: true)
           on(server, "faillock --user #{test_user} --reset")
         end
       end
