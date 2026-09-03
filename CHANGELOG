@@ -17,25 +17,29 @@
   jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
   `pam_faillock.so authfail`, failing an otherwise successful SSSD
   authentication. Removing the jump fixes this.
-- Add `pam::authselect_vendor_profile` (SIMP-#231), defaulting to `false`.
+- Add `pam::authselect_vendor_profile` (SIMP-#231), defaulting to `true`.
   `pam::use_authselect` previously always built the profile as an authselect
-  *vendor* profile under `/usr/share/authselect/vendor/simp`. The CIS rule
-  "Ensure active authselect profile includes pam modules" (EL8 5.3.2.1, EL10
-  5.3.1.1) resolves the active profile to `/etc/authselect/<profile>` for a
-  `custom/`-prefixed name and to `/usr/share/authselect/default/<profile>`
-  otherwise, so a vendor profile is in neither place and the rule fails.
+  *vendor* profile under `/usr/share/authselect/vendor/simp`, with no way to
+  change it. The CIS rule "Ensure active authselect profile includes pam
+  modules" (EL8 5.3.2.1, EL10 5.3.1.1) resolves the active profile to
+  `/etc/authselect/<profile>` for a `custom/`-prefixed name and to
+  `/usr/share/authselect/default/<profile>` otherwise, so a vendor profile is
+  in neither place and the rule fails with nothing to grep. Setting this to
+  `false` builds the profile at `/etc/authselect/custom/simp` and selects it
+  as `custom/simp`, which that check can resolve.
+
+  The default is unchanged behavior: nodes that do not set this parameter keep
+  the vendor layout they have today. Sites opting in should note that
+  `/etc/authselect/authselect.conf` will then read `custom/simp` rather than
+  `simp`, which is visible to anything parsing it or the `authselect_profile`
+  fact, and that the old vendor directory is left in place rather than removed
+  by this module
 - `pam::auth_basedir` now defaults to `undef` and is derived from
   `pam::authselect_profile_name` and `pam::authselect_vendor_profile` so the
   directory the auth files are written to always matches the profile that is
-  selected. An explicit value is still honored.
-
-  UPGRADE NOTE: nodes with `pam::use_authselect` set to `true` will move their
-  profile from `/usr/share/authselect/vendor/simp` to
-  `/etc/authselect/custom/simp`, and `/etc/authselect/authselect.conf` will
-  read `custom/simp` rather than `simp`. Anything parsing that file or the
-  `authselect_profile` fact needs to account for the prefix. The old vendor
-  directory is left in place and is not removed by this module. Set
-  `pam::authselect_vendor_profile: true` to keep the previous layout
+  selected. Its derived value for the default settings is the previous
+  hard-coded default, `/usr/share/authselect/vendor/simp`. An explicit value
+  is still honored
 
 * Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
 - Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:

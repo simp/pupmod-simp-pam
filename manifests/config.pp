@@ -234,11 +234,18 @@ class pam::config {
       symlink_dconf    => true,
     }
 
+    # Aliased to a local variable because it has to be interpolated into the
+    # Exec title below, and puppet-lint's lexer mis-parses a '::'-namespaced
+    # variable whose last segment starts with an underscore when it appears
+    # inside a string: it sees a bare '$pam' and fails the variable_scope
+    # check. Keep the alias if you touch this.
+    $_authselect_profile = $pam::_authselect_profile
+
     class { 'authselect':
-      profile => $pam::_authselect_profile,
+      profile => $_authselect_profile,
     }
 
     Authselect::Custom_profile[$pam::authselect_profile_name] -> Pam::Auth[$pam::auth_sections]
-    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${pam::_authselect_profile} features=[]"]
+    Pam::Auth[$pam::auth_sections] -> Exec["authselect set profile=${_authselect_profile} features=[]"]
   }
 }

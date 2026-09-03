@@ -806,20 +806,21 @@ Default value: `'sssd'`
 Data type: `Boolean`
 
 If true, create the authselect profile as a *vendor* profile under
-`/usr/share/authselect/vendor` instead of a custom profile under
-`/etc/authselect/custom`.
+`/usr/share/authselect/vendor`. If false, create it as a custom profile
+under `/etc/authselect/custom`.
 
-This defaults to `false` because the CIS Benchmark rule "Ensure active
-authselect profile includes pam modules" only resolves the active profile
-to `/etc/authselect/<profile>` (for a `custom/`-prefixed name) or
-`/usr/share/authselect/default/<profile>`. A vendor profile lives in
-neither location, so the rule cannot see it and fails.
+Set this to `false` if you need to pass the CIS Benchmark rule "Ensure
+active authselect profile includes pam modules". That check resolves the
+active profile to `/etc/authselect/<profile>` (for a `custom/`-prefixed
+name) or `/usr/share/authselect/default/<profile>`; a vendor profile lives
+in neither location, so the rule cannot see it and fails.
 
-Note that a custom profile is selected as `custom/<name>`, so
-`/etc/authselect/authselect.conf` will read `custom/simp` rather than
-`simp` with the default settings.
+This defaults to `true` to preserve the historical layout. Note that a
+custom profile is selected as `custom/<name>`, so switching to `false`
+makes `/etc/authselect/authselect.conf` read `custom/simp` rather than
+`simp`, which is visible to anything parsing it.
 
-Default value: `false`
+Default value: `true`
 
 ##### <a name="-pam--auth_basedir"></a>`auth_basedir`
 
