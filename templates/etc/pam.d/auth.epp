@@ -27,6 +27,7 @@
   Boolean                        $faillock_nodelay,
   Optional[String]               $faillock_admin_group,
   Optional[Stdlib::Absolutepath] $faillock_log_dir,
+  Pam::FaillockControl           $faillock_authfail_control,
   Boolean                        $display_account_lock,
   Integer[0]                     $fail_interval,
   Boolean                        $manage_pwhistory_conf,
@@ -170,9 +171,9 @@ auth required pam_lastlog.so inactive=<%= $inactive %>
 -%>
 auth     sufficient    pam_unix.so try_first_pass
 <%       if $manage_faillock_conf { -%>
-auth     [default=die] pam_faillock.so authfail
+auth     <%= sprintf('%-14s', $faillock_authfail_control) %>pam_faillock.so authfail
 <%       } else { -%>
-auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
+auth     <%= sprintf('%-14s', $faillock_authfail_control) %>pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
 <%       } -%>
 <%   } else { -%>
 <%     if $sssd { -%>
@@ -335,10 +336,14 @@ session      requisite     pam_access.so listsep=<%= $separator %> nodefgroup
 <% } else { -%>
 session      requisite     pam_access.so nodefgroup
 <% } -%>
+<%- # 'pam_unix' is not an alternative to 'pam_sss' in the session phase: it
+    # performs the local session setup and writes the session open/close
+    # records, which 'pam_sss' does not replace. authselect's own profiles
+    # emit both, in this order.
+-%>
+session      required      pam_unix.so
 <% if $sssd { -%>
 session      optional      pam_sss.so
-<% } else { -%>
-session      required      pam_unix.so
 <% } -%>
 session      optional      pam_oddjob_mkhomedir.so silent
 session      required      pam_lastlog.so showfailed

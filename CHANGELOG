@@ -1,3 +1,32 @@
+* Thu Sep 03 2026 Mike Riddle <mike@sicura.us> - 9.4.0
+- Add `pam::faillock_authfail_control` (SIMP-#234), defaulting to
+  `[default=die]`. The CIS rules that audit the auth stack --- "Ensure active
+  authselect profile includes pam modules" (EL8/EL9 5.3.2.1, EL10 5.3.1.1) and
+  "Ensure pam_faillock module is enabled" (EL8/EL9 5.3.2.2, EL10 5.3.1.2) ---
+  accept only `required` or `requisite` on the `pam_faillock.so authfail`
+  line, so the default arrangement fails them. Setting this to `required`
+  emits a control they accept; a failed authentication then falls through to
+  `pam_deny.so` rather than aborting the stack immediately, which reaches the
+  same outcome because nothing between the two lines is `sufficient`.
+
+  The default preserves current behavior. Note that the benchmark's value
+  checks on this line (`deny`, `unlock_time`, `root_unlock_time`) also match
+  only plain controls, so they do not evaluate a `[default=die]` line at all;
+  switching to `required` brings them into scope. The module defaults satisfy
+  them, but a site that has tuned those values may newly fail a rule it was
+  passing by omission
+- Keep `pam_unix` in the session stack when `pam::sssd` is enabled
+  (SIMP-#235). The template treated `pam_unix` and `pam_sss` as alternatives
+  in the session phase, so an SSSD host got `session optional pam_sss.so` and
+  no `pam_unix` at all. `pam_unix` performs the local session setup and writes
+  the session open/close records, which `pam_sss` does not replace;
+  authselect's own profiles emit both. `session required pam_unix.so` is now
+  emitted unconditionally, with `session optional pam_sss.so` after it when
+  `pam::sssd` is set.
+
+  This changes the session stack on existing SSSD nodes --- `pam_unix.so` runs
+  where it previously did not
+
 * Wed Sep 02 2026 Mike Riddle <mike@sicura.us> - 9.3.0
 - Give `pam_unix` a plain `sufficient` control in the faillock auth stack
   (SIMP-#230). It was emitted as `auth [success=1 default=ignore]

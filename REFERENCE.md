@@ -24,6 +24,7 @@
 
 * [`Pam::AccountUnlockTime`](#Pam--AccountUnlockTime): Valid account unlock values
 * [`Pam::AuthSections`](#Pam--AuthSections): Valid PAM `auth` sections
+* [`Pam::FaillockControl`](#Pam--FaillockControl): Valid PAM control values for the ``pam_faillock.so authfail`` line  ``[default=die]`` aborts the auth stack immediately on a failed authentic
 * [`Pam::HashAlgorithm`](#Pam--HashAlgorithm): Valid PAM password hash algorithms
 * [`Pam::Limits::Item`](#Pam--Limits--Item): Valid PAM limits
 * [`Pam::Limits::Value`](#Pam--Limits--Value): Valid PAM limit values
@@ -116,6 +117,7 @@ The following parameters are available in the `pam` class:
 * [`package_ensure`](#-pam--package_ensure)
 * [`manage_faillock_conf`](#-pam--manage_faillock_conf)
 * [`faillock_log_dir`](#-pam--faillock_log_dir)
+* [`faillock_authfail_control`](#-pam--faillock_authfail_control)
 * [`faillock_audit`](#-pam--faillock_audit)
 * [`faillock_no_log_info`](#-pam--faillock_no_log_info)
 * [`faillock_local_users_only`](#-pam--faillock_local_users_only)
@@ -833,6 +835,36 @@ The directory where the user files with the failure records are kept.
 
 Default value: `undef`
 
+##### <a name="-pam--faillock_authfail_control"></a>`faillock_authfail_control`
+
+Data type: `Pam::FaillockControl`
+
+The PAM control to use on the ``pam_faillock.so authfail`` line of the auth
+stack.
+
+Defaults to ``[default=die]``, which is the arrangement documented in
+``pam_faillock(8)`` and aborts the stack the moment an authentication
+fails.
+
+Set this to ``required`` (or ``requisite``) if you need to pass the CIS
+Benchmark rules that audit this line --- "Ensure active authselect profile
+includes pam modules" (EL8/EL9 5.3.2.1, EL10 5.3.1.1) and "Ensure
+pam_faillock module is enabled" (EL8/EL9 5.3.2.2, EL10 5.3.1.2) --- both of
+which accept only ``required`` or ``requisite`` there. A failed
+authentication then falls through to ``pam_deny.so`` rather than dying
+immediately; nothing between the two lines is ``sufficient``, so the
+outcome is the same either way.
+
+Note that the benchmark's value checks on this line (``deny``,
+``unlock_time``, ``root_unlock_time``) also match only plain controls, so
+they do not currently evaluate the default ``[default=die]`` line at all.
+Switching to a plain control brings them into scope. The module defaults
+(``deny=5``, ``unlock_time=900``, ``root_unlock_time=60``) all satisfy
+them, but a site that has tuned those may newly fail a rule it was
+previously passing by omission.
+
+Default value: `'[default=die]'`
+
 ##### <a name="-pam--faillock_audit"></a>`faillock_audit`
 
 Data type: `Boolean`
@@ -1277,6 +1309,7 @@ The following parameters are available in the `pam::auth` defined type:
 * [`deny`](#-pam--auth--deny)
 * [`faillock`](#-pam--auth--faillock)
 * [`faillock_log_dir`](#-pam--auth--faillock_log_dir)
+* [`faillock_authfail_control`](#-pam--auth--faillock_authfail_control)
 * [`display_account_lock`](#-pam--auth--display_account_lock)
 * [`fail_interval`](#-pam--auth--fail_interval)
 * [`manage_pwhistory_conf`](#-pam--auth--manage_pwhistory_conf)
@@ -1536,6 +1569,14 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 
 Default value: `$pam::faillock_log_dir`
+
+##### <a name="-pam--auth--faillock_authfail_control"></a>`faillock_authfail_control`
+
+Data type: `Pam::FaillockControl`
+
+
+
+Default value: `$pam::faillock_authfail_control`
 
 ##### <a name="-pam--auth--display_account_lock"></a>`display_account_lock`
 
@@ -1872,6 +1913,19 @@ Array[Enum[
   'smartcard'
 ]]
 ```
+
+### <a name="Pam--FaillockControl"></a>`Pam::FaillockControl`
+
+Valid PAM control values for the ``pam_faillock.so authfail`` line
+
+``[default=die]`` aborts the auth stack immediately on a failed
+authentication and is the arrangement documented in ``pam_faillock(8)``.
+``required`` and ``requisite`` are the plain controls that the CIS Benchmark
+audit of the auth stack will accept; with either of them a failed
+authentication falls through to ``pam_deny.so`` instead of dying on the spot,
+which reaches the same outcome.
+
+Alias of `Enum['[default=die]', 'required', 'requisite']`
 
 ### <a name="Pam--HashAlgorithm"></a>`Pam::HashAlgorithm`
 
