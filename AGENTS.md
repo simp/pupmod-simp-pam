@@ -109,16 +109,22 @@ Private classes (call `assert_private()`):
 - **FIPS restricts the hash algorithm.** With `fips_enabled` set, only
   `sha256`/`sha512` pass; anything else `fail()`s in `pam::auth`
   (`auth.pp`).
-- **The authselect profile is a *custom* profile, not a vendor one.**
-  `pam::authselect_vendor_profile` defaults to `false`, so `pam::config`
-  creates `/etc/authselect/custom/simp` and selects it as `custom/simp`
-  (`config.pp`). Both the derived `$pam::_auth_basedir` and the
-  `custom/`-prefixed `$pam::_authselect_profile` are computed in `init.pp` so
-  the directory the auth files are written to can never disagree with the
-  profile that is selected --- change them together. A vendor profile
-  (`/usr/share/authselect/vendor/simp`) is invisible to the CIS authselect
-  audit, which only resolves `/etc/authselect/<profile>` or
-  `/usr/share/authselect/default/<profile>`.
+- **The authselect profile layout is a parameter, and two derived variables
+  have to move together.** `pam::authselect_vendor_profile` defaults to `true`
+  (vendor profile at `/usr/share/authselect/vendor/simp`, selected as `simp`);
+  `false` gives a custom profile at `/etc/authselect/custom/simp`, selected as
+  `custom/simp`, which is the only one of the two layouts the CIS authselect
+  audit can resolve (it looks at `/etc/authselect/<profile>` or
+  `/usr/share/authselect/default/<profile>`, never the vendor directory). Both
+  `$pam::_auth_basedir` and the `custom/`-prefixed `$pam::_authselect_profile`
+  are derived from it in `init.pp` so the directory the auth files are written
+  to can never disagree with the profile that is selected --- change them
+  together.
+- **`$pam::_authselect_profile` is aliased to a local in `pam::config` before
+  being interpolated into the `Exec` title** (`config.pp`). puppet-lint's
+  lexer mis-parses a `::`-namespaced variable whose last segment starts with
+  an underscore inside a string --- it sees a bare `$pam` and fails the
+  `variable_scope` check. Removing the alias breaks `rake lint` in CI.
 - **`pam_unix` auth lines must keep a plain control.** The CIS rule "Ensure
   `pam_unix` module is enabled" only accepts `required`/`requisite`/
   `sufficient`, so `templates/etc/pam.d/auth.epp` must never go back to a
