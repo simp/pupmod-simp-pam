@@ -50,9 +50,15 @@ describe 'pam check faillock' do
           apply_manifest_on(server, server_manifest, catch_changes: true)
         end
 
+        # catch_failures, not expect_changes: the client exists only to
+        # originate ssh connections, and beaker has already configured ssh on
+        # it by the time this runs, so 'include ssh::client' legitimately
+        # converges with nothing to do. Asserting that changes happened here
+        # tests beaker's own setup rather than this module; the idempotency
+        # check below still proves the manifest converges.
         it "configures #{os}-client with no errors" do
           install_package(client, 'epel-release')
-          apply_manifest_on(client, client_manifest, expect_changes: true)
+          apply_manifest_on(client, client_manifest, catch_failures: true)
         end
         it "configures #{os}-client idempotently" do
           apply_manifest_on(client, client_manifest, catch_changes: true)
