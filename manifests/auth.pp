@@ -35,6 +35,7 @@
 # @param deny
 # @param faillock
 # @param faillock_log_dir
+# @param faillock_authfail_control
 # @param display_account_lock
 # @param fail_interval
 # @param manage_pwhistory_conf
@@ -88,6 +89,7 @@ define pam::auth (
   Boolean                         $faillock                  = $pam::faillock,
   Boolean                         $manage_faillock_conf      = $pam::manage_faillock_conf,
   Optional[Stdlib::Absolutepath]  $faillock_log_dir          = $pam::faillock_log_dir,
+  Pam::FaillockControl            $faillock_authfail_control = $pam::faillock_authfail_control,
   Boolean                         $faillock_audit            = $pam::faillock_audit,
   Boolean                         $faillock_no_log_info      = $pam::faillock_no_log_info,
   Boolean                         $faillock_local_users_only = $pam::faillock_local_users_only,
@@ -241,6 +243,7 @@ define pam::auth (
         deny                      => $deny,
         faillock                  => $faillock,
         faillock_log_dir          => $faillock_log_dir,
+        faillock_authfail_control => $faillock_authfail_control,
         faillock_audit            => $faillock_audit,
         faillock_no_log_info      => $faillock_no_log_info,
         faillock_local_users_only => $faillock_local_users_only,
