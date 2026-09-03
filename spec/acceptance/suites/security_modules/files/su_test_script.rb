@@ -4,6 +4,7 @@ require 'English'
 require 'pty'
 require 'expect'
 require 'optparse'
+require 'timeout'
 
 # parses out provided command line arguments.
 # No command line args are required as sane defaults are set
@@ -53,23 +54,43 @@ end
 # Return:
 # +outputs+:: Concatenated output of su command for regex determination of
 # success or failure
-def run_interactive(command, password, prompt)
+def run_interactive(command, password, prompt, timeout = 60)
   outputs = ''
+  pid = nil
+
   begin
-    r, w, pid = PTY.spawn(command)
-    r.expect(prompt)
-    sleep(1)
-    w.puts("#{password}\r")
-    w.puts('exit')
-    begin
-      r.each { |l| outputs += l }
-    rescue Errno::EIO
-      # Ignoring EIO errors
+    # Every step below can block indefinitely: IO#expect has no timeout of its
+    # own, reading the pty waits on the child, and Process.wait waits on it
+    # again. A pam stack that never reaches the password prompt -- one of the
+    # states this suite deliberately provokes -- would hang the acceptance run
+    # rather than failing it, so bound the whole interaction.
+    Timeout.timeout(timeout) do
+      r, w, pid = PTY.spawn(command)
+      r.expect(prompt)
+      sleep(1)
+      w.puts("#{password}\r")
+      w.puts('exit')
+      begin
+        r.each { |l| outputs += l }
+      rescue Errno::EIO
+        # Ignoring EIO errors
+      end
+      Process.wait(pid)
     end
-    Process.wait(pid)
+  rescue Timeout::Error
+    warn "Timed out after #{timeout}s running #{command.inspect}"
+    warn "Output so far: #{outputs.inspect}"
+
+    begin
+      Process.kill('TERM', pid) if pid
+      Process.wait(pid) if pid
+    rescue Errno::ESRCH, Errno::ECHILD
+      # Child is already gone
+    end
   rescue PTY::ChildExited => e
     $stderr.puts "Child process exited with error #{e}! #{$ERROR_INFO.status.exitstatus}"
   end
+
   outputs
 end
 

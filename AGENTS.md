@@ -211,12 +211,21 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
   every custom type, fact, and function it uses comes from the dependencies
   above.
 - **Acceptance runs in CI:** `.github/workflows/pr_tests.yml` has an
-  `acceptance` job (`pr_tests.yml`) whose matrix nodes are
-  `almalinux8`, `almalinux9`, and `almalinux10`. Its final step runs
-  `bundle exec rake beaker:suites[default,<node>]` under
+  `acceptance` job (`pr_tests.yml`) whose matrix is both suites --- `default`
+  and `security_modules` --- across `almalinux8`, `almalinux9` and
+  `almalinux10`, six jobs. Its final step runs
+  `bundle exec rake beaker:suites[<suite>,<node>]` under
   `BEAKER_HYPERVISOR=vagrant_libvirt` (`pr_tests.yml`). Both `docker_*` and
   vagrant nodesets ship under `spec/acceptance/nodesets/`, but CI drives only
   the AlmaLinux vagrant nodes.
+- **`hosts_as` needs explicit roles.** `security_modules` is a two-node suite:
+  `00_faillock_spec.rb` iterates `hosts_as('server')` and pairs each server
+  with `hosts_as('client')` by hostname prefix, so its nodesets must name the
+  hosts `<node>-server` / `<node>-client` **and** declare matching `roles:`.
+  Beaker matches purely on the declared list
+  (`beaker/shared/host_manager.rb`, `hosts_with_role`); a nodeset without a
+  `server` role makes `hosts_as('server')` return `[]` and the whole suite
+  silently collapses to zero examples rather than failing.
 
 ## Common commands
 
