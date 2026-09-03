@@ -112,7 +112,6 @@ The following parameters are available in the `pam` class:
 * [`use_authselect`](#-pam--use_authselect)
 * [`authselect_profile_name`](#-pam--authselect_profile_name)
 * [`authselect_base_profile`](#-pam--authselect_base_profile)
-* [`authselect_vendor_profile`](#-pam--authselect_vendor_profile)
 * [`auth_basedir`](#-pam--auth_basedir)
 * [`package_ensure`](#-pam--package_ensure)
 * [`manage_faillock_conf`](#-pam--manage_faillock_conf)
@@ -801,39 +800,13 @@ This is only used if 'use_authselect' is true. The default is 'sssd'.
 
 Default value: `'sssd'`
 
-##### <a name="-pam--authselect_vendor_profile"></a>`authselect_vendor_profile`
-
-Data type: `Boolean`
-
-If true, create the authselect profile as a *vendor* profile under
-`/usr/share/authselect/vendor`. If false, create it as a custom profile
-under `/etc/authselect/custom`.
-
-Set this to `false` if you need to pass the CIS Benchmark rule "Ensure
-active authselect profile includes pam modules". That check resolves the
-active profile to `/etc/authselect/<profile>` (for a `custom/`-prefixed
-name) or `/usr/share/authselect/default/<profile>`; a vendor profile lives
-in neither location, so the rule cannot see it and fails.
-
-This defaults to `true` to preserve the historical layout. Note that a
-custom profile is selected as `custom/<name>`, so switching to `false`
-makes `/etc/authselect/authselect.conf` read `custom/simp` rather than
-`simp`, which is visible to anything parsing it.
-
-Default value: `true`
-
 ##### <a name="-pam--auth_basedir"></a>`auth_basedir`
 
-Data type: `Optional[StdLib::Absolutepath]`
+Data type: `StdLib::Absolutepath`
 
 The directory in which the auth files will be created
 
-If left unset, this is derived from `authselect_profile_name` and
-`authselect_vendor_profile` so that the auth files are always written into
-the directory of the profile that is actually selected. Only override this
-if you know that the two cannot disagree.
-
-Default value: `undef`
+Default value: `'/usr/share/authselect/vendor/simp'`
 
 ##### <a name="-pam--package_ensure"></a>`package_ensure`
 

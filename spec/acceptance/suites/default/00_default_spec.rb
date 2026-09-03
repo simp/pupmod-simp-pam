@@ -88,44 +88,6 @@ accept_all_exit_codes: true)
           expect(result.exit_code).to eq(0)
         end
       end
-
-      # The CIS rule "Ensure active authselect profile includes pam modules"
-      # resolves the active profile's template directory to
-      # /etc/authselect/<profile> for a 'custom/'-prefixed name and to
-      # /usr/share/authselect/default/<profile> otherwise. The vendor
-      # directory used by default is neither, so a site that has to pass that
-      # rule opts into a custom profile.
-      context 'with authselect_vendor_profile set to false' do
-        let(:manifest) do
-          <<~EOS
-            class { 'pam':
-              use_authselect            => true,
-              authselect_vendor_profile => false,
-            }
-          EOS
-        end
-
-        it 'applies the manifest without error' do
-          apply_manifest_on(host, manifest, catch_failures: true)
-        end
-
-        it 'is idempotent' do
-          apply_manifest_on(host, manifest, { catch_changes: true })
-        end
-
-        it 'activates the custom/simp authselect profile' do
-          result = on(host, '/usr/bin/authselect current')
-          expect(result.stdout).to match(%r{Profile ID:\s+custom/simp})
-        end
-
-        it 'puts the profile where the CIS authselect audit looks for it' do
-          profile = on(host, 'head -1 /etc/authselect/authselect.conf').stdout.strip
-          expect(profile).to start_with('custom/')
-
-          on(host, "test -d /etc/authselect/#{profile}")
-          on(host, "grep -P -- '\\bpam_unix\\.so\\b' /etc/authselect/#{profile}/{password,system}-auth")
-        end
-      end
     end
   end
 end
