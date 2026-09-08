@@ -6,6 +6,10 @@ require 'expect'
 require 'optparse'
 require 'timeout'
 
+# Echoed by the su'd command on success. See run_interactive for why the su is
+# non-interactive rather than a login shell we type 'exit' at.
+SUCCESS_MARKER = 'SU_TEST_LOGIN_OK'.freeze
+
 # parses out provided command line arguments.
 # No command line args are required as sane defaults are set
 # Returns:
@@ -32,16 +36,13 @@ def parse_opts
     end
     opts.on('-o' + '--output output', 'Escaped regex for expected output of a'\
             ' successful su attempt.'\
-            '\nDefaults to looking for the prompt of the new user.'\
-            '\nEx: "#{options[:user]}@.+[$#]"') do |output|
+            "\nDefaults to the #{SUCCESS_MARKER} echoed by the su'd command.") do |output|
       options[:output] = output
     end
   end
 
   optparse.parse!
-  if options[:output].nil?
-    options[:output] = "#{options[:user]}@.+[$#]"
-  end
+  options[:output] = SUCCESS_MARKER if options[:output].nil?
 
   options
 end
@@ -69,7 +70,6 @@ def run_interactive(command, password, prompt, timeout = 60)
       r.expect(prompt)
       sleep(1)
       w.puts("#{password}\r")
-      w.puts('exit')
       begin
         r.each { |l| outputs += l }
       rescue Errno::EIO
@@ -99,8 +99,15 @@ end
 # returns normally if output does match regex (exit code: 0)
 def main
   options = parse_opts
-  outputs = run_interactive("su -l #{options[:user]}", options[:pass],
-                            %r{#{options[:prompt]}})
+
+  # 'su -l <user> -c <cmd>' rather than a login shell: the command exits on its
+  # own, so nothing has to be typed at the shell afterwards. Writing 'exit'
+  # into the pty right after the password is a race -- the input is discarded
+  # while the login shell sets the terminal up, and on EL10 it loses every
+  # time, leaving the reader blocked on a shell that never exits. EL8 and EL9
+  # happen to win that race, which is why this only ever hung on EL10.
+  outputs = run_interactive("su -l #{options[:user]} -c 'echo #{SUCCESS_MARKER}'",
+                            options[:pass], %r{#{options[:prompt]}})
   if outputs.match?(%r{#{options[:output]}}m)
     warn 'Login successful'
   else
