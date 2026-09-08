@@ -65,10 +65,20 @@ describe 'pam check oath' do
         let(:vagrant_user) { 'vagrant' }
         let(:oath_key) { '000001' }
 
+        # Provisioned here rather than inherited from 00_faillock_spec.rb. Both
+        # the test user and su_test_script.rb used below were previously set up
+        # only by that file, so a failure there cascaded into confusing oath
+        # failures. These are all idempotent, so running after it is harmless.
         it 'Copy test scripts to server' do
           scp_to(server, File.join(files_dir, 'expect_su_test'), '/usr/local/bin/expect_su_test')
-          on(server, "chown #{vagrant_user}:#{vagrant_user} /usr/local/bin/expect_su_test")
-          on(server, 'chmod u+x /usr/local/bin/expect_su_test')
+          scp_to(server, File.join(files_dir, 'su_test_script.rb'), '/usr/local/bin/su_test_script.rb')
+          on(server, "chown #{vagrant_user}:#{vagrant_user} /usr/local/bin/expect_su_test /usr/local/bin/su_test_script.rb")
+          on(server, 'chmod u+x /usr/local/bin/expect_su_test /usr/local/bin/su_test_script.rb')
+        end
+
+        it 'has a test user with a known password' do
+          on(server, "puppet resource user #{test_user} ensure=present comment='Tst0 User'")
+          on(server, "passwd #{test_user} ", stdin: "#{password}\n" * 2)
         end
 
         it 'check that the test user can su' do
