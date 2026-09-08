@@ -78,7 +78,19 @@ describe 'pam check oath' do
 
         it 'has a test user with a known password' do
           on(server, "puppet resource user #{test_user} ensure=present comment='Tst0 User'")
-          on(server, "passwd #{test_user} ", stdin: "#{password}\n" * 2)
+
+          # Not idempotent on its own: pam_pwhistory (pam::remember, 24 by
+          # default) refuses to re-set a password it already knows, which is
+          # exactly what happens when 00_faillock_spec.rb has provisioned this
+          # user earlier in the same run. That rejection means the password is
+          # already the one we want, so accept it and fail on anything else.
+          result = on(server, "passwd #{test_user} ", stdin: "#{password}\n" * 2,
+                              accept_all_exit_codes: true)
+
+          next if result.exit_code.zero?
+          next if result.output.include?('Password has been already used')
+
+          raise "Could not set the password for #{test_user}: #{result.output}"
         end
 
         it 'check that the test user can su' do
