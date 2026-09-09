@@ -210,23 +210,16 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
 - No `lib/` — this module ships no custom Ruby types/providers/functions/facts;
   every custom type, fact, and function it uses comes from the dependencies
   above.
-- **Acceptance runs in CI:** `.github/workflows/pr_tests.yml` has two jobs,
-  `acceptance` and `acceptance-security-modules`, each with a matrix of
-  `almalinux8`, `almalinux9` and `almalinux10`, running
-  `bundle exec rake beaker:suites[<suite>,<node>]` under
-  `BEAKER_HYPERVISOR=vagrant_libvirt` (`pr_tests.yml`). CI drives only the
-  AlmaLinux vagrant nodes. Two things about that arrangement are deliberate:
-  - **Two jobs, not one job with a `suite` matrix dimension.** GitHub derives
-    check names from the matrix, so a dimension would rename
-    `acceptance (almalinux8)` to `acceptance (default, almalinux8)` and any
-    branch-protection required check under the old name would never be
-    satisfied again.
-  - **Both jobs live in the puppetsync-managed file**, rather than the second
-    one being split into an unmanaged workflow of its own. Splitting it would
-    survive the baseline sync without any help, but baseline updates --- the
-    ruby version, the libvirt packages, `actions/checkout` bumps --- would then
-    land on `acceptance` and silently not on `acceptance-security-modules`.
-    Keeping them together is worth carrying the exception in puppetsync for.
+- **Acceptance runs in CI:** `.github/workflows/pr_tests.yml` has one
+  `acceptance` job whose matrix crosses `suite` (`default`,
+  `security_modules`) with `node` (`almalinux8`, `almalinux9`,
+  `almalinux10`), running `bundle exec rake beaker:suites[<suite>,<node>]`
+  under `BEAKER_HYPERVISOR=vagrant_libvirt` (`pr_tests.yml`). CI drives only
+  the AlmaLinux vagrant nodes. Add a suite to the `suite` list to get it into
+  CI; do not add a second acceptance job — the `suite` matrix dimension is the
+  fleet convention (see pupmod-simp-simp and pupmod-simp-simplib), and it keeps
+  the whole change inside the `jobs.acceptance` block that puppetsync preserves
+  when it refreshes this file.
 - **Nodesets resolve per suite.** `spec/acceptance/nodesets/` holds the
   repo-wide `docker_*` and vagrant sets, but a suite with its own `nodesets`
   directory is served from there instead --- both `default` and
@@ -296,10 +289,9 @@ range `>= 8 < 9`.
 - `Gemfile`, `spec/spec_helper.rb`, and `.github/workflows/pr_tests.yml` carry a
   **puppetsync** notice — they are baseline-managed and the next sync overwrites
   local edits. Push changes to those files upstream to the baseline, not here.
-  The `acceptance-security-modules` job in `pr_tests.yml` is a deliberate
-  exception to that rule and needs a matching per-repo exception carried in
-  puppetsync; it is kept in the managed file on purpose so baseline updates
-  reach it, so if a sync ever drops it, restore it there rather than moving it
-  to a workflow file of its own.
+  The one repo-specific part of `pr_tests.yml` is the `acceptance` job's
+  matrix (the `almalinux8` node and the `suite` dimension); puppetsync
+  preserves the `jobs.acceptance` block when refreshing the file, so keep
+  repo-specific CI changes inside that block.
 - Match the existing 2-space Puppet indentation and aligned-arrow parameter
   style used across `manifests/`.

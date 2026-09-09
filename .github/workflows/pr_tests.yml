@@ -145,6 +145,9 @@ jobs:
           - almalinux8
           - almalinux9
           - almalinux10
+        suite:
+          - default
+          - security_modules
       fail-fast: false
     steps:
       - name: checkout repo
@@ -167,37 +170,4 @@ jobs:
           BEAKER_HYPERVISOR: 'vagrant_libvirt'
           VAGRANT_DEFAULT_PROVIDER: 'libvirt'
         run: |
-          bundle exec rake beaker:suites[default,${{ matrix.node }}]
-
-  acceptance-security-modules:
-    runs-on:
-      - ubuntu-latest
-    strategy:
-      matrix:
-        node:
-          - almalinux8
-          - almalinux9
-          - almalinux10
-      fail-fast: false
-    steps:
-      - name: checkout repo
-        uses: actions/checkout@v7
-      - name: setup ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.4.9
-      - name: bundle install
-        run: |
-          bundle install
-      - name: Setup libvirt for Vagrant
-        run: |
-          sudo add-apt-repository ppa:evgeni/vagrant
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends vagrant vagrant-libvirt libvirt-daemon-system libvirt-daemon qemu-system-x86 qemu-utils dnsmasq
-          sudo chmod 666 /var/run/libvirt/libvirt-sock
-      - name: beaker
-        env:
-          BEAKER_HYPERVISOR: 'vagrant_libvirt'
-          VAGRANT_DEFAULT_PROVIDER: 'libvirt'
-        run: |
-          bundle exec rake beaker:suites[security_modules,${{ matrix.node }}]
+          bundle exec rake beaker:suites[${{ matrix.suite }},${{ matrix.node }}]
