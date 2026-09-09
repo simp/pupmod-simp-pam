@@ -1,28 +1,28 @@
 ---
 HOSTS:
-  almalinux9-server:
+  almalinux10-server:
     roles:
     - default
     - master
     - server
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
+    - el10
+    platform: el-10-x86_64
+    box: almalinux/10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: almalinux-cloud/almalinux-10
     gce_machine_type: n1-standard-2
-  almalinux9-client:
+  almalinux10-client:
     roles:
     - client
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
+    - el10
+    platform: el-10-x86_64
+    box: almalinux/10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: almalinux-cloud/almalinux-10
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
