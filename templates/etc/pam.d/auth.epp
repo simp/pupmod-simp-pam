@@ -150,14 +150,23 @@ auth     requisite     pam_deny.so
 <% } -%>
 <% if $name in ['system', 'password'] { -%>
 <%   if $faillock { -%>
+<%-    # 'requisite', and ahead of every authentication module, on purpose.
+       # As 'required' a denial here is remembered but the stack keeps going,
+       # so a *correct* password still reaches 'pam_faillock.so authfail' and
+       # records a tally -- five correct-password logins by an inactive user
+       # would hard-lock the account, root included under even_deny_root.
+       # 'requisite' aborts before authfail is reached. Sitting above the
+       # pam_sss lines also means a sufficient SSSD success can no longer
+       # return before the inactive check has run.
+-%>
+<%     if $inactive { -%>
+auth     requisite     pam_lastlog.so inactive=<%= $inactive %>
+<%     } -%>
 <%     if $sssd { -%>
 <%       if $pam_cert_auth { -%>
 auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
 <%       } -%>
 auth     sufficient    pam_sss.so forward_pass
-<%     } -%>
-<%     if $inactive { -%>
-auth required pam_lastlog.so inactive=<%= $inactive %>
 <%     } -%>
 <%-    # 'pam_unix' keeps a plain 'sufficient' control here on purpose. The CIS
        # rule "Ensure pam_unix module is enabled" only accepts
@@ -175,6 +184,13 @@ auth     [default=die] pam_faillock.so authfail
 auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
 <%       } -%>
 <%   } else { -%>
+<%-    # Same reasoning as the faillock branch above, plus: leaving it here
+       # sat it inside the reach of the two 'default=1' jumps below, so a
+       # non-local user skipped the inactive check instead of pam_unix.
+-%>
+<%     if $inactive { -%>
+auth     requisite     pam_lastlog.so inactive=<%= $inactive %>
+<%     } -%>
 <%     if $sssd { -%>
 <%       if $pam_cert_auth { -%>
 auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
@@ -183,9 +199,6 @@ auth     sufficient    pam_sss.so forward_pass
 <%     } -%>
 auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= <%= $uid %> quiet
 auth     [default=1 success=ok] pam_localuser.so
-<%     if $inactive { -%>
-auth required pam_lastlog.so inactive=<%= $inactive %>
-<%     } -%>
 auth     sufficient    pam_unix.so try_first_pass
 <%   } -%>
 <% } -%>

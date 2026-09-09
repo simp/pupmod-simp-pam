@@ -109,6 +109,46 @@ describe 'pam::auth' do
           end
         end
 
+        # Regression guard. As 'required' a denial here is remembered but the
+        # stack continues, so a correct password still reached
+        # 'pam_faillock.so authfail' and recorded a tally -- verified in a
+        # container: three correct-password authentications recorded three
+        # failures with 'required' and none with 'requisite'.
+        context 'pam::inactive' do
+          let(:params) { { inactive: 30, sssd: sssd } }
+
+          [true, false].each do |faillock|
+            [true, false].each do |use_sssd|
+              context "with faillock => #{faillock}, sssd => #{use_sssd}" do
+                let(:sssd) { use_sssd }
+                let(:params) { { inactive: 30, sssd: use_sssd, faillock: faillock } }
+
+                ['system', 'password'].each do |auth_type|
+                  context "auth type '#{auth_type}'" do
+                    let(:title) { auth_type }
+                    let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+                    it { is_expected.to contain_file(filename).with_content(%r{^auth\s+requisite\s+pam_lastlog\.so inactive=30$}) }
+                    it { is_expected.to contain_file(filename).without_content(%r{^auth\s+required\s+pam_lastlog\.so}) }
+
+                    it 'puts the inactive check ahead of every auth module that can succeed' do
+                      content = catalogue.resource("File[#{filename}]")[:content]
+                      lastlog = content.index('pam_lastlog.so inactive=')
+                      unix    = content.index('pam_unix.so try_first_pass')
+
+                      expect(lastlog).not_to be_nil
+                      expect(lastlog).to be < unix
+
+                      sss = content.index('pam_sss.so forward_pass')
+                      expect(lastlog).to be < sss unless sss.nil?
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+
         context 'Generate file using content params' do
           let(:params) do
             {

@@ -17,6 +17,18 @@
   jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
   `pam_faillock.so authfail`, failing an otherwise successful SSSD
   authentication. Removing the jump fixes this.
+- Emit the `pam::inactive` check as `auth requisite pam_lastlog.so`, ahead of
+  every authentication module rather than between them. As `required` a denial
+  there is remembered but the stack continues, so with the plain `sufficient`
+  control on `pam_unix` a *correct* password still reached
+  `pam_faillock.so authfail` and recorded a lockout tally: five correct-password
+  logins by a user past their inactive window would hard-lock the account, root
+  included since `even_deny_root` defaults to `true`. `requisite` aborts the
+  stack before `authfail` is reached. Moving it above the `pam_sss` lines also
+  means a `sufficient` SSSD success can no longer return before the inactive
+  check has run, and in the non-faillock stack takes it out of the reach of the
+  two `default=1` jumps, which a non-local user used to spend on skipping the
+  inactive check rather than `pam_unix`
 
 * Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
 - Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:

@@ -127,8 +127,8 @@ describe 'pam' do
         let(:params) { { inactive: 35 } }
 
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth required pam_lastlog.so inactive=35$}) }
-        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth required pam_lastlog.so inactive=35$}) }
+        it { is_expected.to contain_file('/etc/pam.d/password-auth').with_content(%r{^auth\s+requisite\s+pam_lastlog\.so inactive=35$}) }
+        it { is_expected.to contain_file('/etc/pam.d/system-auth').with_content(%r{^auth\s+requisite\s+pam_lastlog\.so inactive=35$}) }
       end
 
       context 'with cert_auth set to try' do
