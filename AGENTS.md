@@ -210,16 +210,32 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
 - No `lib/` — this module ships no custom Ruby types/providers/functions/facts;
   every custom type, fact, and function it uses comes from the dependencies
   above.
-- **Acceptance runs in CI:** `.github/workflows/pr_tests.yml` has two jobs,
-  `acceptance` and `acceptance-security-modules`, each with a matrix of
-  `almalinux8`, `almalinux9` and `almalinux10`, running
+- **Acceptance runs in CI from two separate workflow files.**
+  `.github/workflows/pr_tests.yml` has the `acceptance` job (the `default`
+  suite) and `.github/workflows/pr_tests_security_modules.yml` has
+  `acceptance-security-modules`, each with a matrix of `almalinux8`,
+  `almalinux9` and `almalinux10`, running
   `bundle exec rake beaker:suites[<suite>,<node>]` under
-  `BEAKER_HYPERVISOR=vagrant_libvirt` (`pr_tests.yml`). CI drives only the
-  AlmaLinux vagrant nodes. They are deliberately two jobs rather than one job
-  with a `suite` matrix dimension: GitHub derives check names from the matrix,
-  so adding a dimension would rename `acceptance (almalinux8)` to
-  `acceptance (default, almalinux8)` and any branch-protection required check
-  under the old name would never be satisfied again.
+  `BEAKER_HYPERVISOR=vagrant_libvirt`. CI drives only the AlmaLinux vagrant
+  nodes. Two things about that split are deliberate:
+  - **Separate *file*, because `pr_tests.yml` is puppetsync-managed** and is
+    overwritten wholesale by the next baseline sync. Anything added there ---
+    a matrix dimension, a second job, or a reusable-workflow `uses:` --- goes
+    away with it. GitHub discovers every workflow in `.github/workflows/` on
+    its own, so a standalone file with its own `pull_request` trigger needs no
+    registration and survives. `add_new_issue_to_triage_project.yml` is the
+    other unmanaged workflow here and predates this one.
+  - **Separate *job*, not a `suite` matrix dimension**, because GitHub derives
+    check names from the matrix: a dimension would rename
+    `acceptance (almalinux8)` to `acceptance (default, almalinux8)`, and any
+    branch-protection required check under the old name would never be
+    satisfied again.
+
+  The cost is that the setup steps are duplicated across the two files, and a
+  baseline change to the ruby version, libvirt packages or action versions
+  lands only in `pr_tests.yml`. Keep them in step by hand until the suite is
+  added to the pupmod baseline in `simp/gha-workflows`, then delete the local
+  file.
 - **Nodesets resolve per suite.** `spec/acceptance/nodesets/` holds the
   repo-wide `docker_*` and vagrant sets, but a suite with its own `nodesets`
   directory is served from there instead --- both `default` and
