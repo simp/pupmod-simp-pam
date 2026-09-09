@@ -115,12 +115,9 @@ describe 'pam::auth' do
         # container: three correct-password authentications recorded three
         # failures with 'required' and none with 'requisite'.
         context 'pam::inactive' do
-          let(:params) { { inactive: 30, sssd: sssd } }
-
           [true, false].each do |faillock|
             [true, false].each do |use_sssd|
               context "with faillock => #{faillock}, sssd => #{use_sssd}" do
-                let(:sssd) { use_sssd }
                 let(:params) { { inactive: 30, sssd: use_sssd, faillock: faillock } }
 
                 ['system', 'password'].each do |auth_type|

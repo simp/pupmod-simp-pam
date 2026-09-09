@@ -115,6 +115,25 @@ Private classes (call `assert_private()`):
   bracketed jump such as `[success=1 default=ignore]` on `pam_unix`. The
   faillock stack therefore has no `pam_faillock.so authsucc` line --- the
   tally is reset by `account required pam_faillock.so`.
+
+  That reset only reaches callers which run `pam_acct_mgmt()`. A PAM client
+  that calls `pam_authenticate()` alone --- some screen lockers do --- used to
+  get the reset from `authsucc` in the auth phase and now never gets it, so
+  sub-threshold failures accumulate across successful unlocks until `deny` is
+  reached. This matches authselect's own arrangement and is accepted, but no
+  test can see it: the acceptance coverage drives `su`, which always runs the
+  account phase.
+- **A failed `required` module before `pam_unix` makes a correct password
+  record a faillock failure.** PAM will not honour a `sufficient` success once
+  a `required` module has failed, so the stack runs on into
+  `[default=die] pam_faillock.so authfail`. Any auth module placed ahead of
+  `pam_unix` --- in this stack or in a parent one that does
+  `auth include system-auth` --- therefore has to be `requisite` rather than
+  `required`, or a correct password will grow the target's tally. Both current
+  cases are written that way: `pam_lastlog` for `pam::inactive` (`auth.epp`)
+  and `pam_wheel` in `pam::wheel` (`su.epp`). `pam_faillock.so preauth` is the
+  exception and is safe as `required`, because `authfail` declines to record
+  once the user is already blocked (`pam_faillock(8)`).
 - **`simp/oath` and `puppet-authselect` are OPTIONAL dependencies**
   (`metadata.json` `simp.optional_dependencies`), not hard deps. `oath` is
   guarded at runtime with `simplib::assert_optional_dependency` only when

@@ -10,9 +10,18 @@
   unreachable once `pam_unix` is `sufficient`; the failure tally is reset by
   the `account required pam_faillock.so` line the module already emits, which
   is the arrangement documented in `pam_faillock(8)` and used by authselect's
-  own `with-faillock` feature. Lockout behavior is unchanged --- `auth
+  own `with-faillock` feature. Lockout itself is unchanged --- `auth
   [default=die] pam_faillock.so authfail` still records failures --- and
-  consecutive-failure semantics are preserved by the account-phase call.
+  consecutive-failure semantics are preserved by the account-phase call. An
+  already-locked user retrying the correct password is unchanged too, and does
+  not extend `unlock_time`: `authfail` declines to record "unless the user is
+  already blocked" (`pam_faillock(8)`), verified against both stacks.
+
+  One caveat on the account-phase reset: it only reaches callers that run
+  `pam_acct_mgmt()`. A client calling `pam_authenticate()` alone --- some
+  screen lockers --- previously got the reset from `authsucc` and no longer
+  does, so sub-threshold failures accumulate across successful unlocks. This
+  matches authselect's arrangement
 - Fix SSSD logins when `pam::inactive` was also set. The `[success=2 ...]`
   jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
   `pam_faillock.so authfail`, failing an otherwise successful SSSD
@@ -28,7 +37,20 @@
   means a `sufficient` SSSD success can no longer return before the inactive
   check has run, and in the non-faillock stack takes it out of the reach of the
   two `default=1` jumps, which a non-local user used to spend on skipping the
-  inactive check rather than `pam_unix`
+  inactive check rather than `pam_unix`.
+
+  Note this widens who the check denies. `pam_lastlog` reads the host-local
+  lastlog, so an SSSD or domain user who is active elsewhere but has a stale
+  entry on this host is now denied here, where a `sufficient` `pam_sss` success
+  previously returned first. Only stale existing entries are affected ---
+  `pam_lastlog` exempts uid 0 and users who have never logged in
+- Emit `pam_wheel.so` as `requisite` in `pam::wheel`'s `/etc/pam.d/su`. As
+  `required` the denial was remembered and the stack continued into
+  `auth include system-auth`, where `pam_unix`'s `sufficient` success is then
+  discarded because of it --- so a non-wheel user supplying the *correct*
+  target password fell through to `pam_faillock.so authfail` and recorded a
+  failure against the target account, five of which would lock that account
+  out with root included. `requisite` returns before `system-auth` is reached
 
 * Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
 - Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:

@@ -13,7 +13,7 @@ describe 'pam::wheel' do
 
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{required\s+pam_wheel\.so.*group=#{params[:wheel_group]}}) }
+        it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{requisite\s+pam_wheel\.so.*group=#{params[:wheel_group]}}) }
         it { is_expected.not_to create_file('/etc/pam.d/su').with_content(%r{root_only}) }
         it { is_expected.not_to create_file('/etc/pam.d/su').with_content(%r{oo-trap}) }
 
@@ -25,7 +25,7 @@ describe 'pam::wheel' do
             }
           end
 
-          it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{required\s+pam_wheel\.so.*group=#{params[:wheel_group]}}) }
+          it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{requisite\s+pam_wheel\.so.*group=#{params[:wheel_group]}}) }
           it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{root_only}) }
           it { is_expected.not_to create_file('/etc/pam.d/su').with_content(%r{oo-trap}) }
         end
@@ -38,7 +38,7 @@ describe 'pam::wheel' do
             }
           end
 
-          it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{required\s+pam_wheel\.so.*group=#{params[:wheel_group]}}) }
+          it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{requisite\s+pam_wheel\.so.*group=#{params[:wheel_group]}}) }
           it { is_expected.not_to create_file('/etc/pam.d/su').with_content(%r{root_only}) }
           it { is_expected.to create_file('/etc/pam.d/su').with_content(%r{oo-trap}) }
         end
