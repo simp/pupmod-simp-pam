@@ -124,6 +124,15 @@ describe 'pam check faillock' do
       # unreachable, so the tally is reset by 'account required
       # pam_faillock.so' instead. If that reset ever stops happening, failures
       # accumulate across successful logins and eventually lock the user out.
+      # Driven through su rather than ssh on purpose. Repeated failed ssh
+      # connections from one address trip sshd's own per-source penalties
+      # (OpenSSH 9.8+, so EL9 and EL10 but not EL8), which reset the next
+      # connections at key exchange -- "kex_exchange_identification: read:
+      # Connection reset by peer" -- before they ever reach pam. Those
+      # attempts then record no failure and the following good password is
+      # refused by sshd rather than accepted by pam, which is nothing to do
+      # with the behaviour under test. su exercises the same faillock
+      # configuration with no network path to rate limit.
       context 'A successful login clears the faillock tally' do
         it 'starts from a clean tally' do
           on(server, "faillock --user #{test_user} --reset")
@@ -132,14 +141,14 @@ describe 'pam check faillock' do
 
         it 'records failures below the deny threshold' do
           3.times do
-            on(client, "sshpass -p 'badPassword' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'", acceptable_exit_codes: [255])
+            on(server, %(su -l #{vagrant_user} -c "/usr/local/bin/su_test_script.rb -u #{test_user} -p badPassword"), acceptable_exit_codes: [1])
           end
 
           expect(recorded_failures(server, test_user)).to eq(3)
         end
 
         it 'still allows a login with the correct password' do
-          on(client, "sshpass -p '#{password}' ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 #{test_user}@#{os}-server 'hostname;'")
+          on(server, "su -l #{vagrant_user} -c '/usr/local/bin/su_test_script.rb -u #{test_user} -p #{password}'")
         end
 
         it 'clears the recorded failures' do
