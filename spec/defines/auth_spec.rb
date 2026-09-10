@@ -72,6 +72,107 @@ describe 'pam::auth' do
           end
         end
 
+        # CIS "Ensure pam_unix module is enabled" (EL8/EL9 5.3.2.5, EL10
+        # 5.3.1.5) greps the auth stacks for
+        #   ^\h*auth\h+(required|requisite|sufficient)\h+pam_unix\.so\b
+        # so the pam_unix auth line must carry a plain control, never a
+        # bracketed jump such as [success=1 default=ignore].
+        context 'CIS pam_unix control' do
+          let(:cis_pam_unix) { %r{^[ \t]*auth[ \t]+(?:required|requisite|sufficient)[ \t]+pam_unix\.so\b} }
+
+          {
+            'with faillock'            => { faillock: true },
+            'without faillock'         => { faillock: false },
+            'with faillock and sssd'   => { faillock: true, sssd: true },
+            'with faillock via faillock.conf' => { faillock: true, manage_faillock_conf: true },
+          }.each do |description, extra_params|
+            context description do
+              ['system', 'password'].each do |auth_type|
+                context "auth type '#{auth_type}'" do
+                  let(:title) { auth_type }
+                  let(:params) { extra_params }
+                  let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+                  it { is_expected.to contain_file(filename).with_content(cis_pam_unix) }
+                  it { is_expected.to contain_file(filename).without_content(%r{^auth\s+\[[^\]]*\]\s+pam_unix\.so}) }
+
+                  if extra_params[:faillock]
+                    # 'authsucc' is unreachable once pam_unix is 'sufficient';
+                    # the tally is reset by the account-phase pam_faillock call.
+                    it { is_expected.to contain_file(filename).without_content(%r{pam_faillock\.so authsucc}) }
+                    it { is_expected.to contain_file(filename).with_content(%r{^auth\s+\[default=die\]\s+pam_faillock\.so authfail}) }
+                    it { is_expected.to contain_file(filename).with_content(%r{^account\s+required\s+pam_faillock\.so$}) }
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        # Regression guard. As 'required' a denial here is remembered but the
+        # stack continues, so a correct password still reached
+        # 'pam_faillock.so authfail' and recorded a tally -- verified in a
+        # container: three correct-password authentications recorded three
+        # failures with 'required' and none with 'requisite'.
+        context 'pam::inactive' do
+          [true, false].each do |faillock|
+            [true, false].each do |use_sssd|
+              context "with faillock => #{faillock}, sssd => #{use_sssd}" do
+                let(:params) { { inactive: 30, sssd: use_sssd, faillock: faillock } }
+
+                ['system', 'password'].each do |auth_type|
+                  context "auth type '#{auth_type}'" do
+                    let(:title) { auth_type }
+                    let(:filename) { "/etc/pam.d/#{auth_type}-auth" }
+
+                    it { is_expected.to contain_file(filename).with_content(%r{^auth\s+requisite\s+pam_lastlog\.so inactive=30$}) }
+                    it { is_expected.to contain_file(filename).without_content(%r{^auth\s+required\s+pam_lastlog\.so}) }
+
+                    it 'puts the inactive check ahead of pam_unix' do
+                      content = catalogue.resource("File[#{filename}]")[:content]
+                      lastlog = content.index('pam_lastlog.so inactive=')
+                      unix    = content.index('pam_unix.so try_first_pass')
+
+                      expect(lastlog).not_to be_nil
+                      expect(lastlog).to be < unix
+                    end
+
+                    # Deliberately below pam_sss: pam_lastlog reads the
+                    # host-local lastlog, so a domain user active elsewhere
+                    # with a stale entry here stays exempt, as before.
+                    if use_sssd
+                      it 'leaves SSSD authentication ahead of the inactive check' do
+                        content = catalogue.resource("File[#{filename}]")[:content]
+
+                        expect(content.index('pam_sss.so forward_pass')).to be < content.index('pam_lastlog.so inactive=')
+                      end
+                    end
+
+                    # Lockout enforcement rests on line order once the jump
+                    # tail is gone: a 'sufficient' success is only overridden
+                    # when a *prior* required module failed, so a sufficient
+                    # line above preauth would let a locked-out user with the
+                    # correct password straight in.
+                    if faillock
+                      it 'keeps pam_faillock preauth above every sufficient line' do
+                        content = catalogue.resource("File[#{filename}]")[:content]
+                        preauth = content.index('pam_faillock.so preauth')
+
+                        expect(preauth).not_to be_nil
+                        expect(preauth).to be < content.index('pam_lastlog.so inactive=')
+                        expect(preauth).to be < content.index('pam_unix.so try_first_pass')
+
+                        sss = content.index('pam_sss.so forward_pass')
+                        expect(preauth).to be < sss unless sss.nil?
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+
         context 'Generate file using content params' do
           let(:params) do
             {

@@ -1,3 +1,61 @@
+* Wed Sep 02 2026 Mike Riddle <mike@sicura.us> - 9.3.0
+- Give `pam_unix` a plain `sufficient` control in the faillock auth stack
+  (SIMP-#230). It was emitted as `auth [success=1 default=ignore]
+  pam_unix.so`, and the CIS rule "Ensure `pam_unix` module is enabled"
+  (EL8/EL9 5.3.2.5, EL10 5.3.1.5) only accepts `required`, `requisite` or
+  `sufficient`, so enforcing the module turned a passing host into a failing
+  one. The `pam_sss.so forward_pass` line loses its `[success=2
+  default=ignore]` jump for the same reason.
+- Drop the `pam_faillock.so authsucc` line from the faillock auth stack. It is
+  unreachable once `pam_unix` is `sufficient`; the failure tally is reset by
+  the `account required pam_faillock.so` line the module already emits, which
+  is the arrangement documented in `pam_faillock(8)` and used by authselect's
+  own `with-faillock` feature. Lockout itself is unchanged --- `auth
+  [default=die] pam_faillock.so authfail` still records failures --- and
+  consecutive-failure semantics are preserved by the account-phase call. An
+  already-locked user retrying the correct password is unchanged too, and does
+  not extend `unlock_time`: `authfail` records a failure *unless the user is
+  already blocked*, so it declines to record once the deny threshold has been
+  reached (`pam_faillock(8)`). Verified against both stacks.
+
+  One caveat on the account-phase reset: it only reaches callers that run
+  `pam_acct_mgmt()`. A client calling `pam_authenticate()` alone --- some
+  screen lockers --- previously got the reset from `authsucc` and no longer
+  does, so sub-threshold failures accumulate across successful unlocks. This
+  matches authselect's arrangement. Note that with `pam::unlock_time` set to
+  `never` this is permanent rather than merely slow: the tally only ever grows
+  until an administrator runs `faillock --user <name> --reset`. Recorded on
+  the `unlock_time` parameter docs
+- Fix SSSD logins when `pam::inactive` was also set. The `[success=2 ...]`
+  jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
+  `pam_faillock.so authfail`, failing an otherwise successful SSSD
+  authentication. Removing the jump fixes this.
+- Emit the `pam::inactive` check as `auth requisite pam_lastlog.so`, ahead of
+  every authentication module rather than between them. As `required` a denial
+  there is remembered but the stack continues, so with the plain `sufficient`
+  control on `pam_unix` a *correct* password still reached
+  `pam_faillock.so authfail` and recorded a lockout tally: five correct-password
+  logins by a user past their inactive window would hard-lock the account, root
+  included since `even_deny_root` defaults to `true`. `requisite` aborts the
+  stack before `authfail` is reached. Moving it above the `pam_sss` lines also
+  means a `sufficient` SSSD success can no longer return before the inactive
+  check has run, and in the non-faillock stack takes it out of the reach of the
+  two `default=1` jumps, which a non-local user used to spend on skipping the
+  inactive check rather than `pam_unix`.
+
+  The line stays *below* the `pam_sss` lines, so who the check denies is
+  unchanged: `pam_lastlog` reads the host-local lastlog, which is routinely
+  stale for domain users on hosts they rarely visit, and a `sufficient` SSSD
+  success still returns before the check is reached. Local users are checked
+  as they always were
+- Emit `pam_wheel.so` as `requisite` in `pam::wheel`'s `/etc/pam.d/su`. As
+  `required` the denial was remembered and the stack continued into
+  `auth include system-auth`, where `pam_unix`'s `sufficient` success is then
+  discarded because of it --- so a non-wheel user supplying the *correct*
+  target password fell through to `pam_faillock.so authfail` and recorded a
+  failure against the target account, five of which would lock that account
+  out with root included. `requisite` returns before `system-auth` is reached
+
 * Mon Aug 31 2026 Hazel Caballero <hazel@sicura.us> - 9.2.0
 - Remove Amazon Linux 2 remnants left behind when support was dropped in 9.0.0:
   the unreachable Amazon spec branches, the `data/os/Amazon-2.yaml` capability

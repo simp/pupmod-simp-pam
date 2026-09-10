@@ -515,6 +515,13 @@ Data type: `Pam::AccountUnlockTime`
 
 Allow acesss after N seconds to user account after failed attempt.
 
+NOTE: with ``pam::faillock`` enabled the tally is cleared in the *account*
+phase, so a PAM client that only calls ``pam_authenticate()`` -- some
+screen lockers -- never clears it, and sub-threshold failures accumulate
+across successful unlocks until ``deny`` is reached. Setting this to
+``'never'`` makes that permanent until an administrator runs
+``faillock --user <name> --reset``.
+
 Default value: `900`
 
 ##### <a name="-pam--preserve_ac"></a>`preserve_ac`
@@ -628,6 +635,11 @@ Data type: `Optional[Array[String]]`
 User-specified content to be added to ``/etc/pam.d/su`` in addition to
 the rest of the templated content
 
+WARNING: the same ``requisite`` rule as ``auth_content_pre`` applies here.
+``/etc/pam.d/su`` ends with ``auth include system-auth``, so a
+``required`` module added above it reaches the faillock stack the same way
+and makes a correct password record a tally against the *target* account.
+
 Default value: `undef`
 
 ##### <a name="-pam--su_content"></a>`su_content`
@@ -683,6 +695,16 @@ Data type: `Optional[Array[String]]`
 Content to prepend to the auth configs in addition to templated content
 
 * Set to an empty Array to not prepend any default content
+
+WARNING: prepended ``auth`` modules must use ``requisite``, not
+``required``. PAM will not honour the ``sufficient`` success on
+``pam_unix.so`` further down the stack once a ``required`` module has
+already failed, so with ``pam::faillock`` enabled a user supplying the
+*correct* password falls through to ``pam_faillock.so authfail`` and
+records a lockout tally. ``deny`` such logins in a row lock the account,
+root included when ``even_deny_root`` is true. ``requisite`` returns
+immediately instead. This applies to the common prepends --
+``pam_time``, ``pam_access``, ``pam_listfile``.
 
 Default value: `undef`
 

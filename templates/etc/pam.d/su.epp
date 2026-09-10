@@ -18,10 +18,19 @@ auth      sufficient    pam_rootok.so
 <% } -%>
 # SIMP defined su content
 auth      [success=1 default=ignore]  pam_wheel.so trust
+<%-
+   # 'requisite', not 'required'. As 'required' the denial is remembered and
+   # the stack continues into system-auth, where pam_unix's 'sufficient'
+   # success is then discarded because of it -- so a non-wheel user supplying
+   # the *correct* target password falls through to
+   # 'pam_faillock.so authfail' and records a failure against the target
+   # account. Five of those lock the target out, root included under
+   # even_deny_root. 'requisite' returns before system-auth is reached.
+-%>
 <% if $root_only { -%>
-auth      required    pam_wheel.so use_uid group=<%= $wheel_group %> root_only
+auth      requisite   pam_wheel.so use_uid group=<%= $wheel_group %> root_only
 <% } else { -%>
-auth      required    pam_wheel.so use_uid group=<%= $wheel_group %>
+auth      requisite   pam_wheel.so use_uid group=<%= $wheel_group %>
 <% } -%>
 auth      include     system-auth
 account   sufficient  pam_succeed_if.so uid = 0 use_uid quiet

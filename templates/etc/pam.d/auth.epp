@@ -149,36 +149,55 @@ auth     [success=1 default=bad]    pam_oath.so usersfile=/etc/liboath/users.oat
 auth     requisite     pam_deny.so
 <% } -%>
 <% if $name in ['system', 'password'] { -%>
-<%   if $faillock { -%>
-<%     if $sssd { -%>
-<%       if $pam_cert_auth { -%>
+<%-  # The SSSD lines and the inactive check are identical either side of the
+     # faillock split, so they are emitted once here rather than twice below.
+-%>
+<%   if $sssd { -%>
+<%     if $pam_cert_auth { -%>
 auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
-<%       } -%>
-auth     [success=2 default=ignore] pam_sss.so forward_pass
 <%     } -%>
-<%     if $inactive { -%>
-auth required pam_lastlog.so inactive=<%= $inactive %>
-<%     } -%>
-auth     [success=1 default=ignore] pam_unix.so try_first_pass
+auth     sufficient    pam_sss.so forward_pass
+<%   } -%>
+<%-  # 'requisite', not 'required'. As 'required' a denial here is remembered
+     # but the stack keeps going, and pam will not honour the later
+     # 'sufficient' pam_unix success once a required module has failed -- so a
+     # *correct* password reached 'pam_faillock.so authfail' and recorded a
+     # tally. Five correct-password logins by an inactive user would hard-lock
+     # the account, root included under even_deny_root. 'requisite' returns
+     # before authfail is reached.
+     #
+     # Deliberately BELOW the pam_sss lines. pam_lastlog reads the host-local
+     # lastlog, which is routinely stale for domain users on hosts they rarely
+     # visit, so a sufficient SSSD success returning first keeps those users
+     # exempt -- as they were before this line moved. Local users still get the
+     # check, which is what pam::inactive has always meant in practice.
+     #
+     # It must stay ABOVE the two 'default=1' jumps in the non-faillock branch:
+     # those skip exactly one module and are written to skip pam_unix, so a
+     # line between them and pam_unix silently steals the jump.
+-%>
+<%   if $inactive { -%>
+auth     requisite     pam_lastlog.so inactive=<%= $inactive %>
+<%   } -%>
+<%   if $faillock { -%>
+<%-    # 'pam_unix' keeps a plain 'sufficient' control here on purpose. The CIS
+       # rule "Ensure pam_unix module is enabled" only accepts
+       # required/requisite/sufficient, so a bracketed jump such as
+       # [success=1 default=ignore] fails the benchmark. Dropping the jump makes
+       # the 'authsucc' call unreachable, so it is omitted: the tally is reset by
+       # the 'account required pam_faillock.so' line emitted below, which is the
+       # arrangement documented in pam_faillock(8) and used by authselect's own
+       # 'with-faillock' feature.
+-%>
+auth     sufficient    pam_unix.so try_first_pass
 <%       if $manage_faillock_conf { -%>
 auth     [default=die] pam_faillock.so authfail
-auth     sufficient    pam_faillock.so authsucc
 <%       } else { -%>
 auth     [default=die] pam_faillock.so authfail deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
-auth     sufficient    pam_faillock.so authsucc deny=<%= $deny %> audit unlock_time=<%= $unlock_time %><%= $_even_deny_root %>
 <%       } -%>
 <%   } else { -%>
-<%     if $sssd { -%>
-<%       if $pam_cert_auth { -%>
-auth     [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so <%= $pam_cert_auth %>
-<%       } -%>
-auth     sufficient    pam_sss.so forward_pass
-<%     } -%>
 auth     [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= <%= $uid %> quiet
 auth     [default=1 success=ok] pam_localuser.so
-<%     if $inactive { -%>
-auth required pam_lastlog.so inactive=<%= $inactive %>
-<%     } -%>
 auth     sufficient    pam_unix.so try_first_pass
 <%   } -%>
 <% } -%>
