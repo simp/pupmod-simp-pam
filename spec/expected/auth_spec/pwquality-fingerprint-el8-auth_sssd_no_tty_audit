@@ -32,6 +32,7 @@ session      [default=1 success=ignore] pam_succeed_if.so quiet shell = /usr/bin
 session      required      pam_namespace.so no_unmount_on_close
 session      [default=ignore success=1] pam_succeed_if.so quiet shell = /usr/bin/oo-trap-user
 session      requisite     pam_access.so listsep=, nodefgroup
+session      required      pam_unix.so
 session      optional      pam_sss.so
 session      optional      pam_oddjob_mkhomedir.so silent
 session      required      pam_lastlog.so showfailed
