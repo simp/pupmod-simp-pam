@@ -123,7 +123,7 @@ Private classes (call `assert_private()`):
   must not be exposed as configuration. The one exception is the
   `pam_faillock.so authfail` line, whose `[default=die]` has a semantically
   equivalent plain form; that one is a parameter
-  (`pam::faillock_authfail_control`, `Pam::FaillockControl`) because the CIS
+  (`pam::faillock_authfail_control`, `Pam::FaillockAuthfailControl`) because the CIS
   audit will not accept the bracketed control.
 - **`pam_unix` auth lines must keep a plain control.** The CIS rule "Ensure
   `pam_unix` module is enabled" only accepts `required`/`requisite`/
@@ -247,8 +247,8 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
 - `manifests/limits.pp`, `manifests/limits/rule.pp` — `pam_limits`
   (`limits.conf`) management.
 - `types/` — `Pam::PasswordBackends`, `Pam::HashAlgorithm`,
-  `Pam::AccountUnlockTime`, `Pam::AuthSections`, `Pam::Limits::Item`,
-  `Pam::Limits::Value`.
+  `Pam::AccountUnlockTime`, `Pam::AuthSections`,
+  `Pam::FaillockAuthfailControl`, `Pam::Limits::Item`, `Pam::Limits::Value`.
 - `templates/etc/pam.d/{auth,other,sudo,su}.epp` and
   `templates/etc/security/{faillock,pwhistory,pwquality}.conf.epp` — the EPP
   templates.

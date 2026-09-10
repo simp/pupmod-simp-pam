@@ -3,7 +3,16 @@ require 'spec_helper_acceptance'
 test_name 'pam check faillock'
 
 describe 'pam check faillock' do
-  let(:server_hieradata) do
+  # NOTE: by default, include 'ssh' will automatically include the ssh_server
+  let(:client_manifest) { "include 'ssh::client'" }
+  let(:vagrant_user) { 'vagrant' }
+  let(:password) { 'suP3rF00B@rB@11bx23' }
+  let(:files_dir) { File.join(File.dirname(__FILE__), 'files') }
+
+  # Plain methods rather than 'let' so that an after(:context) hook can reach
+  # them: hooks run outside example scope, where 'let' definitions do not
+  # exist. Call sites are unchanged.
+  def server_hieradata
     {
       'simp_options::trusted_nets'                => ['ALL'],
       'ssh::server::conf::banner'                 => '/dev/null',
@@ -13,20 +22,16 @@ describe 'pam check faillock' do
     }
   end
 
-  # NOTE: by default, include 'ssh' will automatically include the ssh_server
-  let(:client_manifest) { "include 'ssh::client'" }
-
-  let(:server_manifest) do
+  def server_manifest
     <<~SERVER_CONFIG
       include 'ssh::server'
       include 'pam'
     SERVER_CONFIG
   end
-  let(:test_user) { 'tst0_usr' }
-  let(:vagrant_user) { 'vagrant' }
-  let(:password) { 'suP3rF00B@rB@11bx23' }
 
-  let(:files_dir) { File.join(File.dirname(__FILE__), 'files') }
+  def test_user
+    'tst0_usr'
+  end
 
   # Number of failures pam_faillock currently has recorded for a user. Each
   # entry in `faillock --user` output starts with the date of the failure.
@@ -225,10 +230,27 @@ describe 'pam check faillock' do
           expect(recorded_failures(server, test_user)).to eq(0)
         end
 
+        # Belt and braces. The example below is where the restore is asserted,
+        # but an earlier failure in this context -- or a focus filter -- would
+        # skip it and leak the non-default control and any residual tally into
+        # every context that follows. A hook always runs.
+        after(:context) do
+          set_hieradata_on(sut_server, server_hieradata)
+          apply_manifest_on(sut_server, server_manifest, catch_failures: true)
+          on(sut_server, "faillock --user #{test_user} --reset", accept_all_exit_codes: true)
+        end
+
         it 'restores the default control' do
           set_hieradata_on(server, server_hieradata)
           apply_manifest_on(server, server_manifest, expect_changes: true)
           on(server, "faillock --user #{test_user} --reset")
+
+          # expect_changes above only proves *something* changed; this proves
+          # the default came back, so a template regression at the default
+          # control is caught here rather than in a later context.
+          ['/etc/pam.d/system-auth', '/etc/pam.d/password-auth'].each do |pam_file|
+            on(server, "grep -P -- '^\\h*auth\\h+\\[default=die\\]\\h+pam_faillock\\.so\\h+([^#\\n\\r]+\\h+)?authfail\\b' #{pam_file}")
+          end
         end
       end
 

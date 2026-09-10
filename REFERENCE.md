@@ -24,7 +24,7 @@
 
 * [`Pam::AccountUnlockTime`](#Pam--AccountUnlockTime): Valid account unlock values
 * [`Pam::AuthSections`](#Pam--AuthSections): Valid PAM `auth` sections
-* [`Pam::FaillockControl`](#Pam--FaillockControl): Valid PAM control values for the ``pam_faillock.so authfail`` line  ``[default=die]`` aborts the auth stack immediately on a failed authentic
+* [`Pam::FaillockAuthfailControl`](#Pam--FaillockAuthfailControl): Valid PAM controls for the ``pam_faillock.so authfail`` line
 * [`Pam::HashAlgorithm`](#Pam--HashAlgorithm): Valid PAM password hash algorithms
 * [`Pam::Limits::Item`](#Pam--Limits--Item): Valid PAM limits
 * [`Pam::Limits::Value`](#Pam--Limits--Value): Valid PAM limit values
@@ -859,7 +859,7 @@ Default value: `undef`
 
 ##### <a name="-pam--faillock_authfail_control"></a>`faillock_authfail_control`
 
-Data type: `Pam::FaillockControl`
+Data type: `Pam::FaillockAuthfailControl`
 
 The PAM control to use on the ``pam_faillock.so authfail`` line of the auth
 stack.
@@ -1594,7 +1594,7 @@ Default value: `$pam::faillock_log_dir`
 
 ##### <a name="-pam--auth--faillock_authfail_control"></a>`faillock_authfail_control`
 
-Data type: `Pam::FaillockControl`
+Data type: `Pam::FaillockAuthfailControl`
 
 
 
@@ -1936,16 +1936,18 @@ Array[Enum[
 ]]
 ```
 
-### <a name="Pam--FaillockControl"></a>`Pam::FaillockControl`
+### <a name="Pam--FaillockAuthfailControl"></a>`Pam::FaillockAuthfailControl`
 
-Valid PAM control values for the ``pam_faillock.so authfail`` line
+Scoped to that one line on purpose: ``[default=die]`` would be harmful on
+the ``preauth`` and account-phase ``pam_faillock`` lines, which hardcode
+``required``.
 
 ``[default=die]`` aborts the auth stack immediately on a failed
 authentication and is the arrangement documented in ``pam_faillock(8)``.
-``required`` and ``requisite`` are the plain controls that the CIS Benchmark
+``required`` and ``requisite`` are the plain controls the CIS Benchmark
 audit of the auth stack will accept; with either of them a failed
-authentication falls through to ``pam_deny.so`` instead of dying on the spot,
-which reaches the same outcome.
+authentication falls through to ``pam_deny.so`` instead of dying on the
+spot, which reaches the same outcome.
 
 Alias of `Enum['[default=die]', 'required', 'requisite']`
 

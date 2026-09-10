@@ -1,5 +1,6 @@
 * Thu Sep 03 2026 Mike Riddle <mike@sicura.us> - 9.4.0
-- Add `pam::faillock_authfail_control` (SIMP-#234), defaulting to
+- Add `pam::faillock_authfail_control` (SIMP-#234), typed
+  `Pam::FaillockAuthfailControl` and defaulting to
   `[default=die]`. The CIS rules that audit the auth stack --- "Ensure active
   authselect profile includes pam modules" (EL8/EL9 5.3.2.1, EL10 5.3.1.1) and
   "Ensure pam_faillock module is enabled" (EL8/EL9 5.3.2.2, EL10 5.3.1.2) ---
@@ -18,11 +19,16 @@
 - Keep `pam_unix` in the session stack when `pam::sssd` is enabled
   (SIMP-#235). The template treated `pam_unix` and `pam_sss` as alternatives
   in the session phase, so an SSSD host got `session optional pam_sss.so` and
-  no `pam_unix` at all. `pam_unix` performs the local session setup and writes
-  the session open/close records, which `pam_sss` does not replace;
-  authselect's own profiles emit both. `session required pam_unix.so` is now
-  emitted unconditionally, with `session optional pam_sss.so` after it when
-  `pam::sssd` is set.
+  no `pam_unix` at all. For non-root sessions `pam_unix` performs the local
+  session setup and writes the session open/close records, which `pam_sss`
+  does not replace; authselect's own profiles emit both. `session required
+  pam_unix.so` is now emitted unconditionally, with `session optional
+  pam_sss.so` after it when `pam::sssd` is set.
+
+  Root sessions are unaffected either way: the unconditional `session
+  sufficient pam_succeed_if.so user = root quiet` above both lines ends the
+  stack for root before either is reached. That is pre-existing behaviour and
+  is not changed here
 
   This changes the session stack on existing SSSD nodes --- `pam_unix.so` runs
   where it previously did not

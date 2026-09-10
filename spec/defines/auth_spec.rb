@@ -201,16 +201,20 @@ describe 'pam::auth' do
                   it { is_expected.to contain_file(filename).with_content(cis_authfail) }
                   it { is_expected.to contain_file(filename).without_content(%r{\[default=die\]\s+pam_faillock}) }
 
-                  # The control field is padded to the column width the rest
-                  # of the file uses.
-                  it { is_expected.to contain_file(filename).with_content(%r{^auth     #{control}#{' ' * (14 - control.length)}pam_faillock\.so authfail\b}) }
+                  # Built with the same sprintf the template uses, so a
+                  # change to the control column width fails here instead of
+                  # needing a lockstep space-recount in the spec.
+                  it {
+                    padded = Regexp.escape('%-14s' % control)
+                    is_expected.to contain_file(filename).with_content(%r{^auth     #{padded}pam_faillock\.so authfail\b})
+                  }
                 end
               end
 
               context 'with an unsupported control' do
                 let(:params) { { faillock_authfail_control: 'sufficient' } }
 
-                it { is_expected.to compile.and_raise_error(%r{Pam::FaillockControl}) }
+                it { is_expected.to compile.and_raise_error(%r{Pam::FaillockAuthfailControl}) }
               end
             end
           end
@@ -239,7 +243,9 @@ describe 'pam::auth' do
                       )
                     end
                   else
-                    it { is_expected.to contain_file(filename).without_content(%r{^session\s+\S+\s+pam_sss\.so}) }
+                    # '.+' rather than '\S+': a bracketed control contains
+                    # spaces, and that is exactly the regression this guards.
+                    it { is_expected.to contain_file(filename).without_content(%r{^session\s+.+pam_sss\.so}) }
                   end
                 end
               end

@@ -519,7 +519,7 @@ class pam (
   Boolean                         $even_deny_root            = true,
   Integer[0]                      $root_unlock_time          = 60,
   Optional[Stdlib::Absolutepath]  $faillock_log_dir          = undef,
-  Pam::FaillockControl            $faillock_authfail_control = '[default=die]',
+  Pam::FaillockAuthfailControl            $faillock_authfail_control = '[default=die]',
   Boolean                         $faillock_audit            = true,
   Boolean                         $faillock_no_log_info      = false,
   Boolean                         $faillock_local_users_only = false,

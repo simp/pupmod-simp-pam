@@ -89,7 +89,7 @@ define pam::auth (
   Boolean                         $faillock                  = $pam::faillock,
   Boolean                         $manage_faillock_conf      = $pam::manage_faillock_conf,
   Optional[Stdlib::Absolutepath]  $faillock_log_dir          = $pam::faillock_log_dir,
-  Pam::FaillockControl            $faillock_authfail_control = $pam::faillock_authfail_control,
+  Pam::FaillockAuthfailControl            $faillock_authfail_control = $pam::faillock_authfail_control,
   Boolean                         $faillock_audit            = $pam::faillock_audit,
   Boolean                         $faillock_no_log_info      = $pam::faillock_no_log_info,
   Boolean                         $faillock_local_users_only = $pam::faillock_local_users_only,
