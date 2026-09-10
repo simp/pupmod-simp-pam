@@ -134,6 +134,19 @@ Private classes (call `assert_private()`):
   and `pam_wheel` in `pam::wheel` (`su.epp`). `pam_faillock.so preauth` is the
   exception and is safe as `required`, because `authfail` declines to record
   once the user is already blocked (`pam_faillock(8)`).
+
+  The rule reaches site content too, not just module-internal lines:
+  `pam::auth_content_pre` is emitted above this stack and
+  `pam::su_content_extra` above `auth include system-auth` in `su.epp`, so a
+  prepended `auth required ...` has exactly the same effect. Both parameters
+  carry the warning in their docstrings --- keep it there.
+- **Lockout enforcement rests on line order.** With the jump tail gone, a
+  `sufficient` success is overridden only when a *prior* required module
+  failed, so `pam_faillock.so preauth` has to stay above every `sufficient`
+  line: move a `sufficient` above it and a locked-out user with the correct
+  password is let straight in. `spec/defines/auth_spec.rb` asserts the
+  position rather than just the presence, because nothing else would catch a
+  reorder.
 - **`simp/oath` and `puppet-authselect` are OPTIONAL dependencies**
   (`metadata.json` `simp.optional_dependencies`), not hard deps. `oath` is
   guarded at runtime with `simplib::assert_optional_dependency` only when

@@ -14,14 +14,18 @@
   [default=die] pam_faillock.so authfail` still records failures --- and
   consecutive-failure semantics are preserved by the account-phase call. An
   already-locked user retrying the correct password is unchanged too, and does
-  not extend `unlock_time`: `authfail` declines to record "unless the user is
-  already blocked" (`pam_faillock(8)`), verified against both stacks.
+  not extend `unlock_time`: `authfail` records a failure *unless the user is
+  already blocked*, so it declines to record once the deny threshold has been
+  reached (`pam_faillock(8)`). Verified against both stacks.
 
   One caveat on the account-phase reset: it only reaches callers that run
   `pam_acct_mgmt()`. A client calling `pam_authenticate()` alone --- some
   screen lockers --- previously got the reset from `authsucc` and no longer
   does, so sub-threshold failures accumulate across successful unlocks. This
-  matches authselect's arrangement
+  matches authselect's arrangement. Note that with `pam::unlock_time` set to
+  `never` this is permanent rather than merely slow: the tally only ever grows
+  until an administrator runs `faillock --user <name> --reset`. Recorded on
+  the `unlock_time` parameter docs
 - Fix SSSD logins when `pam::inactive` was also set. The `[success=2 ...]`
   jump on `pam_sss.so` counted past `pam_lastlog.so` and landed on
   `pam_faillock.so authfail`, failing an otherwise successful SSSD
@@ -39,11 +43,11 @@
   two `default=1` jumps, which a non-local user used to spend on skipping the
   inactive check rather than `pam_unix`.
 
-  Note this widens who the check denies. `pam_lastlog` reads the host-local
-  lastlog, so an SSSD or domain user who is active elsewhere but has a stale
-  entry on this host is now denied here, where a `sufficient` `pam_sss` success
-  previously returned first. Only stale existing entries are affected ---
-  `pam_lastlog` exempts uid 0 and users who have never logged in
+  The line stays *below* the `pam_sss` lines, so who the check denies is
+  unchanged: `pam_lastlog` reads the host-local lastlog, which is routinely
+  stale for domain users on hosts they rarely visit, and a `sufficient` SSSD
+  success still returns before the check is reached. Local users are checked
+  as they always were
 - Emit `pam_wheel.so` as `requisite` in `pam::wheel`'s `/etc/pam.d/su`. As
   `required` the denial was remembered and the stack continued into
   `auth include system-auth`, where `pam_unix`'s `sufficient` success is then

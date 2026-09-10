@@ -128,16 +128,43 @@ describe 'pam::auth' do
                     it { is_expected.to contain_file(filename).with_content(%r{^auth\s+requisite\s+pam_lastlog\.so inactive=30$}) }
                     it { is_expected.to contain_file(filename).without_content(%r{^auth\s+required\s+pam_lastlog\.so}) }
 
-                    it 'puts the inactive check ahead of every auth module that can succeed' do
+                    it 'puts the inactive check ahead of pam_unix' do
                       content = catalogue.resource("File[#{filename}]")[:content]
                       lastlog = content.index('pam_lastlog.so inactive=')
                       unix    = content.index('pam_unix.so try_first_pass')
 
                       expect(lastlog).not_to be_nil
                       expect(lastlog).to be < unix
+                    end
 
-                      sss = content.index('pam_sss.so forward_pass')
-                      expect(lastlog).to be < sss unless sss.nil?
+                    # Deliberately below pam_sss: pam_lastlog reads the
+                    # host-local lastlog, so a domain user active elsewhere
+                    # with a stale entry here stays exempt, as before.
+                    if use_sssd
+                      it 'leaves SSSD authentication ahead of the inactive check' do
+                        content = catalogue.resource("File[#{filename}]")[:content]
+
+                        expect(content.index('pam_sss.so forward_pass')).to be < content.index('pam_lastlog.so inactive=')
+                      end
+                    end
+
+                    # Lockout enforcement rests on line order once the jump
+                    # tail is gone: a 'sufficient' success is only overridden
+                    # when a *prior* required module failed, so a sufficient
+                    # line above preauth would let a locked-out user with the
+                    # correct password straight in.
+                    if faillock
+                      it 'keeps pam_faillock preauth above every sufficient line' do
+                        content = catalogue.resource("File[#{filename}]")[:content]
+                        preauth = content.index('pam_faillock.so preauth')
+
+                        expect(preauth).not_to be_nil
+                        expect(preauth).to be < content.index('pam_lastlog.so inactive=')
+                        expect(preauth).to be < content.index('pam_unix.so try_first_pass')
+
+                        sss = content.index('pam_sss.so forward_pass')
+                        expect(preauth).to be < sss unless sss.nil?
+                      end
                     end
                   end
                 end
