@@ -67,7 +67,9 @@ describe 'pam_tty_audit' do
 
         tty_audit_files.each do |tty_audit_file|
           it "sets pam_tty_audit to optional in #{tty_audit_file}" do
-            expect(file_contents_on(host, tty_audit_file)).to match(%r{^session\s+optional\s+pam_tty_audit\.so})
+            content = file_contents_on(host, tty_audit_file)
+            expect(content).to match(%r{^session\s+optional\s+pam_tty_audit\.so})
+            expect(content).not_to match(%r{^session\s+required\s+pam_tty_audit\.so})
           end
         end
       end
