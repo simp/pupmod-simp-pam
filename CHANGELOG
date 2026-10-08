@@ -1,3 +1,7 @@
+* Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 9.5.0
+- Add support for OpenVox 9
+- Update metadata.json dependency ranges from the Forge
+
 * Thu Sep 03 2026 Mike Riddle <mike@sicura.us> - 9.4.0
 - Add `pam::faillock_authfail_control` (SIMP-#234), typed
   `Pam::FaillockAuthfailControl` and defaulting to
