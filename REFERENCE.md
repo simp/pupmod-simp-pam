@@ -805,6 +805,11 @@ and authselect will simply include the files created under that new directory.
 In short, if this value is true, the files will be created the same way, they
 will just live under a different directory and be included by the original files
 
+If false, the files are written directly to `/etc/pam.d`, except any that
+authselect already manages (symlinks into `/etc/authselect`, as reported
+by the `pam_authselect` fact). Those are left alone, with a warning, so the
+active authselect configuration stays valid.
+
 Default value: `simplib::lookup('simp_options::authselect', { 'default_value' => false })`
 
 ##### <a name="-pam--authselect_profile_name"></a>`authselect_profile_name`

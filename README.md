@@ -11,9 +11,11 @@
 * [Overview](#overview)
 * [This is a SIMP module](#this-is-a-simp-module)
 * [Module Description](#module-description)
+* [Breaking changes in 10.0.0](#breaking-changes-in-1000)
 * [Setup](#setup)
   * [Setup Requirements](#setup-requirements)
   * [What ``pam`` Affects](#what-pam-affects)
+  * [Hosts Managed by authselect](#hosts-managed-by-authselect)
 * [Usage](#usage)
   * [Basic Usage](#basic-usage)
   * [Restricting System Logins (pam_access)](#restricting-system-logins-pam_access)
@@ -56,6 +58,13 @@ focused on common security and compliance settings. Care has been taken to
 provide a significant set of switches and override mechanisms in order to
 provide for user flexibility.
 
+## Breaking changes in 10.0.0
+
+* With ``pam::use_authselect`` false (the default), the module no longer
+  replaces ``/etc/pam.d/*-auth`` files that authselect manages, so its stack is
+  not applied on those hosts. Set ``pam::use_authselect`` to ``true`` to keep
+  managing it. See [Hosts Managed by authselect](#hosts-managed-by-authselect).
+
 ## Setup
 
 ### Setup Requirements
@@ -71,6 +80,28 @@ the **EXPERIMENTAL** OATH (TOTP/HOTP) support.
 The ``pam`` module modifies various settings in the ``/etc/pam.d/`` and
 ``/etc/security`` directories related to user logins via various authentication
 methods.
+
+### Hosts Managed by authselect
+
+When ``pam::use_authselect`` is ``false`` (the default), the module writes the
+``*-auth`` stacks directly to ``/etc/pam.d``. If authselect already manages one
+of those files (it is a symlink into ``/etc/authselect``, as on hosts installed
+with an authselect profile selected), the module leaves that file alone and
+logs a warning. Replacing the symlink would invalidate the active authselect
+configuration (``authselect check`` fails) and break audits that evaluate PAM
+through authselect.
+
+To have the module manage the stacks on such a host, set
+``pam::use_authselect`` to ``true``, which delivers them through a ``simp``
+authselect profile.
+
+A host switched from ``pam::use_authselect: true`` to ``false`` keeps the
+``simp`` authselect profile as last rendered; the module no longer updates it.
+
+Hosts where an earlier version of this module already replaced the symlinks
+keep being managed directly. To hand those files back to authselect, run
+``authselect select <profile> <features...> --force`` with the profile and
+features shown by ``authselect current``.
 
 ## Usage
 

@@ -345,6 +345,11 @@
 #   In short, if this value is true, the files will be created the same way, they
 #   will just live under a different directory and be included by the original files
 #
+#   If false, the files are written directly to `/etc/pam.d`, except any that
+#   authselect already manages (symlinks into `/etc/authselect`, as reported
+#   by the `pam_authselect` fact). Those are left alone, with a warning, so the
+#   active authselect configuration stays valid.
+#
 # @param authselect_profile_name
 #   The name of the authselect profile to create and use.
 #

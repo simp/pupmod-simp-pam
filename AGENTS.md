@@ -55,9 +55,11 @@ Public API (consumers `include`/declare these; none call `assert_private()`):
     `reject_username` are written into `faillock.conf`/`pwhistory.conf` vs.
     inlined into the auth EPP (`auth.pp`).
   - Writes `${basedir}/${name}-auth` where `$basedir` is the authselect vendor
-    dir when `$pam::use_authselect`, else `/etc/pam.d` (`auth.pp`,
-    `269-275`); removes the `-ac` companion file unless `$preserve_ac`
-    (`auth.pp`).
+    dir when `$pam::use_authselect`, else `/etc/pam.d` (`auth.pp`); removes
+    the `-ac` companion file unless `$preserve_ac` (`auth.pp`). With
+    `use_authselect` false it skips (with a `warning()`) any file the
+    `pam_authselect` fact reports as an authselect symlink, so an active
+    authselect configuration stays valid.
 - **`pam::wheel` (`manifests/wheel.pp`)** — `inherits pam`; manages
   `/etc/pam.d/su` from the `su.epp` template (or custom `$content`).
 - **`pam::access` (`manifests/access.pp`)** — manages
@@ -261,9 +263,12 @@ OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
 - `spec/classes/`, `spec/defines/` — rspec-puppet unit tests;
   `spec/acceptance/suites/{default,security_modules}/` — beaker suites with
   docker/vagrant nodesets under `spec/acceptance/nodesets/`.
-- No `lib/` — this module ships no custom Ruby types/providers/functions/facts;
-  every custom type, fact, and function it uses comes from the dependencies
-  above.
+- `lib/facter/pam_authselect.rb` — the only custom Ruby in the module: a fact
+  reporting the selected authselect profile/features and which `/etc/pam.d`
+  files are symlinks into `/etc/authselect`. `pam::auth` reads its
+  `symlinked` list to leave authselect-managed files alone when
+  `use_authselect` is false. It reads files only (no shell-out), so it is
+  safe under noop.
 - **Acceptance runs in CI:** `.github/workflows/pr_tests.yml` has one
   `acceptance` job whose matrix crosses `suite` (`default`,
   `security_modules`) with `node` (`almalinux8`, `almalinux9`,

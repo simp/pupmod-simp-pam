@@ -278,12 +278,27 @@ define pam::auth (
     }
   }
 
-  file { "${basedir}/${target}":
-    ensure  => 'file',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => $_content,
+  # When authselect already owns the file (a symlink into /etc/authselect),
+  # writing it would replace the symlink with a regular file and invalidate
+  # the active authselect configuration. Leave it alone unless the stack is
+  # being delivered through authselect itself.
+  $_authselect_symlinked = pick($facts.dig('pam_authselect', 'symlinked'), [])
+
+  if !$pam::use_authselect and $target in $_authselect_symlinked {
+    warning(@("WARN"/L)
+      pam::auth: /etc/pam.d/${target} is managed by authselect, so it is not \
+      being changed. Set 'pam::use_authselect' to true to manage the \
+      ${target} stack through authselect.
+      |-WARN
+    )
+  } else {
+    file { "${basedir}/${target}":
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => $_content,
+    }
   }
 
   if ! $preserve_ac {

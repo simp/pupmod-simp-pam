@@ -272,6 +272,73 @@ describe 'pam::auth' do
           end
         end
 
+        context 'with the file managed by authselect' do
+          let(:facts) do
+            os_facts.merge(
+              {
+                'login_defs' => {
+                  'uid_min' => 1000,
+                },
+                'simplib__auditd' => {
+                  'enforcing' => false,
+                },
+                'pam_authselect' => {
+                  'profile'   => 'minimal',
+                  'features'  => ['with-faillock'],
+                  'symlinked' => ['postlogin', 'system-auth'],
+                },
+              },
+            )
+          end
+
+          context 'auth type with an authselect symlink' do
+            let(:title) { 'system' }
+
+            it { is_expected.to compile.with_all_deps }
+            it { is_expected.not_to contain_file('/etc/pam.d/system-auth') }
+            it { is_expected.to contain_file('/etc/pam.d/system-auth-ac').with_ensure('absent') }
+          end
+
+          # rspec-puppet caches compiled catalogues, so the warning is only
+          # logged on the first compile of a given title/params/facts. This
+          # context compiles a catalogue of its own in a single example.
+          context 'auth type with an authselect symlink and explicit content' do
+            let(:title) { 'system' }
+            let(:params) { { content: 'site-provided stack' } }
+            let(:logs) { [] }
+
+            before(:each) do
+              Puppet::Util::Log.newdestination(Puppet::Test::LogCollector.new(logs))
+            end
+
+            after(:each) do
+              Puppet::Util::Log.close_all
+            end
+
+            it 'leaves the file to authselect with a warning' do
+              is_expected.not_to contain_file('/etc/pam.d/system-auth')
+              expect(logs.map(&:message)).to include(%r{/etc/pam\.d/system-auth is managed by authselect})
+            end
+          end
+
+          context 'auth type without an authselect symlink' do
+            let(:title) { 'password' }
+            let(:filename) { '/etc/pam.d/password-auth' }
+
+            it_behaves_like 'a pam.d config file generator'
+          end
+
+          context 'with use_authselect => true' do
+            let(:pre_condition) do
+              'class { "pam": auth_sections => [], use_authselect => true }'
+            end
+            let(:title) { 'system' }
+
+            it { is_expected.to compile.with_all_deps }
+            it { is_expected.to contain_file('/usr/share/authselect/vendor/simp/system-auth') }
+          end
+        end
+
         context 'Generate file without locale_file' do
           let(:params) do
             {

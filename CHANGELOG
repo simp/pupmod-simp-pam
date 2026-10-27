@@ -1,3 +1,20 @@
+* Tue Oct 27 2026 Mike Riddle <mike@sicura.us> - 10.0.0
+- **BREAKING**: With `pam::use_authselect` false (the default), `pam::auth`
+  no longer writes a `/etc/pam.d/*-auth` file that authselect manages (a
+  symlink into `/etc/authselect`, as on hosts installed with an authselect
+  profile selected). It logs a warning and leaves the file to authselect.
+  Previously it replaced the symlink with a regular file, which invalidated
+  the authselect configuration (`authselect check` failed) and failed CIS
+  checks that evaluate PAM through authselect (SIMP-#256).
+
+  On those hosts the module's stack, including `content` and the
+  `*_auth_content` parameters, is no longer applied. To keep managing it, set
+  `pam::use_authselect` to true. Hosts where the module already replaced the
+  symlinks are unaffected. A host switched from `use_authselect` true to false
+  keeps the `simp` authselect profile last rendered
+- Add the `pam_authselect` fact, which reports the selected authselect
+  profile and features and the `/etc/pam.d` files authselect manages
+
 * Thu Sep 03 2026 Mike Riddle <mike@sicura.us> - 9.4.0
 - Add `pam::faillock_authfail_control` (SIMP-#234), typed
   `Pam::FaillockAuthfailControl` and defaulting to

@@ -46,6 +46,12 @@ describe 'pam class' do
 
         it 'does not replace authconfig and authselect should do nothing if not forced' do
           skip('authselect works differently on el10+ and does not require --force') unless os_major(host) < 10
+          # Images installed with an authselect profile selected (e.g. Oracle
+          # Linux) keep authselect in charge, so there is nothing for it to
+          # refuse; see 'with an authselect profile already selected'.
+          if on(host, 'test -L /etc/pam.d/system-auth', accept_all_exit_codes: true).exit_code.zero?
+            skip('authselect manages the auth files on this host, so the module leaves them alone')
+          end
           # Install the authconfig package if it doesn't exist
           on(host, 'dnf install -y authconfig')
 
@@ -86,6 +92,40 @@ describe 'pam class' do
           result = on(host, 'diff <(grep -v "^\s*#" /etc/authselect/password-auth | tr -d "\n") <(grep -v "^\s*#" /usr/share/authselect/vendor/simp/password-auth | tr -d "\n")',
 accept_all_exit_codes: true)
           expect(result.exit_code).to eq(0)
+        end
+      end
+
+      # Hosts installed with an authselect profile already selected (e.g. the
+      # Oracle Linux 8/9 images) must keep a valid authselect configuration.
+      context 'with an authselect profile already selected' do
+        before(:context) do
+          # 'minimal' was renamed 'local' in authselect 1.5 (EL10)
+          profile = on(host, 'test -d /usr/share/authselect/default/local', accept_all_exit_codes: true).exit_code.zero? ? 'local' : 'minimal'
+          on(host, "authselect select #{profile} with-faillock --force")
+        end
+
+        # Later spec files expect the module's stacks, so hand the files back.
+        after(:context) do
+          on(host, 'rm -f /etc/pam.d/{fingerprint,password,smartcard,system}-auth')
+          apply_manifest_on(host, "include 'pam'", catch_failures: true)
+        end
+
+        it 'applies without errors' do
+          apply_manifest_on(host, manifest, catch_failures: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, catch_changes: true)
+        end
+
+        it 'leaves the authselect symlinks in place' do
+          ['fingerprint', 'password', 'smartcard', 'system'].each do |f|
+            on(host, "test -L /etc/pam.d/#{f}-auth")
+          end
+        end
+
+        it 'leaves a valid authselect configuration' do
+          on(host, 'authselect check')
         end
       end
     end
